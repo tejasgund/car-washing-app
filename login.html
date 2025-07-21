@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahyadri Washing Center - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .language-toggle {
+            display: flex;
+            background: #f0f2f5;
+            border-radius: 25px;
+            padding: 4px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .user-type-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .user-type-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .user-type-btn .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .user-type-btn .label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-label {
+            position: absolute;
+            left: 20px;
+            top: 18px;
+            color: #999;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: white;
+            padding: 0 5px;
+        }
+
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -8px;
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #764ba2;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 25px;
+                margin: 10px;
+            }
+
+            .user-type-selector {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .user-type-btn {
+                padding: 12px;
+            }
+
+            .user-type-btn .icon {
+                font-size: 28px;
+            }
+        }
+
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <div class="logo">SW</div>
+            <h1 id="title">Sahyadri Washing Center</h1>
+            <p class="subtitle" id="subtitle">Professional Laundry Services</p>
+        </div>
+
+        <div class="language-toggle">
+            <button class="lang-btn active" onclick="switchLanguage('en')" id="en-btn">English</button>
+            <button class="lang-btn" onclick="switchLanguage('mr')" id="mr-btn">मराठी</button>
+        </div>
+
+        <div class="user-type-selector">
+            <div class="user-type-btn active" onclick="selectUserType('user')" id="user-btn">
+                <span class="icon">👤</span>
+                <span class="label" id="user-label">User</span>
+            </div>
+            <div class="user-type-btn" onclick="selectUserType('admin')" id="admin-btn">
+                <span class="icon">⚙️</span>
+                <span class="label" id="admin-label">Admin</span>
+            </div>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="text" class="form-input" id="username" placeholder=" " required>
+                <label class="form-label" id="username-label">Username</label>
+            </div>
+
+            <div class="form-group">
+                <input type="password" class="form-input" id="password" placeholder=" " required>
+                <label class="form-label" id="password-label">Password</label>
+            </div>
+
+            <button type="submit" class="login-btn" id="login-btn">
+                <span class="loading" id="loading"></span>
+                <span id="login-text">Login</span>
+            </button>
+        </form>
+
+        <div class="forgot-password">
+            <a href="#" id="forgot-link">Forgot Password?</a>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'en';
+        let currentUserType = 'user';
+
+        const translations = {
+            en: {
+                title: 'Sahyadri Washing Center',
+                subtitle: 'Professional Laundry Services',
+                user: 'User',
+                admin: 'Admin',
+                username: 'Username',
+                password: 'Password',
+                login: 'Login',
+                forgot: 'Forgot Password?',
+                logging: 'Logging in...'
+            },
+            mr: {
+                title: 'सह्याद्री वॉशिंग सेंटर',
+                subtitle: 'व्यावसायिक लाँड्री सेवा',
+                user: 'वापरकर्ता',
+                admin: 'प्रशासक',
+                username: 'वापरकर्त्याचे नाव',
+                password: 'पासवर्ड',
+                login: 'लॉगिन',
+                forgot: 'पासवर्ड विसरलात?',
+                logging: 'लॉगिन करत आहे...'
+            }
+        };
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(lang + '-btn').classList.add('active');
+            
+            // Update text content
+            const t = translations[lang];
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('user-label').textContent = t.user;
+            document.getElementById('admin-label').textContent = t.admin;
+            document.getElementById('username-label').textContent = t.username;
+            document.getElementById('password-label').textContent = t.password;
+            document.getElementById('login-text').textContent = t.login;
+            document.getElementById('forgot-link').textContent = t.forgot;
+        }
+
+        function selectUserType(type) {
+            currentUserType = type;
+            
+            // Update active user type button
+            document.querySelectorAll('.user-type-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(type + '-btn').classList.add('active');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('login-btn');
+            const loginText = document.getElementById('login-text');
+            const loading = document.getElementById('loading');
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loading.style.display = 'inline-block';
+            loginText.textContent = translations[currentLanguage].logging;
+            
+            // Simulate login process
+            setTimeout(() => {
+                // Reset button state
+                loginBtn.disabled = false;
+                loading.style.display = 'none';
+                loginText.textContent = translations[currentLanguage].login;
+                
+                // Show success message (in a real app, you'd handle authentication here)
+                alert(`${currentLanguage === 'en' ? 'Login successful!' : 'लॉगिन यशस्वी!'}\n${currentLanguage === 'en' ? 'User Type:' : 'वापरकर्ता प्रकार:'} ${currentUserType === 'user' ? translations[currentLanguage].user : translations[currentLanguage].admin}`);
+                
+                // Clear form
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            }, 2000);
+        });
+
+        // Initialize page
+        switchLanguage('en');
+        selectUserType('user');
+    </script>
+</body>
+</html>
