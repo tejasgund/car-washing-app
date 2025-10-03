@@ -1,19 +1,24 @@
-from flask import Flask, request, jsonify, send_from_directory
-import config
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+import os
 
-# Create Flask app
-app = Flask(__name__, static_folder="frontend", template_folder="frontend")
+# Create FastAPI app
+app = FastAPI()
 
-# Route to serve frontend HTML
-@app.route("/")
-def home():
-    return send_from_directory("frontend", "index.html")
+# Path to frontend folder
+frontend_dir = os.path.join(os.path.dirname(__file__), "frontend")
+
+# Serve static files (CSS, JS, images)
+app.mount("/static", StaticFiles(directory=os.path.join(frontend_dir, "static")), name="static")
+
+# Serve index.html at root
+@app.get("/")
+def serve_index():
+    return FileResponse(os.path.join(frontend_dir, "index.html"))
 
 # Example API route
-
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)  # No host or port needed for Gunicorn
+@app.get("/api/test")
+def test_api():
+    return {"message": "FastAPI is working!"}
 
