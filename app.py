@@ -10,8 +10,7 @@ def home():
     return send_from_directory("frontend", "index.html")
 
 # Example API route
-@app.route("/api/car/<car_number>", methods=["GET"]):
-print(car_number):
+
 
 
 
