@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WashFlow - Billing & Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Icon library (Lucide Icons) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom styles for professional and sleek look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        /* Custom scrollbar for activity log */
+        .activity-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .activity-scroll::-webkit-scrollbar-thumb {
+            background-color: #c0c0c0;
+            border-radius: 3px;
+        }
+        .activity-scroll::-webkit-scrollbar-track {
+            background-color: #e2e8f0;
+        }
+        /* Style for the active tab indicator */
+        .tab-active {
+            border-bottom: 3px solid #10b981; /* Emerald green */
+            color: #10b981;
+            font-weight: 600;
+        }
+        /* General button style */
+        .btn-primary {
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Main Application Container -->
+    <div id="app" class="flex flex-col min-h-screen">
+
+        <!-- Header -->
+        <header class="bg-gray-800 text-white shadow-lg sticky top-0 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="car-wash" class="w-7 h-7 text-emerald-400"></i>
+                    <h1 class="text-2xl font-bold">WashFlow</h1>
+                </div>
+                <div class="text-sm text-gray-400 hidden sm:block">Internal Billing System</div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs (Mobile & Desktop) -->
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex h-12">
+                    <button class="flex-1 text-center text-gray-600 px-4 py-2 hover:bg-gray-50 transition duration-150 ease-in-out" id="tab-dashboard" onclick="changeTab('dashboard')">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 inline-block sm:mr-2"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </button>
+                    <button class="flex-1 text-center text-gray-600 px-4 py-2 hover:bg-gray-50 transition duration-150 ease-in-out tab-active" id="tab-billing" onclick="changeTab('billing')">
+                        <i data-lucide="receipt" class="w-5 h-5 inline-block sm:mr-2"></i>
+                        <span class="hidden sm:inline">New Bill</span>
+                    </button>
+                    <button class="flex-1 text-center text-gray-600 px-4 py-2 hover:bg-gray-50 transition duration-150 ease-in-out" id="tab-activity" onclick="changeTab('activity')">
+                        <i data-lucide="list-checks" class="w-5 h-5 inline-block sm:mr-2"></i>
+                        <span class="hidden sm:inline">Activity Log</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8">
+
+            <!-- Global Message Box -->
+            <div id="message-box" class="fixed top-4 right-4 z-50 w-full max-w-sm hidden">
+                <!-- Messages will be injected here -->
+            </div>
+            
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="space-y-6 hidden">
+                <h2 class="text-3xl font-bold text-gray-800 border-b pb-2 mb-4">Today's Performance</h2>
+                
+                <!-- Stat Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Total Washes -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-emerald-500">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="car" class="w-8 h-8 text-emerald-500"></i>
+                            <span class="text-2xl font-bold text-gray-800" id="stat-washes">0</span>
+                        </div>
+                        <p class="mt-1 text-sm font-medium text-gray-500">Total Cars Washed</p>
+                    </div>
+                    <!-- Total Revenue -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-indigo-500">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="indian-rupee" class="w-8 h-8 text-indigo-500"></i>
+                            <span class="text-2xl font-bold text-gray-800" id="stat-revenue">₹0.00</span>
+                        </div>
+                        <p class="mt-1 text-sm font-medium text-gray-500">Total Revenue</p>
+                    </div>
+                    <!-- Top Vehicle Type -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-amber-500">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="truck" class="w-8 h-8 text-amber-500"></i>
+                            <span class="text-sm font-semibold text-gray-800" id="stat-top-vehicle">N/A</span>
+                        </div>
+                        <p class="mt-1 text-sm font-medium text-gray-500">Top Vehicle Type</p>
+                    </div>
+                    <!-- Top Service -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-rose-500">
+                        <div class="flex items-center justify-between">
+                            <i data-lucide="brush" class="w-8 h-8 text-rose-500"></i>
+                            <span class="text-sm font-semibold text-gray-800" id="stat-top-service">N/A</span>
+                        </div>
+                        <p class="mt-1 text-sm font-medium text-gray-500">Most Popular Service</p>
+                    </div>
+                </div>
+
+                <!-- Activity Log Preview -->
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <i data-lucide="history" class="w-5 h-5 mr-2"></i> Recent Washes
+                    </h3>
+                    <div id="dashboard-activity-log" class="divide-y divide-gray-100 max-h-96 activity-scroll overflow-y-auto">
+                        <!-- Activity items will be loaded here -->
+                        <p class="text-gray-500 py-3 text-center" id="dashboard-activity-placeholder">Loading recent activity...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Billing View -->
+            <section id="view-billing" class="space-y-6">
+                <h2 class="text-3xl font-bold text-gray-800 border-b pb-2 mb-4">New Billing Session</h2>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg max-w-2xl mx-auto">
+                    <form id="billing-form" class="space-y-4">
+                        
+                        <!-- Car Number Lookup -->
+                        <div>
+                            <label for="car-number" class="block text-sm font-medium text-gray-700">Vehicle Registration Number <span class="text-red-500">*</span></label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input type="text" id="car-number" name="car-number" required class="block w-full rounded-lg border-gray-300 p-3 pr-10 focus:ring-emerald-500 focus:border-emerald-500 uppercase font-bold text-lg tracking-wider" placeholder="MH01AB1234" oninput="handleCarNumberInput(this.value)">
+                                <div id="lookup-status" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <!-- Icon or spinner will be here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Details (New/Old) -->
+                        <div id="customer-details-container" class="space-y-4 pt-2">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <p class="font-semibold text-gray-700">Customer Status:</p>
+                                <span id="customer-status-badge" class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-700">Awaiting Input</span>
+                            </div>
+                            
+                            <div id="old-customer-info" class="p-3 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                                <p class="font-medium text-blue-800">Welcome Back, <span id="old-customer-name" class="font-bold"></span>!</p>
+                                <p class="text-sm text-blue-700">Phone: <span id="old-customer-phone"></span></p>
+                                <input type="hidden" id="customer-id" name="customer-id">
+                            </div>
+
+                            <!-- New Customer Input Fields -->
+                            <div id="new-customer-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 hidden">
+                                <div>
+                                    <label for="customer-name" class="block text-sm font-medium text-gray-700">Name <span class="text-red-500">*</span></label>
+                                    <input type="text" id="customer-name" name="customer-name" class="mt-1 block w-full rounded-lg border-gray-300 p-3 focus:ring-emerald-500 focus:border-emerald-500" placeholder="Customer Name">
+                                </div>
+                                <div>
+                                    <label for="customer-phone" class="block text-sm font-medium text-gray-700">Phone <span class="text-red-500">*</span></label>
+                                    <input type="tel" id="customer-phone" name="customer-phone" class="mt-1 block w-full rounded-lg border-gray-300 p-3 focus:ring-emerald-500 focus:border-emerald-500" placeholder="10 Digit Phone">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Details -->
+                        <div class="pt-4 border-t border-gray-100">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">Service Selection</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Vehicle Type -->
+                                <div>
+                                    <label for="vehicle-type" class="block text-sm font-medium text-gray-700">Vehicle Type <span class="text-red-500">*</span></label>
+                                    <select id="vehicle-type" name="vehicle-type" required class="mt-1 block w-full rounded-lg border-gray-300 p-3 focus:ring-emerald-500 focus:border-emerald-500">
+                                        <option value="" disabled selected>Select vehicle type</option>
+                                        <!-- Options injected by JS -->
+                                    </select>
+                                </div>
+                                <!-- Wash Service -->
+                                <div>
+                                    <label for="wash-service" class="block text-sm font-medium text-gray-700">Wash Service <span class="text-red-500">*</span></label>
+                                    <select id="wash-service" name="wash-service" required class="mt-1 block w-full rounded-lg border-gray-300 p-3 focus:ring-emerald-500 focus:border-emerald-500" onchange="updateTotalPrice()">
+                                        <option value="" disabled selected>Select service</option>
+                                        <!-- Options injected by JS -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Billing Summary -->
+                        <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-xl font-semibold text-gray-800">Total Price:</span>
+                            <span id="total-price-display" class="text-3xl font-bold text-emerald-600">₹0.00</span>
+                            <input type="hidden" id="total-price" name="total-price" value="0">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="generate-bill-btn" class="btn-primary w-full flex justify-center items-center space-x-2 py-3 px-4 border border-transparent text-lg font-medium rounded-xl shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50" disabled>
+                            <i data-lucide="credit-card" class="w-6 h-6"></i>
+                            <span id="btn-text">Generate Bill & Record Wash</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- Activity Log View -->
+            <section id="view-activity" class="space-y-6 hidden">
+                <h2 class="text-3xl font-bold text-gray-800 border-b pb-2 mb-4">Complete Activity Log</h2>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Car No.</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Customer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody id="full-activity-log" class="bg-white divide-y divide-gray-200">
+                                <!-- Full activity log items will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p class="text-gray-500 py-3 text-center" id="full-activity-placeholder">No activity recorded yet.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script type="module">
+        // Initialize Lucide Icons
+        lucide.createIcons();
+        
+        // --- Mock Data & API Simulation (Replace with your actual FastAPI calls) ---
+
+        // Mock database for services and vehicle types (replace with GET /api/v1/vehicle_types etc.)
+        const VEHICLE_TYPES = [
+            { id: 1, name: "Bike/Scooter", base_price_multiplier: 0.5 },
+            { id: 2, name: "Hatchback/Sedan", base_price_multiplier: 1.0 },
+            { id: 3, name: "SUV/MUV", base_price_multiplier: 1.2 },
+            { id: 4, name: "Truck/Bus", base_price_multiplier: 1.8 }
+        ];
+
+        const SERVICES = [
+            { id: 101, name: "Basic Wash (Exterior)", base_price: 250.00 },
+            { id: 102, name: "Premium Wash & Wax", base_price: 450.00 },
+            { id: 103, name: "Interior Cleaning & Vacuum", base_price: 600.00 },
+            { id: 104, name: "Full Detail Package", base_price: 1200.00 }
+        ];
+
+        // In-memory mock storage (replace with Firestore/MySQL/FastAPI calls)
+        let MOCK_CUSTOMERS = [
+            { id: 1, car_number: "MH01AB1234", name: "Ravi Sharma", phone: "9876543210" },
+            { id: 2, car_number: "DL05CD5678", name: "Priya Singh", phone: "9900112233" },
+        ];
+        let MOCK_WASH_RECORDS = [
+            { id: 5001, customer_id: 1, car_number: "MH01AB1234", service_name: "Basic Wash (Exterior)", vehicle_type: "Hatchback/Sedan", total_price: 250.00, wash_date: new Date(Date.now() - 3600000) },
+            { id: 5002, customer_id: 2, car_number: "DL05CD5678", service_name: "Premium Wash & Wax", vehicle_type: "SUV/MUV", total_price: 540.00, wash_date: new Date(Date.now() - 7200000) },
+            { id: 5003, customer_id: 1, car_number: "MH01AB1234", service_name: "Interior Cleaning & Vacuum", vehicle_type: "Hatchback/Sedan", total_price: 600.00, wash_date: new Date(Date.now() - 10800000) },
+        ];
+        let nextCustomerId = 3;
+        let nextRecordId = 5004;
+        
+        // Utility function to simulate network delay and exponential backoff behavior
+        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // --- Mock API Functions (Mimics your FastAPI Endpoints) ---
+
+        /**
+         * GET /api/v1/customer/{car_number}
+         */
+        async function apiCheckCustomer(carNumber) {
+            await wait(300); // Simulate network latency
+
+            const normalizedCarNumber = carNumber.toUpperCase().replace(/\s/g, '');
+            const customer = MOCK_CUSTOMERS.find(c => c.car_number === normalizedCarNumber);
+
+            if (customer) {
+                return {
+                    status: "success",
+                    data: {
+                        is_old_customer: true,
+                        customer_id: customer.id,
+                        name: customer.name,
+                        phone: customer.phone,
+                        car_number: normalizedCarNumber
+                    }
+                };
+            } else {
+                return {
+                    status: "success",
+                    data: {
+                        is_old_customer: false,
+                        car_number: normalizedCarNumber
+                    }
+                };
+            }
+        }
+
+        /**
+         * POST /api/v1/customer
+         */
+        async function apiCreateCustomer(data) {
+            await wait(500); // Simulate network latency
+
+            const newCustomer = {
+                id: nextCustomerId++,
+                car_number: data.car_number.toUpperCase().replace(/\s/g, ''),
+                name: data.name,
+                phone: data.phone
+            };
+            MOCK_CUSTOMERS.push(newCustomer);
+
+            return {
+                status: "success",
+                message: "Customer created successfully.",
+                customer_id: newCustomer.id
+            };
+        }
+
+        /**
+         * POST /api/v1/wash
+         */
+        async function apiRecordWash(data) {
+            await wait(700); // Simulate network latency
+
+            const newRecord = {
+                id: nextRecordId++,
+                customer_id: data.customer_id,
+                car_number: data.car_number,
+                service_name: data.service_name,
+                vehicle_type: data.vehicle_type,
+                total_price: data.total_price,
+                wash_date: new Date()
+            };
+            MOCK_WASH_RECORDS.unshift(newRecord); // Add to the start for recent activity
+
+            return {
+                status: "success",
+                message: "Bill generated and wash recorded.",
+                record_id: newRecord.id
+            };
+        }
+
+        /**
+         * GET /api/v1/dashboard/stats
+         */
+        async function apiFetchDailyStats() {
+            await wait(300); // Simulate network latency
+            
+            const today = new Date().toDateString();
+            const todayRecords = MOCK_WASH_RECORDS.filter(r => r.wash_date.toDateString() === today);
+
+            const totalWashes = todayRecords.length;
+            const totalRevenue = todayRecords.reduce((sum, record) => sum + record.total_price, 0);
+
+            // Simple Top Stats calculation (can be optimized in backend)
+            const vehicleCounts = todayRecords.reduce((acc, r) => {
+                acc[r.vehicle_type] = (acc[r.vehicle_type] || 0) + 1;
+                return acc;
+            }, {});
+
+            const serviceCounts = todayRecords.reduce((acc, r) => {
+                acc[r.service_name] = (acc[r.service_name] || 0) + 1;
+                return acc;
+            }, {});
+
+            const topVehicle = Object.keys(vehicleCounts).sort((a, b) => vehicleCounts[b] - vehicleCounts[a])[0];
+            const topService = Object.keys(serviceCounts).sort((a, b) => serviceCounts[b] - serviceCounts[a])[0];
+
+            return {
+                status: "success",
+                data: {
+                    total_washes_today: totalWashes,
+                    total_revenue_today: totalRevenue,
+                    top_vehicle_type: topVehicle ? `${topVehicle} (${vehicleCounts[topVehicle]} washes)` : 'N/A',
+                    top_service: topService ? `${topService} (${serviceCounts[topService]} uses)` : 'N/A'
+                }
+            };
+        }
+        
+        /**
+         * GET /api/v1/activity/recent (and full list)
+         */
+        async function apiFetchActivity(limit = null) {
+            await wait(300); // Simulate network latency
+
+            const records = MOCK_WASH_RECORDS.sort((a, b) => b.wash_date.getTime() - a.wash_date.getTime());
+            return {
+                status: "success",
+                data: limit ? records.slice(0, limit) : records
+            };
+        }
+
+
+        // --- Frontend State and Logic ---
+
+        let currentTab = 'billing';
+        let isNewCustomer = false;
+        let currentCustomerId = null;
+        let debounceTimer;
+
+        // Utility: Format price to INR
+        const formatPrice = (price) => {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(price);
+        };
+        
+        // Utility: Format date and time
+        const formatDateTime = (date) => {
+            const d = new Date(date);
+            return d.toLocaleString('en-IN', { 
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: true
+            });
+        }
+        
+        /**
+         * Global UI Message Handler
+         * @param {string} message - The message content
+         * @param {string} type - 'success', 'error', or 'info'
+         */
+        function showMessage(message, type = 'info') {
+            const box = document.getElementById('message-box');
+            box.innerHTML = ''; // Clear previous messages
+
+            let bgColor, borderColor;
+            let icon;
+
+            switch (type) {
+                case 'success':
+                    bgColor = 'bg-emerald-100';
+                    borderColor = 'border-emerald-500';
+                    icon = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>`;
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-100';
+                    borderColor = 'border-red-500';
+                    icon = `<i data-lucide="x-circle" class="w-5 h-5 text-red-600"></i>`;
+                    break;
+                default:
+                    bgColor = 'bg-blue-100';
+                    borderColor = 'border-blue-500';
+                    icon = `<i data-lucide="info" class="w-5 h-5 text-blue-600"></i>`;
+            }
+
+            const element = document.createElement('div');
+            element.className = `${bgColor} border-l-4 ${borderColor} text-gray-800 p-4 rounded-lg shadow-xl mb-3 flex items-center space-x-3 transition-opacity duration-300 ease-out`;
+            element.innerHTML = `${icon} <span>${message}</span>`;
+            
+            lucide.createIcons(); // Re-render icons
+
+            box.prepend(element); // Show newest message on top
+            box.classList.remove('hidden');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                element.classList.add('opacity-0');
+                element.addEventListener('transitionend', () => element.remove());
+                if (box.children.length === 1) { // If this was the last child
+                    box.classList.add('hidden');
+                }
+            }, 5000);
+        }
+
+        // --- View Switching ---
+
+        function changeTab(tabName) {
+            currentTab = tabName;
+            ['dashboard', 'billing', 'activity'].forEach(view => {
+                const viewEl = document.getElementById(`view-${view}`);
+                const tabEl = document.getElementById(`tab-${view}`);
+                
+                if (viewEl) viewEl.classList.add('hidden');
+                if (tabEl) tabEl.classList.remove('tab-active');
+
+                if (view === tabName) {
+                    if (viewEl) viewEl.classList.remove('hidden');
+                    if (tabEl) tabEl.classList.add('tab-active');
+                }
+            });
+
+            // Load data specific to the selected tab
+            if (tabName === 'dashboard') {
+                loadDashboardData();
+            } else if (tabName === 'activity') {
+                loadFullActivityLog();
+            }
+        }
+
+        // --- Billing Form Logic ---
+
+        function populateServiceOptions() {
+            const vehicleSelect = document.getElementById('vehicle-type');
+            const serviceSelect = document.getElementById('wash-service');
+
+            VEHICLE_TYPES.forEach(v => {
+                const option = document.createElement('option');
+                option.value = v.name;
+                option.textContent = v.name;
+                option.setAttribute('data-multiplier', v.base_price_multiplier);
+                vehicleSelect.appendChild(option);
+            });
+
+            SERVICES.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.id;
+                option.textContent = `${s.name} (${formatPrice(s.base_price)})`;
+                option.setAttribute('data-price', s.base_price);
+                serviceSelect.appendChild(option);
+            });
+        }
+        
+        function updateTotalPrice() {
+            const serviceSelect = document.getElementById('wash-service');
+            const vehicleSelect = document.getElementById('vehicle-type');
+            const priceDisplay = document.getElementById('total-price-display');
+            const priceInput = document.getElementById('total-price');
+
+            const selectedServiceOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const selectedVehicleOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+
+            const basePrice = selectedServiceOption && selectedServiceOption.dataset.price ? parseFloat(selectedServiceOption.dataset.price) : 0;
+            const multiplier = selectedVehicleOption && selectedVehicleOption.dataset.multiplier ? parseFloat(selectedVehicleOption.dataset.multiplier) : 1.0;
+
+            const finalPrice = basePrice * multiplier;
+
+            priceDisplay.textContent = formatPrice(finalPrice);
+            priceInput.value = finalPrice.toFixed(2);
+            
+            checkFormValidity();
+        }
+        
+        function checkFormValidity() {
+             const form = document.getElementById('billing-form');
+             const carNumInput = document.getElementById('car-number');
+             const nameInput = document.getElementById('customer-name');
+             const phoneInput = document.getElementById('customer-phone');
+             const serviceSelect = document.getElementById('wash-service');
+             const vehicleSelect = document.getElementById('vehicle-type');
+             const submitBtn = document.getElementById('generate-bill-btn');
+             
+             let isValid = true;
+             
+             // 1. Check required fields
+             if (!carNumInput.value.trim() || !serviceSelect.value || !vehicleSelect.value) {
+                 isValid = false;
+             }
+             
+             // 2. Check new customer fields if applicable
+             if (isNewCustomer) {
+                 if (!nameInput.value.trim() || !phoneInput.value.trim() || phoneInput.value.trim().length < 10) {
+                     isValid = false;
+                 }
+             }
+             
+             submitBtn.disabled = !isValid || currentCustomerId === null;
+        }
+
+
+        // Debounced input handler for car number lookup
+        window.handleCarNumberInput = function(carNumber) {
+            // Reset state first
+            document.getElementById('old-customer-info').classList.add('hidden');
+            document.getElementById('new-customer-fields').classList.add('hidden');
+            document.getElementById('customer-status-badge').textContent = 'Typing...';
+            document.getElementById('customer-status-badge').className = 'px-3 py-1 text-xs font-semibold rounded-full bg-yellow-200 text-yellow-700';
+            currentCustomerId = null;
+            checkFormValidity();
+
+
+            clearTimeout(debounceTimer);
+            if (carNumber.length < 4) {
+                document.getElementById('lookup-status').innerHTML = '';
+                document.getElementById('customer-status-badge').textContent = 'Awaiting Input';
+                document.getElementById('customer-status-badge').className = 'px-3 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-700';
+                return;
+            }
+
+            const loadingSpinner = `<i data-lucide="loader" class="w-5 h-5 text-gray-500 animate-spin"></i>`;
+            document.getElementById('lookup-status').innerHTML = loadingSpinner;
+            lucide.createIcons();
+            
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const result = await apiCheckCustomer(carNumber);
+                    
+                    if (result.data.is_old_customer) {
+                        // Old Customer Found
+                        isNewCustomer = false;
+                        currentCustomerId = result.data.customer_id;
+                        
+                        document.getElementById('old-customer-name').textContent = result.data.name;
+                        document.getElementById('old-customer-phone').textContent = result.data.phone;
+                        document.getElementById('customer-id').value = result.data.customer_id;
+
+                        document.getElementById('old-customer-info').classList.remove('hidden');
+                        document.getElementById('new-customer-fields').classList.add('hidden');
+                        document.getElementById('customer-status-badge').textContent = 'Old Customer';
+                        document.getElementById('customer-status-badge').className = 'px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800';
+
+                    } else {
+                        // New Customer
+                        isNewCustomer = true;
+                        currentCustomerId = null; // Will be set after POST /customer
+                        
+                        document.getElementById('old-customer-info').classList.add('hidden');
+                        document.getElementById('new-customer-fields').classList.remove('hidden');
+                        document.getElementById('customer-status-badge').textContent = 'New Customer';
+                        document.getElementById('customer-status-badge').className = 'px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800';
+                    }
+                    showMessage(`Lookup successful! Customer is ${isNewCustomer ? 'New' : 'Old'}.`, 'info');
+
+                } catch (error) {
+                    showMessage('Error during customer lookup. Check API connection.', 'error');
+                } finally {
+                    document.getElementById('lookup-status').innerHTML = `<i data-lucide="search" class="w-5 h-5 text-gray-500"></i>`;
+                    lucide.createIcons();
+                    checkFormValidity();
+                }
+            }, 500); // 500ms debounce
+        }
+
+        // Form submission handler
+        document.getElementById('billing-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('generate-bill-btn');
+            const btnText = document.getElementById('btn-text');
+            const originalText = btnText.textContent;
+
+            btn.disabled = true;
+            btnText.innerHTML = `<i data-lucide="loader" class="w-5 h-5 animate-spin mr-2"></i> Processing...`;
+            lucide.createIcons();
+
+            const carNumber = document.getElementById('car-number').value.toUpperCase().replace(/\s/g, '');
+            const serviceSelect = document.getElementById('wash-service');
+            const vehicleSelect = document.getElementById('vehicle-type');
+            
+            const washData = {
+                car_number: carNumber,
+                service_id: parseInt(serviceSelect.value),
+                service_name: serviceSelect.options[serviceSelect.selectedIndex].textContent.split(' (')[0],
+                vehicle_type: vehicleSelect.value,
+                total_price: parseFloat(document.getElementById('total-price').value),
+                customer_id: currentCustomerId
+            };
+
+            try {
+                // 1. If New Customer, create customer first
+                if (isNewCustomer) {
+                    const name = document.getElementById('customer-name').value;
+                    const phone = document.getElementById('customer-phone').value;
+                    
+                    if (!name || !phone) {
+                        showMessage("Customer details are required for new registration.", 'error');
+                        return;
+                    }
+
+                    const customerResult = await apiCreateCustomer({ car_number: carNumber, name: name, phone: phone });
+                    washData.customer_id = customerResult.customer_id;
+                    currentCustomerId = customerResult.customer_id; // Update state
+                }
+
+                // 2. Record the Wash (Generate Bill)
+                const washResult = await apiRecordWash(washData);
+
+                showMessage(`Bill generated! Record #${washResult.record_id}. Total: ${formatPrice(washData.total_price)}`, 'success');
+                
+                // Reset form and state
+                document.getElementById('billing-form').reset();
+                window.handleCarNumberInput(''); // Reset lookup status
+                document.getElementById('total-price-display').textContent = formatPrice(0);
+                isNewCustomer = false;
+                currentCustomerId = null;
+                
+            } catch (error) {
+                showMessage('Error generating bill. Please check inputs and API status.', 'error');
+            } finally {
+                btnText.textContent = originalText;
+                btn.disabled = false;
+                checkFormValidity();
+            }
+        });
+        
+        // --- Dashboard & Activity Log Logic ---
+
+        async function loadDashboardData() {
+            try {
+                document.getElementById('dashboard-activity-placeholder').textContent = "Loading...";
+
+                // Load Stats
+                const statsResult = await apiFetchDailyStats();
+                const stats = statsResult.data;
+                
+                document.getElementById('stat-washes').textContent = stats.total_washes_today;
+                document.getElementById('stat-revenue').textContent = formatPrice(stats.total_revenue_today);
+                document.getElementById('stat-top-vehicle').textContent = stats.top_vehicle_type;
+                document.getElementById('stat-top-service').textContent = stats.top_service;
+
+                // Load Recent Activity (Last 5)
+                const activityResult = await apiFetchActivity(5);
+                renderActivityLog(activityResult.data, 'dashboard-activity-log');
+
+            } catch (error) {
+                showMessage('Failed to load dashboard data.', 'error');
+                document.getElementById('dashboard-activity-placeholder').textContent = "Could not load data.";
+            }
+        }
+        
+        async function loadFullActivityLog() {
+            try {
+                const placeholder = document.getElementById('full-activity-placeholder');
+                placeholder.textContent = "Loading full activity log...";
+                placeholder.classList.remove('hidden');
+                
+                const activityResult = await apiFetchActivity();
+                renderActivityLog(activityResult.data, 'full-activity-log', true);
+                
+                if (activityResult.data.length === 0) {
+                     placeholder.textContent = "No activity recorded yet.";
+                } else {
+                     placeholder.classList.add('hidden');
+                }
+
+            } catch (error) {
+                showMessage('Failed to load activity log.', 'error');
+                document.getElementById('full-activity-placeholder').textContent = "Could not load data.";
+            }
+        }
+
+        /**
+         * Renders activity records into a container.
+         * @param {Array} records - Array of wash records.
+         * @param {string} containerId - ID of the container element.
+         * @param {boolean} isTable - Whether to render as a table row (true) or a list item (false).
+         */
+        function renderActivityLog(records, containerId, isTable = false) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (isTable) {
+                records.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50 transition duration-100';
+                    row.innerHTML = `
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${formatDateTime(record.wash_date)}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${record.car_number}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">ID: ${record.customer_id}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">${record.service_name}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm font-semibold text-right text-emerald-600">${formatPrice(record.total_price)}</td>
+                    `;
+                    container.appendChild(row);
+                });
+            } else {
+                if (records.length === 0) {
+                     document.getElementById('dashboard-activity-placeholder').textContent = "No washes recorded today.";
+                     return;
+                }
+                
+                document.getElementById('dashboard-activity-placeholder').classList.add('hidden');
+                
+                records.forEach(record => {
+                    const item = document.createElement('div');
+                    item.className = 'flex justify-between items-center py-3';
+                    item.innerHTML = `
+                        <div>
+                            <p class="font-medium text-gray-800">${record.car_number} <span class="text-xs text-gray-500 ml-1">(${record.vehicle_type})</span></p>
+                            <p class="text-sm text-gray-600">${record.service_name}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-emerald-600">${formatPrice(record.total_price)}</p>
+                            <p class="text-xs text-gray-500">${formatDateTime(record.wash_date)}</p>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+        }
+
+        // --- Initialization ---
+        window.onload = function() {
+            // Initial setup for the app
+            populateServiceOptions();
+            
+            // Set initial view
+            changeTab('billing'); 
+            
+            // Add listener to recalculate price on vehicle type change
+            document.getElementById('vehicle-type').addEventListener('change', updateTotalPrice);
+            
+            // Force initial dashboard load in case user navigates there first
+            loadDashboardData();
+        };
+
+        // Export functions to global scope for use in inline HTML attributes
+        window.changeTab = changeTab;
+        window.updateTotalPrice = updateTotalPrice;
+        
+        // This is where you would place your Firebase initialisation in a real app:
+        /*
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const __initial_auth_token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        async function authenticate() {
+             if (__initial_auth_token) {
+                 await signInWithCustomToken(auth, __initial_auth_token);
+             } else {
+                 await signInAnonymously(auth);
+             }
+             const userId = auth.currentUser?.uid || crypto.randomUUID();
+             // Display userId somewhere for troubleshooting/sharing in a multi-user app
+             console.log("Current User ID:", userId);
+        }
+        authenticate();
+        */
+        
+    </script>
+</body>
+</html>
+
