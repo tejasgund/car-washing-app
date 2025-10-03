@@ -4,7 +4,7 @@ def database():
     host="15.206.151.116",
     user="admin",
     passwd="admin",
-    database="Sahyadri",
+    database="sahyadri_Washing_center",
     port=3306
 )
 
