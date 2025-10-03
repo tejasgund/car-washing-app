@@ -23,7 +23,7 @@ def api_customer(car_number):
         return jsonify({
             "status": "success",
             "data": {
-                "is_old_customer": true,
+                "is_old_customer": True,
                 "customer_id": 101,
                 "name": "Jane Doe",
                 "phone": "9876543210"
