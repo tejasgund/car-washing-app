@@ -1,6 +1,6 @@
-import mysql.connector
+import pymysql
 def database():
-    return mysql.connector.connect(
+    return pymysql.connect(
     host="15.206.151.116",
     user="admin",
     passwd="admin",
