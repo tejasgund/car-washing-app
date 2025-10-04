@@ -87,4 +87,3 @@ def list_service():
         cursor.close()
         conn.close()
 
-print(add_service("test",300))
