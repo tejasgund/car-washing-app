@@ -63,7 +63,7 @@ data={
     }
   ]
 }
-@app.get("GET /api/dashboard/stats")
+@app.get("/api/dashboard/stats")
 def dashboard_stats():
     return data
 
