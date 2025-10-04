@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* (*** YOUR CSS STYLES ARE HERE ***) */
+        /* (*** KEEP YOUR ORIGINAL CSS HERE ***) */
         :root {
             --primary-color: #2563eb;
             --secondary-color: #64748b;
@@ -559,11 +559,11 @@
     <script src="https://unpkg.com/msw@1.3.2/lib/umd/index.js"></script>
 
     <script>
-        // --- 1. CONFIGURATION AND MOCK DATA (Initial State) ---
+        // --- 1. CONFIGURATION AND MOCK DATA ---
 
-        const API_BASE_URL = '/api';
+        const API_BASE_URL = '/api'; // Using a relative URL to make mocking easier
         let appData = {
-            // CORRECTED: This ensures the initial services are correct.
+            // This will hold the live state manipulated by the mock handlers
             services: [
                 { id: 1, name: 'Basic Wash', price: 200 },
                 { id: 2, name: 'Premium Wash', price: 400 },
@@ -588,7 +588,7 @@
 
         const handlers = [
 
-            // Dashboard Stats
+            // ------------------ Dashboard Stats (GET /api/dashboard/stats) ------------------
             rest.get(`${API_BASE_URL}/dashboard/stats`, (req, res, ctx) => {
                 const totalVehicles = appData.bills.length;
                 const totalEarnings = appData.bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
@@ -626,9 +626,8 @@
             }),
 
 
-            // Services (GET /api/services)
+            // ------------------ Services (GET /api/services) ------------------
             rest.get(`${API_BASE_URL}/services`, (req, res, ctx) => {
-                // Ensure this returns the current state of services, including customs
                 return res(
                     ctx.delay(300),
                     ctx.status(200),
@@ -636,14 +635,11 @@
                 );
             }),
 
-            // Add Custom Service (POST /api/services)
+            // ------------------ Add Custom Service (POST /api/services) ------------------
             rest.post(`${API_BASE_URL}/services`, async (req, res, ctx) => {
                 const newService = await req.json();
-                // Find next available ID (to avoid conflicts with original 1-5 IDs)
-                const maxId = appData.services.reduce((max, s) => Math.max(max, s.id), 0);
-                const id = maxId < 100 ? 100 + appData.services.length : maxId + 1;
-
-                const serviceWithId = { ...newService, id, custom: true, price: parseInt(newService.price) };
+                const id = Date.now();
+                const serviceWithId = { ...newService, id, custom: true };
                 appData.services.push(serviceWithId);
 
                 return res(
@@ -653,7 +649,7 @@
                 );
             }),
 
-            // Customer Search (GET /api/customers?vehicleNumber=...)
+            // ------------------ Customer Search (GET /api/customers?vehicleNumber=...) ------------------
             rest.get(`${API_BASE_URL}/customers`, (req, res, ctx) => {
                 const vehicleNumber = req.url.searchParams.get('vehicleNumber')?.toUpperCase();
                 const customer = appData.customers.find(c => c.vehicleNumber === vehicleNumber);
@@ -673,7 +669,7 @@
                 }
             }),
 
-            // Employees (GET /api/employees)
+            // ------------------ Employees (GET /api/employees) ------------------
             rest.get(`${API_BASE_URL}/employees`, (req, res, ctx) => {
                 return res(
                     ctx.delay(300),
@@ -682,10 +678,10 @@
                 );
             }),
 
-            // Add Employee (POST /api/employees)
+            // ------------------ Add Employee (POST /api/employees) ------------------
             rest.post(`${API_BASE_URL}/employees`, async (req, res, ctx) => {
                 const newEmployee = await req.json();
-                const id = appData.employees.reduce((max, e) => Math.max(max, e.id), 0) + 1;
+                const id = appData.employees.length + 1;
                 const employeeWithId = { ...newEmployee, id: id };
                 appData.employees.push(employeeWithId);
 
@@ -696,7 +692,7 @@
                 );
             }),
 
-            // Save Bill (POST /api/bills)
+            // ------------------ Save Bill (POST /api/bills) ------------------
             rest.post(`${API_BASE_URL}/bills`, async (req, res, ctx) => {
                 const billData = await req.json();
                 const billNo = appData.nextBillNo++;
@@ -725,7 +721,7 @@
                 );
             }),
 
-            // Reports (GET /api/bills/report?fromDate=...&toDate=...)
+            // ------------------ Reports (GET /api/bills/report?fromDate=...&toDate=...) ------------------
             rest.get(`${API_BASE_URL}/bills/report`, (req, res, ctx) => {
                 const fromDate = req.url.searchParams.get('fromDate');
                 const toDate = req.url.searchParams.get('toDate');
@@ -761,15 +757,16 @@
 
         // --- 3. FRONTEND LOGIC (Modified to use fetch() API calls) ---
 
-        let localServicesCache = [];
+        let localServicesCache = []; // To store services loaded from API
 
         document.addEventListener('DOMContentLoaded', function() {
             // Initial setup is now async due to API calls
             Promise.all([
-                loadServices(),
+                loadServices(), // Load services first
                 loadEmployees(),
                 updateDashboard(),
             ]).then(() => {
+                // Set current bill number and date only after services are loaded
                 document.getElementById('billNumber').textContent = appData.nextBillNo;
                 document.getElementById('billDate').textContent = new Date().toLocaleDateString();
                 setDefaultDates();
@@ -780,11 +777,11 @@
                 saveEmployee();
             });
 
+            // Set up event listeners for bill preview updates
             document.getElementById('customerForm').addEventListener('input', updateBillPreviewCustomer);
         });
 
-        // Navigation and Utility functions (omitted for brevity, they are unchanged from previous version)
-
+        // Navigation
         function showPage(pageId) {
             document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.remove('active');
@@ -816,6 +813,7 @@
             document.getElementById('vehicleNumber').value = '';
             document.getElementById('vehicleNumberDisplay').value = '';
 
+            // Uncheck all service checkboxes
             localServicesCache.forEach(service => {
                 const checkbox = document.getElementById('service' + service.id);
                 if (checkbox) checkbox.checked = false;
@@ -827,15 +825,16 @@
             document.getElementById('billNumber').textContent = appData.nextBillNo;
             document.getElementById('billDate').textContent = new Date().toLocaleDateString();
 
+            // Reset preview
             document.getElementById('previewCustomer').textContent = '-';
             document.getElementById('previewMobile').textContent = '-';
             document.getElementById('previewVehicle').textContent = '-';
-            updateBillPreview();
+            updateBillPreview(); // to reset total and services list
         }
 
+        // --- API Integration Functions ---
 
-        // --- API Integration Functions (Core logic remains the same, relying on fixed data) ---
-
+        // Load Services (GET /api/services)
         async function loadServices() {
             const container = document.getElementById('servicesList');
             container.innerHTML = '<p class="text-muted">Loading services...</p>';
@@ -863,16 +862,17 @@
                 });
             } catch (error) {
                 console.error('Error loading services:', error);
-                container.innerHTML = '<p class="text-danger">Failed to load services. Check console.</p>';
+                container.innerHTML = '<p class="text-danger">Failed to load services.</p>';
             }
         }
 
+        // Add Custom Service (POST /api/services)
         async function addCustomService() {
             const name = document.getElementById('customServiceName').value.trim();
-            const price = document.getElementById('customServicePrice').value;
+            const price = parseInt(document.getElementById('customServicePrice').value);
 
-            if (!name || !price || isNaN(parseInt(price))) {
-                alert('Please enter service name and a valid price');
+            if (!name || !price) {
+                alert('Please enter service name and price');
                 return;
             }
 
@@ -880,11 +880,11 @@
                 const response = await fetch(`${API_BASE_URL}/services`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, price: parseInt(price) })
+                    body: JSON.stringify({ name, price })
                 });
 
                 if (response.ok) {
-                    await loadServices();
+                    await loadServices(); // Reload services to include the new one
                     alert(`Service "${name}" added.`);
                     document.getElementById('customServiceName').value = '';
                     document.getElementById('customServicePrice').value = '';
@@ -897,6 +897,7 @@
             }
         }
 
+        // Vehicle Search (GET /api/customers?vehicleNumber=...)
         async function searchVehicle() {
             const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
 
@@ -934,6 +935,7 @@
             }
         }
 
+        // Load Employees (GET /api/employees)
         async function loadEmployees() {
             const select = document.getElementById('employeeSelect');
             const listContainer = document.getElementById('employeesList');
@@ -944,7 +946,7 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/employees`);
                 const employees = await response.json();
-                appData.employees = employees;
+                appData.employees = employees; // Update local cache for bill data processing
 
                 select.innerHTML = '<option value="">Select Employee</option>';
                 listContainer.innerHTML = '';
@@ -965,6 +967,7 @@
                         </div>
                     `;
                 });
+                // This updates the dashboard stat on the employees page, but Dashboard page will use updateDashboard()
                 document.getElementById('activeEmployees').textContent = employees.filter(e => e.status === 'Active').length;
 
             } catch (error) {
@@ -974,6 +977,7 @@
             }
         }
 
+        // Save Employee (POST /api/employees)
         async function saveEmployee() {
             const newEmployee = {
                 name: document.getElementById('empName').value.trim(),
@@ -1007,6 +1011,7 @@
             }
         }
 
+        // Save Bill (POST /api/bills)
         async function saveBill() {
             const customerName = document.getElementById('customerName').value.trim();
             const mobile = document.getElementById('mobileNumber').value.trim();
@@ -1066,6 +1071,7 @@
             }
         }
 
+        // Load Reports (GET /api/bills/report?fromDate=...&toDate=...)
         async function loadReports() {
             const fromDate = document.getElementById('fromDate').value;
             const toDate = document.getElementById('toDate').value;
@@ -1108,6 +1114,7 @@
             }
         }
 
+        // Update Dashboard (GET /api/dashboard/stats)
         async function updateDashboard() {
             try {
                 const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
@@ -1154,6 +1161,9 @@
             }
         }
 
+        // --- Frontend Utility Functions ---
+
+        // Update Bill Preview - Customer details
         function updateBillPreviewCustomer() {
             const name = document.getElementById('customerName').value.trim();
             const mobile = document.getElementById('mobileNumber').value.trim();
@@ -1165,8 +1175,9 @@
             document.getElementById('previewVehicle').textContent = (vehicleNum && vehicleType) ? `${vehicleNum} (${vehicleType})` : vehicleNum || '-';
         }
 
+        // Update Bill Preview - Services and Total Amount
         function updateBillPreview() {
-            updateBillPreviewCustomer();
+            updateBillPreviewCustomer(); // Ensure customer details are also updated
 
             let selectedServices = [];
             let total = 0;
@@ -1195,7 +1206,7 @@
         }
 
         function printBill() {
-            alert("Print/PDF functionality would be implemented here.");
+            alert("Print/PDF functionality would be implemented here using a library like jsPDF or a print stylesheet.");
         }
     </script>
 </body>
