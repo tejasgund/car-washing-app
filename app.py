@@ -11,6 +11,9 @@ def home():
 @app.route("/about")
 def about():
     return {"message":"this is test api"}
+@app.route("/contact/<name>",methods=["GET"])
+def contact(name):
+    return {"message":"Welcone" + name}
 
 # Example API route
 
