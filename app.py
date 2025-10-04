@@ -74,6 +74,6 @@ class ServiceRequest(BaseModel):
     price: float
 
 @app.post("/api/services")
-def add_service(service: ServiceRequest):
-    add_service(service.name, service.price)
+def add_services(service: ServiceRequest):
+    api_functions.add_service(service.name, service.price)
 
