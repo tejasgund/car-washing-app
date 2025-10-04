@@ -13,7 +13,7 @@ def about():
     return {"message": "This is a test API"}
 
 @app.get("/contact")
-def contact(name: str, mob: str):
+def contact(name: str, mobile: str):
     return {"message": f"Welcome {name} Your Mobile number is: {mobile}"}
 
 
