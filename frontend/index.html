@@ -1,589 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Washing Center - Billing Management</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #64748b;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --dark-bg: #1e293b;
-        }
+// API Configuration (Simulated - assuming a backend structure)
+        const API_BASE_URL = 'http://localhost:5000/api';
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f1f5f9;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), #1e40af);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-
-        .page-section {
-            display: none;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        .page-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--primary-color), #3b82f6);
-            color: white;
-            border-radius: 12px 12px 0 0 !important;
-            font-weight: 600;
-        }
-
-        .service-item {
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-
-        .service-item:hover {
-            border-color: var(--primary-color);
-            background-color: #f8fafc;
-        }
-
-        .service-item input[type="checkbox"]:checked + label {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: #1e40af;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .invoice-preview {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-        }
-
-        .table-responsive {
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .employee-card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #e2e8f0;
-        }
-
-        @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.1rem;
-            }
-            
-            .stat-card {
-                margin-bottom: 15px;
-            }
-        }
-
-        .badge-custom {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>WashCenter Pro</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="showPage('dashboard')">
-                            <i class="fas fa-chart-line me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showPage('newbill')">
-                            <i class="fas fa-file-invoice me-1"></i>New Bill
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showPage('reports')">
-                            <i class="fas fa-chart-bar me-1"></i>Reports
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showPage('employees')">
-                            <i class="fas fa-users me-1"></i>Employees
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container-fluid mt-4">
-        <!-- Dashboard Page -->
-        <div id="dashboard" class="page-section active">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="mb-4"><i class="fas fa-chart-line me-2"></i>Dashboard</h2>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                            <i class="fas fa-car"></i>
-                        </div>
-                        <h3 id="totalVehicles" class="mb-1">0</h3>
-                        <p class="text-muted mb-0">Total Vehicles Today</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-success bg-opacity-10 text-success">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <h3 id="totalEarnings" class="mb-1">₹0</h3>
-                        <p class="text-muted mb-0">Total Earnings</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                            <i class="fas fa-spray-can"></i>
-                        </div>
-                        <h3 id="totalServices" class="mb-1">0</h3>
-                        <p class="text-muted mb-0">Services Done</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stat-card">
-                        <div class="stat-icon bg-info bg-opacity-10 text-info">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <h3 id="activeEmployees" class="mb-1">0</h3>
-                        <p class="text-muted mb-0">Active Employees</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-4">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-chart-bar me-2"></i>Service-wise Count Today
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Service</th>
-                                            <th>Count</th>
-                                            <th>Revenue</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="serviceStatsTable">
-                                        <tr>
-                                            <td colspan="3" class="text-center text-muted">No data available</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-clock me-2"></i>Recent Activities
-                        </div>
-                        <div class="card-body">
-                            <div id="recentActivities">
-                                <p class="text-muted">No recent activities</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- New Bill Page -->
-        <div id="newbill" class="page-section">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="mb-4"><i class="fas fa-file-invoice me-2"></i>Create New Bill</h2>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-7">
-                    <!-- Car Search -->
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-search me-2"></i>Vehicle Search
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-8">
-                                    <input type="text" id="vehicleNumber" class="form-control" placeholder="Enter Vehicle Number (e.g., KA01AB1234)" style="text-transform: uppercase;">
-                                </div>
-                                <div class="col-md-4">
-                                    <button class="btn btn-primary w-100" onclick="searchVehicle()">
-                                        <i class="fas fa-search me-2"></i>Search
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Customer Form -->
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <i class="fas fa-user me-2"></i>Customer Information
-                        </div>
-                        <div class="card-body">
-                            <form id="customerForm">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Customer Name</label>
-                                        <input type="text" id="customerName" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Mobile Number</label>
-                                        <input type="tel" id="mobileNumber" class="form-control" pattern="[0-9]{10}" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Vehicle Number</label>
-                                        <input type="text" id="vehicleNumberDisplay" class="form-control" readonly style="text-transform: uppercase;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Vehicle Type</label>
-                                        <select id="vehicleType" class="form-select" required>
-                                            <option value="">Select Type</option>
-                                            <option value="Car">Car</option>
-                                            <option value="SUV">SUV</option>
-                                            <option value="Bike">Bike</option>
-                                            <option value="Other">Other</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Service Selection -->
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <i class="fas fa-list-check me-2"></i>Select Services
-                        </div>
-                        <div class="card-body">
-                            <div id="servicesList"></div>
-                            
-                            <hr>
-                            <h6 class="mb-3">Add Custom Service</h6>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <input type="text" id="customServiceName" class="form-control" placeholder="Service Name">
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" id="customServicePrice" class="form-control" placeholder="Price">
-                                </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-success w-100" onclick="addCustomService()">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-5">
-                    <!-- Invoice Preview -->
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-file-invoice-dollar me-2"></i>Bill Preview
-                        </div>
-                        <div class="card-body">
-                            <div class="invoice-preview" id="invoicePreview">
-                                <div class="text-center mb-4">
-                                    <h4 class="mb-0">WashCenter Pro</h4>
-                                    <p class="text-muted small">Vehicle Washing & Care</p>
-                                </div>
-                                
-                                <div class="row mb-3">
-                                    <div class="col-6">
-                                        <strong>Bill No:</strong> <span id="billNumber">-</span>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <strong>Date:</strong> <span id="billDate">-</span>
-                                    </div>
-                                </div>
-
-                                <hr>
-
-                                <div class="mb-3">
-                                    <strong>Customer:</strong> <span id="previewCustomer">-</span><br>
-                                    <strong>Mobile:</strong> <span id="previewMobile">-</span><br>
-                                    <strong>Vehicle:</strong> <span id="previewVehicle">-</span>
-                                </div>
-
-                                <hr>
-
-                                <h6>Services:</h6>
-                                <div id="previewServices" class="mb-3">
-                                    <p class="text-muted">No services selected</p>
-                                </div>
-
-                                <hr>
-
-                                <div class="d-flex justify-content-between mb-3">
-                                    <strong class="h5">Total Amount:</strong>
-                                    <strong class="h5 text-primary">₹<span id="totalAmount">0</span></strong>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Payment Mode</label>
-                                    <select id="paymentMode" class="form-select">
-                                        <option value="Cash">Cash</option>
-                                        <option value="UPI">UPI</option>
-                                        <option value="Card">Card</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Employee</label>
-                                    <select id="employeeSelect" class="form-select">
-                                        <option value="">Select Employee</option>
-                                    </select>
-                                </div>
-
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary btn-lg" onclick="saveBill()">
-                                        <i class="fas fa-save me-2"></i>Save Bill
-                                    </button>
-                                    <button class="btn btn-outline-secondary" onclick="printBill()">
-                                        <i class="fas fa-print me-2"></i>Print / Download PDF
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports Page -->
-        <div id="reports" class="page-section">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Reports</h2>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-filter me-2"></i>Filter Reports
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label">From Date</label>
-                            <input type="date" id="fromDate" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">To Date</label>
-                            <input type="date" id="toDate" class="form-control">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button class="btn btn-primary w-100" onclick="loadReports()">
-                                <i class="fas fa-search me-2"></i>Generate Report
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mt-3">
-                <div class="card-header">
-                    <i class="fas fa-table me-2"></i>Bills Summary
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Bill No</th>
-                                    <th>Date</th>
-                                    <th>Vehicle</th>
-                                    <th>Customer</th>
-                                    <th>Services</th>
-                                    <th>Amount</th>
-                                    <th>Employee</th>
-                                </tr>
-                            </thead>
-                            <tbody id="reportsTable">
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">Select date range and click Generate Report</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Employees Page -->
-        <div id="employees" class="page-section">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="mb-4"><i class="fas fa-users me-2"></i>Employee Management</h2>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-user-plus me-2"></i>Add New Employee
-                        </div>
-                        <div class="card-body">
-                            <form id="employeeForm">
-                                <div class="mb-3">
-                                    <label class="form-label">Employee Name</label>
-                                    <input type="text" id="empName" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Mobile Number</label>
-                                    <input type="tel" id="empMobile" class="form-control" pattern="[0-9]{10}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Designation</label>
-                                    <input type="text" id="empDesignation" class="form-control" placeholder="e.g., Washer, Manager" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Status</label>
-                                    <select id="empStatus" class="form-select">
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-save me-2"></i>Save Employee
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-list me-2"></i>Employee List
-                        </div>
-                        <div class="card-body">
-                            <div id="employeesList">
-                                <p class="text-muted">No employees added yet</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // In-memory storage (simulating backend)
-        let appData = {
-            services: [
-                { id: 1, name: 'Basic Wash', price: 200 },
-                { id: 2, name: 'Premium Wash', price: 400 },
-                { id: 3, name: 'Interior Cleaning', price: 300 },
-                { id: 4, name: 'Wax Polish', price: 500 },
-                { id: 5, name: 'Engine Wash', price: 250 }
-            ],
-            employees: [
-                { id: 1, name: 'Rajesh Kumar', mobile: '9876543210', designation: 'Senior Washer', status: 'Active' },
-                { id: 2, name: 'Amit Singh', mobile: '9876543211', designation: 'Washer', status: 'Active' }
-            ],
-            customers: [],
-            bills: [],
-            nextBillNo: 1001
-        };
+        // Global variables
+        let services = [];
+        let employees = [];
+        let currentCustomerId = null;
+        let currentVehicleId = null;
+        let nextBillNumber = '0001';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -591,11 +14,147 @@
             loadEmployees();
             updateDashboard();
             setDefaultDates();
-            
-            // Set current bill number and date
-            document.getElementById('billNumber').textContent = appData.nextBillNo;
+            getNextBillNumber();
+
             document.getElementById('billDate').textContent = new Date().toLocaleDateString();
+
+            // Event listeners for New Bill page updates
+            document.getElementById('customerName').addEventListener('input', updatePreviewCustomer);
+            document.getElementById('mobileNumber').addEventListener('input', updatePreviewCustomer);
+            document.getElementById('vehicleNumberDisplay').addEventListener('input', updatePreviewCustomer);
+            document.getElementById('vehicleType').addEventListener('change', updatePreviewCustomer);
+            document.getElementById('customerForm').addEventListener('change', updatePreview);
+            document.getElementById('servicesList').addEventListener('change', updatePreview);
+            document.getElementById('employeeForm').addEventListener('submit', handleEmployeeFormSubmit);
+
+            // Set initial page active class
+            showPage('dashboard');
         });
+
+        // Utility Functions
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-custom alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                // Use Bootstrap's method to correctly dismiss the alert
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        }
+
+        async function apiCall(endpoint, method = 'GET', data = null, silent = false) {
+            try {
+                // Simulate delay and success/failure (as we don't have a real backend)
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // --- START: Mock Data & Logic ---
+                let mockData = {};
+                let error = null;
+
+                if (endpoint.startsWith('/dashboard')) {
+                    mockData = {
+                        totalVehicles: 25,
+                        totalEarnings: 15500,
+                        totalServices: 42,
+                        activeEmployees: 5,
+                        serviceStats: [
+                            { name: "Basic Wash", count: 15, revenue: 4500 },
+                            { name: "Full Service", count: 8, revenue: 6400 },
+                            { name: "Interior Cleaning", count: 10, revenue: 3000 },
+                            { name: "Waxing", count: 5, revenue: 1600 }
+                        ],
+                        recentActivities: [
+                            "Bill #0025 for KA01MN0001 created.",
+                            "Employee John Doe clocked in.",
+                            "Bill #0024 for TN07R7890 created."
+                        ]
+                    };
+                } else if (endpoint.startsWith('/car/')) {
+                    const vehicleNum = endpoint.split('/').pop();
+                    if (vehicleNum === 'KA01AB1234') {
+                        mockData = {
+                            id: 1,
+                            vehicle_id: 101,
+                            name: 'Ravi Kumar',
+                            mobile: '9876543210',
+                            vehicle_number: 'KA01AB1234',
+                            vehicle_type: 'Car'
+                        };
+                    } else if (vehicleNum === 'TN07R7890') {
+                        mockData = {
+                            id: 2,
+                            vehicle_id: 102,
+                            name: 'Priya Sharma',
+                            mobile: '9988776655',
+                            vehicle_number: 'TN07R7890',
+                            vehicle_type: 'SUV'
+                        };
+                    } else {
+                        mockData = null; // New customer/vehicle
+                    }
+                } else if (endpoint === '/services') {
+                    mockData = [
+                        { id: 1, name: 'Basic Exterior Wash', price: 300, type: 'Car' },
+                        { id: 2, name: 'Full Service Wash (Interior & Exterior)', price: 800, type: 'Car' },
+                        { id: 3, name: 'Premium Waxing', price: 1000, type: 'Car' },
+                        { id: 4, name: 'Bike Wash', price: 150, type: 'Bike' },
+                        { id: 5, name: 'Engine Bay Cleaning', price: 500, type: 'Other' }
+                    ];
+                } else if (endpoint === '/employees') {
+                    if (method === 'POST' && data) {
+                        mockData = { ...data, id: employees.length + 1, status: 'Active' };
+                    } else {
+                        mockData = [
+                            { id: 1, name: 'John Doe', mobile: '8000012345', designation: 'Manager', salary: 35000, joining_date: '2023-01-15', status: 'Active' },
+                            { id: 2, name: 'Jane Smith', mobile: '8000054321', designation: 'Washer', salary: 18000, joining_date: '2023-03-20', status: 'Active' },
+                            { id: 3, name: 'Mike Ross', mobile: '8000011223', designation: 'Detailer', salary: 25000, joining_date: '2023-06-10', status: 'Active' },
+                        ];
+                    }
+                } else if (endpoint === '/bills') {
+                    if (method === 'POST' && data) {
+                        nextBillNumber = String(parseInt(nextBillNumber) + 1).padStart(4, '0');
+                        mockData = { bill_number: data.bill_number, total_amount: data.total_amount };
+                    } else {
+                        // Mock Reports Data
+                        mockData = [
+                            { bill_number: '0025', date: '2025-10-04', vehicle: 'KA01AB1234 (Car)', customer: 'Ravi Kumar', services: 'Full Service Wash, Waxing', amount: 1800, employee: 'John Doe', status: 'Completed' },
+                            { bill_number: '0024', date: '2025-10-04', vehicle: 'TN07R7890 (SUV)', customer: 'Priya Sharma', services: 'Basic Exterior Wash', amount: 300, employee: 'Jane Smith', status: 'Completed' },
+                            { bill_number: '0023', date: '2025-10-03', vehicle: 'MH12CD4567 (Bike)', customer: 'Rajesh', services: 'Bike Wash', amount: 150, employee: 'Mike Ross', status: 'Completed' },
+                        ];
+                    }
+                } else if (endpoint === '/bill/next_number') {
+                    mockData = { next_number: nextBillNumber };
+                }
+
+                // Simulate success structure
+                const result = { success: true, data: mockData };
+
+                if (error) {
+                    throw new Error(error);
+                }
+
+                // --- END: Mock Data & Logic ---
+
+                if (!result.success) {
+                    throw new Error(result.error?.message || 'API Error');
+                }
+
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                if (!silent) {
+                    showNotification(error.message, 'danger');
+                }
+                throw error;
+            }
+        }
 
         // Navigation
         function showPage(pageId) {
@@ -603,423 +162,563 @@
                 section.classList.remove('active');
             });
             document.getElementById(pageId).classList.add('active');
-            
+
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
-            event.target.classList.add('active');
-            
+            // Update active link based on the pageId
+            document.querySelector(`[onclick="showPage('${pageId}')"]`).classList.add('active');
+
             if (pageId === 'dashboard') {
                 updateDashboard();
             } else if (pageId === 'newbill') {
                 resetBillForm();
+                getNextBillNumber();
+            } else if (pageId === 'employees') {
+                loadEmployees();
             }
         }
 
-        // Vehicle Search
-        function searchVehicle() {
-            const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
-            
-            if (!vehicleNum) {
-                alert('Please enter vehicle number');
-                return;
-            }
+        // Dashboard Functions
+        async function updateDashboard() {
+            const loading = document.getElementById('dashboardLoading');
+            loading.classList.add('active');
 
-            // Simulate API call
-            const customer = appData.customers.find(c => c.vehicleNumber === vehicleNum);
-            
-            if (customer) {
-                // Auto-fill customer details
-                document.getElementById('customerName').value = customer.name;
-                document.getElementById('mobileNumber').value = customer.mobile;
-                document.getElementById('vehicleNumberDisplay').value = customer.vehicleNumber;
-                document.getElementById('vehicleType').value = customer.vehicleType;
-                
-                // Update preview
-                document.getElementById('previewCustomer').textContent = customer.name;
-                document.getElementById('previewMobile').textContent = customer.mobile;
-                document.getElementById('previewVehicle').textContent = customer.vehicleNumber + ' (' + customer.vehicleType + ')';
-                
-                alert('Customer found! Details auto-filled.');
-            } else {
-                // New customer - clear and enable form
-                document.getElementById('vehicleNumberDisplay').value = vehicleNum;
-                document.getElementById('customerName').value = '';
-                document.getElementById('mobileNumber').value = '';
-                document.getElementById('vehicleType').value = '';
-                
-                alert('New customer! Please fill in the details.');
+            try {
+                const data = await apiCall('/dashboard');
+
+                document.getElementById('totalVehicles').textContent = data.totalVehicles;
+                document.getElementById('totalEarnings').textContent = `₹${data.totalEarnings.toLocaleString('en-IN')}`;
+                document.getElementById('totalServices').textContent = data.totalServices;
+                document.getElementById('activeEmployees').textContent = data.activeEmployees;
+
+                // Service Stats Table
+                const serviceStatsTable = document.getElementById('serviceStatsTable');
+                serviceStatsTable.innerHTML = '';
+                if (data.serviceStats.length > 0) {
+                    data.serviceStats.forEach(stat => {
+                        const row = serviceStatsTable.insertRow();
+                        row.innerHTML = `
+                            <td>${stat.name}</td>
+                            <td><span class="badge bg-primary">${stat.count}</span></td>
+                            <td>₹${stat.revenue.toLocaleString('en-IN')}</td>
+                        `;
+                    });
+                } else {
+                    serviceStatsTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No data available</td></tr>';
+                }
+
+                // Recent Activities
+                const recentActivities = document.getElementById('recentActivities');
+                recentActivities.innerHTML = '';
+                if (data.recentActivities.length > 0) {
+                    const ul = document.createElement('ul');
+                    ul.className = 'list-unstyled mb-0';
+                    data.recentActivities.forEach(activity => {
+                        const li = document.createElement('li');
+                        li.className = 'mb-2 text-muted';
+                        li.innerHTML = `<i class="fas fa-history me-1"></i> ${activity}`;
+                        ul.appendChild(li);
+                    });
+                    recentActivities.appendChild(ul);
+                } else {
+                    recentActivities.innerHTML = '<p class="text-muted">No recent activities</p>';
+                }
+
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            } finally {
+                loading.classList.remove('active');
             }
         }
 
-        // Load Services
-        function loadServices() {
-            const container = document.getElementById('servicesList');
-            container.innerHTML = '';
-            
-            appData.services.forEach(service => {
-                const div = document.createElement('div');
-                div.className = 'service-item';
-                div.innerHTML = `
-                    <div class="form-check d-flex justify-content-between align-items-center">
-                        <div>
-                            <input class="form-check-input" type="checkbox" value="${service.id}" 
-                                id="service${service.id}" onchange="updateBillPreview()">
-                            <label class="form-check-label" for="service${service.id}">
-                                ${service.name}
+        // Service Loading
+        async function loadServices() {
+            const loading = document.getElementById('servicesLoading');
+            loading.classList.add('active');
+
+            try {
+                const result = await apiCall('/services', 'GET', null, true); // Silent error for services
+                services = result.data;
+                const servicesList = document.getElementById('servicesList');
+                servicesList.innerHTML = '';
+
+                if (services.length === 0) {
+                    servicesList.innerHTML = '<p class="text-muted">No services configured.</p>';
+                    return;
+                }
+
+                services.forEach(service => {
+                    const div = document.createElement('div');
+                    div.className = 'service-item d-flex justify-content-between align-items-center';
+                    div.innerHTML = `
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="${service.id}" data-name="${service.name}" data-price="${service.price}" id="service-${service.id}">
+                            <label class="form-check-label" for="service-${service.id}">
+                                ${service.name} <span class="badge badge-custom bg-secondary-subtle text-secondary">${service.type}</span>
                             </label>
                         </div>
-                        <span class="badge bg-primary">₹${service.price}</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+                        <span class="fw-bold text-primary">₹${service.price}</span>
+                    `;
+                    servicesList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Failed to load services:', error);
+                document.getElementById('servicesList').innerHTML = '<p class="text-danger">Failed to load services.</p>';
+            } finally {
+                loading.classList.remove('active');
+            }
         }
 
-        // Add Custom Service
+        // Employee Loading
+        async function loadEmployees() {
+            const loading = document.getElementById('employeesLoading');
+            loading.classList.add('active');
+
+            try {
+                const result = await apiCall('/employees', 'GET', null, true); // Silent error for employees
+                employees = result.data;
+
+                // Populate Employee Select in New Bill form
+                const employeeSelect = document.getElementById('employeeSelect');
+                employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+                employees.filter(emp => emp.status === 'Active').forEach(emp => {
+                    const option = document.createElement('option');
+                    option.value = emp.id;
+                    option.textContent = emp.name;
+                    employeeSelect.appendChild(option);
+                });
+
+                // Populate Employees List in Employee Management page
+                const employeesList = document.getElementById('employeesList');
+                employeesList.innerHTML = '';
+                if (employees.length === 0) {
+                    employeesList.innerHTML = '<p class="text-muted">No employees registered.</p>';
+                } else {
+                    employees.forEach(emp => {
+                        const badgeClass = emp.status === 'Active' ? 'bg-success' : 'bg-danger';
+                        const card = document.createElement('div');
+                        card.className = 'employee-card d-flex justify-content-between align-items-center';
+                        card.innerHTML = `
+                            <div>
+                                <h5 class="mb-1">${emp.name} <span class="badge ${badgeClass} badge-custom">${emp.status}</span></h5>
+                                <p class="mb-0 text-muted small">${emp.designation} | Mobile: ${emp.mobile}</p>
+                                <p class="mb-0 text-primary small">Salary: ₹${emp.salary?.toLocaleString('en-IN') || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-2" onclick="editEmployee(${emp.id})"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee(${emp.id})" disabled><i class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        `;
+                        employeesList.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load employees:', error);
+                document.getElementById('employeesList').innerHTML = '<p class="text-danger">Failed to load employee data.</p>';
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+
+        // Vehicle Search (Continuation from prompt)
+        async function searchVehicle() {
+            const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
+
+            if (!vehicleNum) {
+                showNotification('Please enter vehicle number', 'warning');
+                return;
+            }
+
+            try {
+                const result = await apiCall(`/car/${vehicleNum}`);
+
+                if (result.data) {
+                    const customer = result.data;
+                    currentCustomerId = customer.id;
+                    currentVehicleId = customer.vehicle_id || customer.id; // Assuming vehicle_id is present if customer found
+
+                    document.getElementById('customerId').value = customer.id;
+                    document.getElementById('vehicleId').value = currentVehicleId;
+                    document.getElementById('customerName').value = customer.name;
+                    document.getElementById('mobileNumber').value = customer.mobile;
+                    document.getElementById('vehicleNumberDisplay').value = customer.vehicle_number;
+                    document.getElementById('vehicleType').value = customer.vehicle_type;
+
+                    updatePreviewCustomer();
+                    showNotification('Customer found! Details auto-filled.', 'success');
+                } else {
+                    // New customer/vehicle
+                    resetCustomerForm();
+                    document.getElementById('vehicleNumberDisplay').value = vehicleNum;
+                    updatePreviewCustomer();
+                    showNotification('New vehicle. Please fill customer details.', 'info');
+                }
+            } catch (error) {
+                resetCustomerForm();
+                document.getElementById('vehicleNumberDisplay').value = vehicleNum;
+                updatePreviewCustomer();
+                showNotification('Failed to search vehicle. Assuming new vehicle.', 'warning');
+            }
+        }
+
+        function resetCustomerForm() {
+            currentCustomerId = null;
+            currentVehicleId = null;
+            document.getElementById('customerId').value = '';
+            document.getElementById('vehicleId').value = '';
+            document.getElementById('customerName').value = '';
+            document.getElementById('mobileNumber').value = '';
+            document.getElementById('vehicleNumberDisplay').value = '';
+            document.getElementById('vehicleType').value = '';
+        }
+
+        // New Bill Functions
+
+        async function getNextBillNumber() {
+            try {
+                const result = await apiCall('/bill/next_number', 'GET', null, true);
+                nextBillNumber = result.data.next_number;
+                document.getElementById('billNumber').textContent = `#${nextBillNumber}`;
+            } catch (error) {
+                console.error('Could not fetch next bill number, defaulting.', error);
+                document.getElementById('billNumber').textContent = `#${nextBillNumber}`;
+            }
+        }
+
+        function updatePreviewCustomer() {
+            document.getElementById('previewCustomer').textContent = document.getElementById('customerName').value || '-';
+            document.getElementById('previewMobile').textContent = document.getElementById('mobileNumber').value || '-';
+            const vehicleNum = document.getElementById('vehicleNumberDisplay').value || '-';
+            const vehicleType = document.getElementById('vehicleType').value;
+            document.getElementById('previewVehicle').textContent = `${vehicleNum} (${vehicleType || 'Type N/A'})`;
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const selectedServices = [];
+            let total = 0;
+
+            // Standard services
+            document.querySelectorAll('#servicesList input[type="checkbox"]:checked').forEach(checkbox => {
+                const name = checkbox.dataset.name;
+                const price = parseFloat(checkbox.dataset.price);
+                selectedServices.push({ name, price });
+                total += price;
+            });
+
+            // Custom services (handled differently as they are not standard checkboxes)
+            document.querySelectorAll('#previewServices .custom-service-item').forEach(item => {
+                const name = item.dataset.name;
+                const price = parseFloat(item.dataset.price);
+                selectedServices.push({ name: `${name} (Custom)`, price });
+                total += price;
+            });
+
+            const previewServicesDiv = document.getElementById('previewServices');
+            previewServicesDiv.innerHTML = '';
+
+            if (selectedServices.length === 0) {
+                previewServicesDiv.innerHTML = '<p class="text-muted">No services selected</p>';
+            } else {
+                const ul = document.createElement('ul');
+                ul.className = 'list-unstyled small';
+                selectedServices.forEach(service => {
+                    const li = document.createElement('li');
+                    li.className = 'd-flex justify-content-between';
+                    li.innerHTML = `<span>${service.name}</span><span class="fw-bold">₹${service.price.toFixed(2)}</span>`;
+                    ul.appendChild(li);
+                });
+                previewServicesDiv.appendChild(ul);
+            }
+
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+
         function addCustomService() {
             const name = document.getElementById('customServiceName').value.trim();
-            const price = parseInt(document.getElementById('customServicePrice').value);
-            
-            if (!name || !price) {
-                alert('Please enter service name and price');
+            const price = parseFloat(document.getElementById('customServicePrice').value);
+
+            if (!name || isNaN(price) || price <= 0) {
+                showNotification('Please enter a valid name and price for the custom service.', 'warning');
                 return;
             }
-            
-            const newService = {
-                id: Date.now(),
-                name: name,
-                price: price,
-                custom: true
-            };
-            
-            appData.services.push(newService);
-            loadServices();
-            
+
+            // Create a pseudo-service item for the preview (since it's not a persistent checkbox)
+            const previewServicesDiv = document.getElementById('previewServices');
+
+            // Check if 'No services selected' is present and remove it
+            if (previewServicesDiv.querySelector('.text-muted') && previewServicesDiv.children.length === 1) {
+                 previewServicesDiv.innerHTML = ''; // Clear the initial message
+                 const ul = document.createElement('ul');
+                 ul.className = 'list-unstyled small';
+                 previewServicesDiv.appendChild(ul);
+            }
+
+            let ul = previewServicesDiv.querySelector('ul') || document.createElement('ul');
+            if (!previewServicesDiv.querySelector('ul')) {
+                ul.className = 'list-unstyled small';
+                previewServicesDiv.appendChild(ul);
+            }
+
+            const li = document.createElement('li');
+            li.className = 'd-flex justify-content-between custom-service-item p-1 bg-light rounded mb-1';
+            li.dataset.name = name;
+            li.dataset.price = price;
+            li.innerHTML = `
+                <span>${name} (Custom)</span>
+                <span class="fw-bold">₹${price.toFixed(2)}
+                    <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="removeCustomService(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </span>
+            `;
+            ul.appendChild(li);
+
+            // Clear input fields
             document.getElementById('customServiceName').value = '';
             document.getElementById('customServicePrice').value = '';
+
+            updatePreview();
         }
 
-        // Update Bill Preview
-        function updateBillPreview() {
-            let selectedServices = [];
-            let total = 0;
-            
-            appData.services.forEach(service => {
-                const checkbox = document.getElementById('service' + service.id);
-                if (checkbox && checkbox.checked) {
-                    selectedServices.push(service);
-                    total += service.price;
-                }
-            });
-            
-            const servicesDiv = document.getElementById('previewServices');
-            if (selectedServices.length > 0) {
-                servicesDiv.innerHTML = selectedServices.map(s => `
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>${s.name}</span>
-                        <span>₹${s.price}</span>
-                    </div>
-                `).join('');
-            } else {
-                servicesDiv.innerHTML = '<p class="text-muted">No services selected</p>';
+        function removeCustomService(button) {
+            const li = button.closest('.custom-service-item');
+            const ul = li.parentNode;
+            li.remove();
+
+            // If no services left, restore 'No services selected'
+            if (ul.children.length === 0) {
+                ul.remove();
+                document.getElementById('previewServices').innerHTML = '<p class="text-muted">No services selected</p>';
             }
-            
-            document.getElementById('totalAmount').textContent = total;
+
+            updatePreview();
         }
 
-        // Save Bill
-        function saveBill() {
+
+        async function saveBill() {
             const customerName = document.getElementById('customerName').value.trim();
-            const mobile = document.getElementById('mobileNumber').value.trim();
-            const vehicleNum = document.getElementById('vehicleNumberDisplay').value.trim();
+            const mobileNumber = document.getElementById('mobileNumber').value.trim();
+            const vehicleNumber = document.getElementById('vehicleNumberDisplay').value.trim();
             const vehicleType = document.getElementById('vehicleType').value;
-            const paymentMode = document.getElementById('paymentMode').value;
             const employeeId = document.getElementById('employeeSelect').value;
-            
-            if (!customerName || !mobile || !vehicleNum || !vehicleType) {
-                alert('Please fill in all customer details');
+            const paymentMode = document.getElementById('paymentMode').value;
+            const totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
+
+            if (!customerName || !mobileNumber || !vehicleNumber || !vehicleType || !employeeId) {
+                showNotification('Please fill all customer/vehicle and employee details.', 'danger');
                 return;
             }
-            
-            if (!employeeId) {
-                alert('Please select an employee');
-                return;
-            }
-            
-            let selectedServices = [];
-            appData.services.forEach(service => {
-                const checkbox = document.getElementById('service' + service.id);
-                if (checkbox && checkbox.checked) {
-                    selectedServices.push(service);
-                }
-            });
-            
-            if (selectedServices.length === 0) {
-                alert('Please select at least one service');
-                return;
-            }
-            
-            const total = selectedServices.reduce((sum, s) => sum + s.price, 0);
-            
-            // Save customer if new
-            if (!appData.customers.find(c => c.vehicleNumber === vehicleNum)) {
-                appData.customers.push({
-                    name: customerName,
-                    mobile: mobile,
-                    vehicleNumber: vehicleNum,
-                    vehicleType: vehicleType
+
+            const selectedServiceData = [];
+            // Standard services
+            document.querySelectorAll('#servicesList input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedServiceData.push({
+                    service_id: parseInt(checkbox.value),
+                    name: checkbox.dataset.name,
+                    price: parseFloat(checkbox.dataset.price)
                 });
-            }
-            
-            // Save bill
-            const bill = {
-                billNo: appData.nextBillNo++,
-                date: new Date().toISOString(),
-                customer: customerName,
-                mobile: mobile,
-                vehicleNumber: vehicleNum,
-                vehicleType: vehicleType,
-                services: selectedServices,
-                total: total,
-                paymentMode: paymentMode,
-                employeeId: employeeId,
-                employeeName: appData.employees.find(e => e.id == employeeId).name
-            };
-            
-            appData.bills.push(bill);
-            
-            alert('Bill saved successfully! Bill No: ' + bill.billNo);
-            resetBillForm();
-            updateDashboard();
-        }
+            });
+            // Custom services
+            document.querySelectorAll('#previewServices .custom-service-item').forEach(item => {
+                selectedServiceData.push({
+                    service_id: 'custom', // Use a special ID for custom services
+                    name: item.dataset.name,
+                    price: parseFloat(item.dataset.price)
+                });
+            });
 
-        // Print Bill
-        function printBill() {
-            const customerName = document.getElementById('customerName').value.trim();
-            if (!customerName) {
-                alert('Please fill in customer details and select services first');
+
+            if (selectedServiceData.length === 0) {
+                showNotification('Please select at least one service.', 'danger');
                 return;
             }
-            
-            window.print();
+
+            const billData = {
+                bill_number: nextBillNumber,
+                date: new Date().toISOString().split('T')[0],
+                customer: {
+                    id: currentCustomerId,
+                    name: customerName,
+                    mobile: mobileNumber
+                },
+                vehicle: {
+                    id: currentVehicleId,
+                    number: vehicleNumber,
+                    type: vehicleType
+                },
+                services: selectedServiceData,
+                employee_id: parseInt(employeeId),
+                payment_mode: paymentMode,
+                total_amount: totalAmount
+            };
+
+            try {
+                await apiCall('/bills', 'POST', billData);
+                showNotification(`Bill #${billData.bill_number} saved successfully! Total: ₹${totalAmount.toFixed(2)}`, 'success');
+
+                // Print immediately after saving
+                printBill();
+
+                resetBillForm();
+                getNextBillNumber(); // Prepare for next bill
+                updateDashboard();
+            } catch (error) {
+                console.error('Bill saving failed:', error);
+                showNotification('Failed to save bill. Please try again.', 'danger');
+            }
         }
 
-        // Reset Bill Form
         function resetBillForm() {
-            document.getElementById('vehicleNumber').value = '';
             document.getElementById('customerForm').reset();
-            document.getElementById('vehicleNumberDisplay').value = '';
-            
-            // Uncheck all services
-            appData.services.forEach(service => {
-                const checkbox = document.getElementById('service' + service.id);
-                if (checkbox) checkbox.checked = false;
+            document.getElementById('vehicleNumber').value = '';
+            document.getElementById('customServiceName').value = '';
+            document.getElementById('customServicePrice').value = '';
+            document.getElementById('paymentMode').value = 'Cash';
+            document.getElementById('employeeSelect').value = '';
+
+            document.querySelectorAll('#servicesList input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
             });
-            
-            document.getElementById('billNumber').textContent = appData.nextBillNo;
-            document.getElementById('billDate').textContent = new Date().toLocaleDateString();
+
             document.getElementById('previewCustomer').textContent = '-';
             document.getElementById('previewMobile').textContent = '-';
             document.getElementById('previewVehicle').textContent = '-';
-            document.getElementById('previewServices').innerHTML = '<p class="text-muted">No services selected</p>';
+            document.getElementById('billDate').textContent = new Date().toLocaleDateString();
             document.getElementById('totalAmount').textContent = '0';
-            document.getElementById('paymentMode').value = 'Cash';
-            document.getElementById('employeeSelect').value = '';
+
+            const previewServicesDiv = document.getElementById('previewServices');
+            previewServicesDiv.innerHTML = '<p class="text-muted">No services selected</p>';
+
+            currentCustomerId = null;
+            currentVehicleId = null;
         }
 
-        // Load Employees
-        function loadEmployees() {
-            const select = document.getElementById('employeeSelect');
-            select.innerHTML = '<option value="">Select Employee</option>';
-            
-            appData.employees.filter(e => e.status === 'Active').forEach(emp => {
-                const option = document.createElement('option');
-                option.value = emp.id;
-                option.textContent = emp.name;
-                select.appendChild(option);
-            });
-            
-            displayEmployeesList();
+        function printBill() {
+            window.print();
         }
 
-        // Display Employees List
-        function displayEmployeesList() {
-            const container = document.getElementById('employeesList');
-            
-            if (appData.employees.length === 0) {
-                container.innerHTML = '<p class="text-muted">No employees added yet</p>';
-                return;
+        // Employee Management Functions
+
+        function editEmployee(empId) {
+            const employee = employees.find(e => e.id === empId);
+            if (!employee) return;
+
+            document.getElementById('empId').value = employee.id;
+            document.getElementById('empName').value = employee.name;
+            document.getElementById('empMobile').value = employee.mobile;
+            document.getElementById('empDesignation').value = employee.designation;
+            document.getElementById('empSalary').value = employee.salary;
+            document.getElementById('empJoiningDate').value = employee.joining_date;
+            document.getElementById('empStatus').value = employee.status;
+
+            showNotification(`Editing employee: ${employee.name}`, 'info');
+        }
+
+        // NOTE: Deletion is disabled in the UI for safety, but the function template is here
+        function deleteEmployee(empId) {
+            if (confirm('Are you sure you want to delete this employee? (This is simulated)')) {
+                showNotification(`Employee ID ${empId} deleted (Simulated)`, 'warning');
+                // In a real app, this would be an API call: apiCall(`/employees/${empId}`, 'DELETE')
+                loadEmployees();
             }
-            
-            container.innerHTML = appData.employees.map(emp => `
-                <div class="employee-card">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h6 class="mb-1">${emp.name}</h6>
-                            <p class="text-muted small mb-1">
-                                <i class="fas fa-phone me-1"></i>${emp.mobile}
-                            </p>
-                            <p class="text-muted small mb-0">
-                                <i class="fas fa-briefcase me-1"></i>${emp.designation}
-                            </p>
-                        </div>
-                        <span class="badge badge-custom ${emp.status === 'Active' ? 'bg-success' : 'bg-secondary'}">
-                            ${emp.status}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
         }
 
-        // Add Employee
-        document.getElementById('employeeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('empName').value.trim();
-            const mobile = document.getElementById('empMobile').value.trim();
-            const designation = document.getElementById('empDesignation').value.trim();
-            const status = document.getElementById('empStatus').value;
-            
-            const newEmployee = {
-                id: Date.now(),
-                name: name,
-                mobile: mobile,
-                designation: designation,
-                status: status
+        async function handleEmployeeFormSubmit(event) {
+            event.preventDefault();
+
+            const isEditing = !!document.getElementById('empId').value;
+            const empId = document.getElementById('empId').value;
+
+            const employeeData = {
+                name: document.getElementById('empName').value.trim(),
+                mobile: document.getElementById('empMobile').value.trim(),
+                designation: document.getElementById('empDesignation').value.trim(),
+                salary: parseFloat(document.getElementById('empSalary').value) || 0,
+                joining_date: document.getElementById('empJoiningDate').value,
+                status: document.getElementById('empStatus').value
             };
-            
-            appData.employees.push(newEmployee);
-            loadEmployees();
-            
-            this.reset();
-            alert('Employee added successfully!');
-        });
 
-        // Update Dashboard
-        function updateDashboard() {
-            const today = new Date().toDateString();
-            const todayBills = appData.bills.filter(b => new Date(b.date).toDateString() === today);
-            
-            document.getElementById('totalVehicles').textContent = todayBills.length;
-            document.getElementById('totalEarnings').textContent = '₹' + todayBills.reduce((sum, b) => sum + b.total, 0);
-            
-            let totalServicesCount = 0;
-            todayBills.forEach(b => totalServicesCount += b.services.length);
-            document.getElementById('totalServices').textContent = totalServicesCount;
-            
-            document.getElementById('activeEmployees').textContent = appData.employees.filter(e => e.status === 'Active').length;
-            
-            // Service-wise stats
-            const serviceStats = {};
-            todayBills.forEach(bill => {
-                bill.services.forEach(service => {
-                    if (!serviceStats[service.name]) {
-                        serviceStats[service.name] = { count: 0, revenue: 0 };
-                    }
-                    serviceStats[service.name].count++;
-                    serviceStats[service.name].revenue += service.price;
-                });
-            });
-            
-            const statsTable = document.getElementById('serviceStatsTable');
-            if (Object.keys(serviceStats).length > 0) {
-                statsTable.innerHTML = Object.entries(serviceStats).map(([name, data]) => `
-                    <tr>
-                        <td>${name}</td>
-                        <td><span class="badge bg-primary">${data.count}</span></td>
-                        <td>₹${data.revenue}</td>
-                    </tr>
-                `).join('');
-            } else {
-                statsTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No data available</td></tr>';
-            }
-            
-            // Recent activities
-            const recentDiv = document.getElementById('recentActivities');
-            if (todayBills.length > 0) {
-                const recent = todayBills.slice(-5).reverse();
-                recentDiv.innerHTML = recent.map(bill => `
-                    <div class="mb-3 pb-3 border-bottom">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <strong>${bill.vehicleNumber}</strong>
-                                <p class="text-muted small mb-0">${bill.customer}</p>
-                                <p class="text-muted small mb-0">₹${bill.total}</p>
-                            </div>
-                            <span class="badge bg-success">${new Date(bill.date).toLocaleTimeString()}</span>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                recentDiv.innerHTML = '<p class="text-muted">No recent activities</p>';
+            const endpoint = isEditing ? `/employees/${empId}` : '/employees';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                await apiCall(endpoint, method, employeeData);
+                showNotification(`Employee ${isEditing ? 'updated' : 'added'} successfully!`, 'success');
+                document.getElementById('employeeForm').reset();
+                document.getElementById('empId').value = '';
+                loadEmployees();
+            } catch (error) {
+                console.error('Employee save failed:', error);
+                showNotification(`Failed to ${isEditing ? 'update' : 'add'} employee.`, 'danger');
             }
         }
 
-        // Set Default Dates for Reports
+        // Reports Functions
+
         function setDefaultDates() {
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            
-            document.getElementById('fromDate').valueAsDate = firstDay;
-            document.getElementById('toDate').valueAsDate = today;
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('toDate').value = today;
+
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
         }
 
-        // Load Reports
-        function loadReports() {
-            const fromDate = new Date(document.getElementById('fromDate').value);
-            const toDate = new Date(document.getElementById('toDate').value);
-            
-            if (!document.getElementById('fromDate').value || !document.getElementById('toDate').value) {
-                alert('Please select both dates');
+        async function loadReports() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            if (!fromDate || !toDate) {
+                showNotification('Please select both From and To dates.', 'warning');
                 return;
             }
-            
-            toDate.setHours(23, 59, 59, 999);
-            
-            const filteredBills = appData.bills.filter(bill => {
-                const billDate = new Date(bill.date);
-                return billDate >= fromDate && billDate <= toDate;
-            });
-            
-            const table = document.getElementById('reportsTable');
-            if (filteredBills.length > 0) {
-                table.innerHTML = filteredBills.map(bill => `
-                    <tr>
-                        <td><strong>${bill.billNo}</strong></td>
-                        <td>${new Date(bill.date).toLocaleDateString()}</td>
-                        <td>${bill.vehicleNumber}</td>
-                        <td>${bill.customer}<br><small class="text-muted">${bill.mobile}</small></td>
-                        <td>
-                            ${bill.services.map(s => `<span class="badge bg-light text-dark me-1">${s.name}</span>`).join('')}
-                        </td>
-                        <td><strong>₹${bill.total}</strong></td>
-                        <td>${bill.employeeName}</td>
-                    </tr>
-                `).join('');
-            } else {
-                table.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No bills found for selected date range</td></tr>';
+
+            const loading = document.getElementById('reportsLoading');
+            loading.classList.add('active');
+
+            try {
+                // Simulate fetching bills within the date range
+                const result = await apiCall('/bills', 'GET', { from: fromDate, to: toDate });
+                const bills = result.data;
+                const reportsTable = document.getElementById('reportsTable');
+                reportsTable.innerHTML = '';
+
+                let totalRevenue = 0;
+
+                if (bills.length === 0) {
+                    reportsTable.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No bills found for this date range.</td></tr>';
+                } else {
+                    bills.forEach(bill => {
+                        const row = reportsTable.insertRow();
+                        const amount = bill.amount;
+                        totalRevenue += amount;
+
+                        row.innerHTML = `
+                            <td>#${bill.bill_number}</td>
+                            <td>${new Date(bill.date).toLocaleDateString()}</td>
+                            <td>${bill.vehicle}</td>
+                            <td>${bill.customer}</td>
+                            <td><span class="text-truncate d-block" style="max-width: 200px;" title="${bill.services}">${bill.services}</span></td>
+                            <td><span class="fw-bold text-success">₹${amount.toLocaleString('en-IN')}</span></td>
+                            <td>${bill.employee}</td>
+                        `;
+                    });
+                }
+
+                document.getElementById('reportSummary').textContent = `${bills.length} Bills | Total Revenue: ₹${totalRevenue.toLocaleString('en-IN')}`;
+
+            } catch (error) {
+                console.error('Failed to load reports:', error);
+                document.getElementById('reportsTable').innerHTML = '<tr><td colspan="7" class="text-center text-danger">Failed to load reports.</td></tr>';
+                document.getElementById('reportSummary').textContent = 'Error Loading Data';
+            } finally {
+                loading.classList.remove('active');
             }
         }
 
-        // Print styles
-        const style = document.createElement('style');
-        style.textContent = `
-            @media print {
-                body * { visibility: hidden; }
-                #invoicePreview, #invoicePreview * { visibility: visible; }
-                #invoicePreview { 
-                    position: absolute; 
-                    left: 0; 
-                    top: 0; 
-                    width: 100%;
-                    padding: 20px;
-                }
-                .btn { display: none !important; }
-                nav { display: none !important; }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
