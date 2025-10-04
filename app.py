@@ -1,25 +1,22 @@
-from fastapi import FastApi
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
 
-
-# Create Flask app
-app = FastApi(__name__, static_folder="frontend", template_folder="frontend")
+app = FastAPI()
 
 # Route to serve frontend HTML
-@app.route("/")
+@app.get("/")
 def home():
-    return send_from_directory("frontend", "index.html")
-@app.route("/about")
+    return FileResponse("frontend/index.html")
+
+@app.get("/about")
 def about():
-    return {"message":"this is test api"}
-@app.route("/contact/<name>",methods=["GET"])
-def contact(name):
-    return {"message":"Welcone" + name}
+    return {"message": "This is a test API"}
 
-# Example API route
+@app.get("/contact/{name}")
+def contact(name: str):
+    return {"message": f"Welcome {name}"}
 
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)  # No host or port needed for Gunicorn
-
+# Note:
+# In FastAPI, you don’t use app.run() (that’s Flask).
+# You run it with uvicorn:
+# uvicorn app:app --host 0.0.0.0 --port 8080
