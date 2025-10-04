@@ -1,20 +1,17 @@
 from fastapi import FastAPI, Query
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import api_functions
-import json
 
 app = FastAPI()
 
 # Serve static files
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
-
 # Serve index.html
 @app.get("/")
 def home():
     return FileResponse("frontend/index.html")
-
 
 # API endpoint using query parameter
 @app.get("/api/customers")
