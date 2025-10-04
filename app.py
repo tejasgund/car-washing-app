@@ -67,6 +67,10 @@ data={
 def dashboard_stats():
     return data
 
+@app.get("/api/employees")
+def get_employees():
+    api_functions.list_employees()
+
 #------------------------------post requests
 
 class ServiceRequest(BaseModel):

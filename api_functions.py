@@ -108,3 +108,26 @@ def add_employee(name,mobile,designation,status):
     finally:
         cursor.close()
         conn.close()
+def list_employees():
+    conn = database()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""select id,name,mobile,designation,status from employees""")
+        response = []
+        for row in cursor.fetchall():
+            response.append({
+                "id": row[0],
+                "name": row[1],
+                "mobile": row[2],
+                "designation": row[3],
+                "status": row[4]
+            })
+    except Exception as e:
+        response= {"message": f"Database Error {str(e)}"},500
+    finally:
+        cursor.close()
+        conn.close()
+        return response
+
+
+
