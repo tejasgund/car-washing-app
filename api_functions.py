@@ -128,7 +128,6 @@ def list_employees():
         cursor.close()
         conn.close()
         return response
-def bills():
 
 
 
