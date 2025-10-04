@@ -1,0 +1,250 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS wash_center;
+USE wash_center;
+
+-- 1. Services Table
+CREATE TABLE services (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    is_custom BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 2. Employees Table
+CREATE TABLE employees (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    mobile VARCHAR(15) NOT NULL UNIQUE,
+    designation VARCHAR(50) NOT NULL,
+    status ENUM('Active', 'Inactive') DEFAULT 'Active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 3. Customers Table
+CREATE TABLE customers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    mobile VARCHAR(15) NOT NULL,
+    vehicle_number VARCHAR(20) NOT NULL UNIQUE,
+    vehicle_type ENUM('Car', 'SUV', 'Bike', 'Other') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 4. Bills Table (Main billing table)
+CREATE TABLE bills (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    bill_no INT NOT NULL UNIQUE,
+    customer_id INT NOT NULL,
+    vehicle_number VARCHAR(20) NOT NULL,
+    vehicle_type ENUM('Car', 'SUV', 'Bike', 'Other') NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    payment_mode ENUM('Cash', 'UPI', 'Card') DEFAULT 'Cash',
+    employee_id INT NOT NULL,
+    bill_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT,
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE RESTRICT
+);
+
+-- 5. Bill Services Table (Many-to-many relationship between bills and services)
+CREATE TABLE bill_services (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    bill_id INT NOT NULL,
+    service_id INT NOT NULL,
+    service_name VARCHAR(100) NOT NULL,
+    service_price DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE RESTRICT
+);
+
+-- 6. Settings Table (for storing next bill number)
+CREATE TABLE settings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    setting_key VARCHAR(50) NOT NULL UNIQUE,
+    setting_value VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
+
+
+SAMPLE DATA:
+-- Insert default services
+INSERT INTO services (name, price, is_custom) VALUES
+('Basic Wash', 200.00, FALSE),
+('Premium Wash', 400.00, FALSE),
+('Interior Cleaning', 300.00, FALSE),
+('Wax Polish', 500.00, FALSE),
+('Engine Wash', 250.00, FALSE);
+
+-- Insert sample employees
+INSERT INTO employees (name, mobile, designation, status) VALUES
+('Rajesh Kumar', '9876543210', 'Senior Washer', 'Active'),
+('Amit Singh', '9876543211', 'Washer', 'Active'),
+('Priya Sharma', '9876543212', 'Manager', 'Active');
+
+-- Insert sample customers
+INSERT INTO customers (name, mobile, vehicle_number, vehicle_type) VALUES
+('John Doe', '9876543210', 'KA01AB1234', 'Car'),
+('Anita Patel', '9876543215', 'MH12EF9012', 'SUV'),
+('Rahul Verma', '9876543216', 'DL09GH4567', 'Car');
+
+-- Set initial bill number
+INSERT INTO settings (setting_key, setting_value, description) VALUES
+('next_bill_no', '1001', 'Next available bill number');
+
+
+
+Additional Indexes for Performance:
+
+-- Create indexes for better performance
+CREATE INDEX idx_bills_date ON bills(bill_date);
+CREATE INDEX idx_bills_customer ON bills(customer_id);
+CREATE INDEX idx_bills_employee ON bills(employee_id);
+CREATE INDEX idx_bills_vehicle ON bills(vehicle_number);
+CREATE INDEX idx_customers_vehicle ON customers(vehicle_number);
+CREATE INDEX idx_customers_mobile ON customers(mobile);
+CREATE INDEX idx_employees_status ON employees(status);
+CREATE INDEX idx_bill_services_bill ON bill_services(bill_id);
+
+VIEWS:
+-- View for dashboard statistics
+CREATE VIEW dashboard_stats AS
+SELECT
+    COUNT(DISTINCT b.id) as total_vehicles_today,
+    COALESCE(SUM(b.total_amount), 0) as total_earnings_today,
+    COUNT(bs.id) as total_services_today,
+    (SELECT COUNT(*) FROM employees WHERE status = 'Active') as active_employees
+FROM bills b
+LEFT JOIN bill_services bs ON b.id = bs.bill_id
+WHERE DATE(b.bill_date) = CURDATE();
+
+-- View for service-wise statistics
+CREATE VIEW service_stats AS
+SELECT
+    s.name as service_name,
+    COUNT(bs.id) as service_count,
+    COALESCE(SUM(bs.service_price), 0) as service_revenue
+FROM services s
+LEFT JOIN bill_services bs ON s.id = bs.service_id
+LEFT JOIN bills b ON bs.bill_id = b.id
+WHERE DATE(b.bill_date) = CURDATE()
+GROUP BY s.id, s.name;
+
+-- View for recent activities
+CREATE VIEW recent_activities AS
+SELECT
+    b.bill_no,
+    CONCAT('Bill ', b.bill_no, ' created for ', b.vehicle_number) as description,
+    DATE_FORMAT(b.created_at, '%H:%i:%s') as activity_time
+FROM bills b
+WHERE DATE(b.created_at) = CURDATE()
+ORDER BY b.created_at DESC
+LIMIT 10;
+
+
+Stored Procedures:
+-- Stored procedure to create a new bill
+DELIMITER $$
+CREATE PROCEDURE CreateNewBill(
+    IN p_customer_name VARCHAR(100),
+    IN p_mobile VARCHAR(15),
+    IN p_vehicle_number VARCHAR(20),
+    IN p_vehicle_type ENUM('Car','SUV','Bike','Other'),
+    IN p_total_amount DECIMAL(10,2),
+    IN p_payment_mode ENUM('Cash','UPI','Card'),
+    IN p_employee_id INT,
+    IN p_services JSON -- JSON array of service IDs
+)
+BEGIN
+    DECLARE v_customer_id INT;
+    DECLARE v_bill_no INT;
+    DECLARE v_bill_id INT;
+    DECLARE i INT DEFAULT 0;
+    DECLARE service_count INT;
+    DECLARE service_id_val INT;
+
+    -- Start transaction
+    START TRANSACTION;
+
+    -- Check if customer exists, if not create new
+    SELECT id INTO v_customer_id FROM customers WHERE vehicle_number = p_vehicle_number;
+
+    IF v_customer_id IS NULL THEN
+        INSERT INTO customers (name, mobile, vehicle_number, vehicle_type)
+        VALUES (p_customer_name, p_mobile, p_vehicle_number, p_vehicle_type);
+        SET v_customer_id = LAST_INSERT_ID();
+    ELSE
+        -- Update customer details if they exist
+        UPDATE customers
+        SET name = p_customer_name, mobile = p_mobile, vehicle_type = p_vehicle_type
+        WHERE id = v_customer_id;
+    END IF;
+
+    -- Get next bill number
+    SELECT setting_value INTO v_bill_no FROM settings WHERE setting_key = 'next_bill_no';
+
+    -- Create bill
+    INSERT INTO bills (bill_no, customer_id, vehicle_number, vehicle_type, total_amount, payment_mode, employee_id, bill_date)
+    VALUES (v_bill_no, v_customer_id, p_vehicle_number, p_vehicle_type, p_total_amount, p_payment_mode, p_employee_id, CURDATE());
+
+    SET v_bill_id = LAST_INSERT_ID();
+
+    -- Add services to bill_services
+    SET service_count = JSON_LENGTH(p_services);
+
+    WHILE i < service_count DO
+        SET service_id_val = JSON_EXTRACT(p_services, CONCAT('$[', i, ']'));
+
+        INSERT INTO bill_services (bill_id, service_id, service_name, service_price)
+        SELECT v_bill_id, service_id_val, s.name, s.price
+        FROM services s WHERE s.id = service_id_val;
+
+        SET i = i + 1;
+    END WHILE;
+
+    -- Update next bill number
+    UPDATE settings SET setting_value = v_bill_no + 1 WHERE setting_key = 'next_bill_no';
+
+    -- Commit transaction
+    COMMIT;
+
+    -- Return the bill number
+    SELECT v_bill_no as bill_no;
+END$$
+DELIMITER ;
+
+-- Stored procedure for reports
+DELIMITER $$
+CREATE PROCEDURE GetBillsReport(
+    IN p_from_date DATE,
+    IN p_to_date DATE
+)
+BEGIN
+    SELECT
+        b.bill_no,
+        DATE(b.bill_date) as bill_date,
+        b.vehicle_number,
+        c.name as customer_name,
+        COUNT(bs.id) as services_count,
+        b.total_amount as amount,
+        e.name as employee_name
+    FROM bills b
+    JOIN customers c ON b.customer_id = c.id
+    JOIN employees e ON b.employee_id = e.id
+    LEFT JOIN bill_services bs ON b.id = bs.bill_id
+    WHERE b.bill_date BETWEEN p_from_date AND p_to_date
+    GROUP BY b.id, b.bill_no, b.bill_date, b.vehicle_number, c.name, b.total_amount, e.name
+    ORDER BY b.bill_date DESC, b.bill_no DESC;
+END$$
+DELIMITER ;
+

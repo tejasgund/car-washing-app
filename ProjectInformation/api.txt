@@ -1,0 +1,31 @@
+Required API Endpoints:
+Your backend should provide these endpoints:
+
+GET /api/dashboard/stats - Dashboard statistics
+
+GET /api/services - Get all services
+
+POST /api/services - Add new service
+
+GET /api/customers?vehicleNumber=XXX - Search customer by vehicle number
+
+GET /api/employees - Get all employees
+
+POST /api/employees - Add new employee
+
+POST /api/bills - Save new bill
+
+GET /api/bills/report?fromDate=XXX&toDate=XXX - Get reports
+
+
+
+
+Endpoint	Method	Description	Sample Request Body (Send Data)	Expected Output (JSON Structure)
+/api/dashboard/stats	GET	Retrieves current metrics for the Dashboard view.	None	{"totalVehicles": 1, "totalEarnings": 600.00, "totalServices": 2, "activeEmployees": 2, "serviceStats": [ {"service": "Basic Wash", "count": 1, "revenue": 200} ], "recentActivities": [ {"time": "10:55 AM", "description": "Bill 1001 created for KA01AB1234"} ]}
+/api/services	GET	Fetches the full list of available services.	None	[ {"id": 1, "name": "Basic Wash", "price": 200}, {"id": 2, "name": "Premium Wash", "price": 400}, ... ]
+/api/services	POST	Adds a new custom service.	{"name": "Tire Polish", "price": 150}	{"name": "Tire Polish", "price": 150, "id": 167888888, "custom": true}
+/api/customers?vehicleNumber={number}	GET	Searches for a customer by vehicle number.	None	Success (200): {"name": "John Doe", "mobile": "9876543210", "vehicleNumber": "KA01AB1234", "vehicleType": "Car"} Not Found (404): {"message": "Customer not found"}
+/api/employees	GET	Fetches the list of all employees.	None	[ {"id": 1, "name": "Rajesh Kumar", "mobile": "9876543210", "designation": "Senior Washer", "status": "Active"}, ... ]
+/api/employees	POST	Adds a new employee to the system.	{"name": "New Hire", "mobile": "1234567890", "designation": "Trainee", "status": "Active"}	{"name": "New Hire", "mobile": "1234567890", "designation": "Trainee", "status": "Active", "id": 3}
+/api/bills	POST	Saves a new bill record.	{"customerName": "John Doe", "mobileNumber": "9876543210", "vehicleNumber": "KA01AB1234", "vehicleType": "Car", "services": [ {"id": 1, "name": "Basic Wash", "price": 200} ], "totalAmount": 200, "paymentMode": "Cash", "employeeId": 1}	Success (201): {"billNo": 1002, "message": "Bill saved successfully"}
+/api/bills/report?fromDate={date}&toDate={date}	GET	Retrieves bills filtered by date range.	None	[ {"billNo": 1001, "date": "2025-10-04", "vehicleNumber": "KA01AB1234", "customerName": "John Doe", "servicesCount": 2, "amount": 600, "employeeName": "Rajesh Kumar"}, ... ]
