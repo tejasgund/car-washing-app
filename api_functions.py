@@ -87,3 +87,24 @@ def list_service():
         cursor.close()
         conn.close()
 
+def add_employee(name,mobile,designation,status):
+    conn = database()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""INSERT INTO employees (name,mobile,designation,status) VALUES (%s, %s, %s, %s)""", (name,mobile,designation,status))
+        conn.commit()
+        cursor.execute("""select name,mobile,designation,status,id from employees where name = %s and mobile = %s""", (name,mobile))
+        for i in cursor.fetchall():
+            employee = {
+                "name": i[1],
+                "mobile": i[2],
+                "designation": i[3],
+                "status": i[4],
+                "id": i[0]
+            }
+        return employee
+    except Exception as e:
+        return {"message": f"Database Error {str(e)}"},500
+    finally:
+        cursor.close()
+        conn.close()

@@ -72,8 +72,17 @@ def dashboard_stats():
 class ServiceRequest(BaseModel):
     name: str
     price: float
+class emp(BaseModel):
+    name: str
+    mobile : int
+    designation : str
+    status : str
+
 
 @app.post("/api/services")
 def add_services(service: ServiceRequest):
     api_functions.add_service(service.name, service.price)
 
+@app.post("/api/employees")
+def add_employees(service: emp):
+    api_functions.add_employee(service.name, service.mobile, service.designation)
