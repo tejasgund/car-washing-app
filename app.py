@@ -1,13 +1,16 @@
-from flask import Flask, request, jsonify, send_from_directory
-import config
+from fastapi import FastApi
+
 
 # Create Flask app
-app = Flask(__name__, static_folder="frontend", template_folder="frontend")
+app = FastApi(__name__, static_folder="frontend", template_folder="frontend")
 
 # Route to serve frontend HTML
 @app.route("/")
 def home():
     return send_from_directory("frontend", "index.html")
+@app.route("/about")
+def about():
+    return {"message":"this is test api"}
 
 # Example API route
 
