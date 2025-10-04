@@ -75,4 +75,5 @@ class ServiceRequest(BaseModel):
 
 @app.post("/api/services")
 def add_service(service: ServiceRequest):
-    return {"name": service.name, "price": service.price}
+    add_service(service.name, service.price)
+
