@@ -24,3 +24,14 @@ def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to 
         return JSONResponse(content=response, status_code=404)
     else:
         return JSONResponse(content=response, status_code=500)
+
+
+
+
+#post api to add new service
+@app.post("/api/services")
+def add_service():
+    responce,status=api_functions.list_service()
+    return JSONResponse(content=responce, status_code=status)
+
+

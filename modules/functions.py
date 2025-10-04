@@ -10,7 +10,8 @@ def is_valid_bike_number(number):
 
 def vehicle_number(v_number):
     if not is_valid_bike_number(v_number):
-        return {"message": "Invalid vehicle number format"}, 400  # Bad Request
+        print("Invalid bike number format")
+        return {"message": "Invalid bike number format"}
 
     conn = database()
     cursor = conn.cursor()
@@ -23,7 +24,7 @@ def vehicle_number(v_number):
             WHERE v.vehicle_number = %s;
         """, (v_number,))
 
-        data = cursor.fetchone()  # only one record expected
+        data = cursor.fetchone()
         if data:
             response = {
                 "name": data[0],
@@ -31,13 +32,12 @@ def vehicle_number(v_number):
                 "vehicleNumber": data[2],
                 "vehicleType": data[3]
             }
-            return response, 200  # Success
+            return response,200 #success
         else:
-            return {"message": "Customer not found"}, 404  # Not Found
+            return {"message": "Customer Not Found"},404 #not found
 
     except Exception as e:
-        return {"message": f"Database error: {e}"}, 500  # Internal Server Error
+        return {"message": f"Database Error {str(e)}"},500
     finally:
         cursor.close()
         conn.close()
-

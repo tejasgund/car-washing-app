@@ -41,4 +41,26 @@ def vehicle_number(v_number):
     finally:
         cursor.close()
         conn.close()
-print(vehicle_number("MH13CL3290"))
+
+
+def list_service():
+    conn = database()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""select id,name,price from services""")
+        services = []
+        for row in cursor.fetchall():
+            services.append(
+                {"id": row[0],
+                 "name": row[1],
+                 "price": float(row[2])
+                 }
+            )
+        return services,200
+
+    except Exception as e:
+        return {"message": f"Database Error {str(e)}"},500
+    finally:
+        cursor.close()
+        conn.close()
+
