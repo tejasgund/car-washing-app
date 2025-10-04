@@ -12,13 +12,11 @@ def home():
 def about():
     return {"message": "This is a test API"}
 
-@app.get("/contact/{name}")
-def contact(name: str):
-    return {"message": f"Welcome {name}"}
+@app.get("/contact/{name}/{mobile}")
+def contact(name: str, mobile: str):
+    return {"message": f"Welcome {name} Your Mobile number is: {mobile}"}
 
-@app.get("/contact/{mobile}")
-def contact(mobile: int):
-    return {"message": f"Welcome dear {mobile}"}
+
 
 # Note:
 # In FastAPI, you don’t use app.run() (that’s Flask).
