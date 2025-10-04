@@ -69,7 +69,7 @@ def dashboard_stats():
 
 @app.get("/api/employees")
 def list_employees():
-    api_functions.list_employees()
+    return api_functions.list_employees()
 
 #------------------------------post requests
 
