@@ -35,16 +35,37 @@ def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to 
 def list_services():
     responce,status=api_functions.list_service()
     return JSONResponse(content=responce, status_code=status)
-#
-@app.get("/api/employees")
-def get_employees():
-    return [
-        {"id": 1, "name":
-        "Rajesh Kumar",
-         "mobile": "9876543210",
-         "designation": "Senior Washer",
-         "status": "Active"}
-    ]
+data={
+  "totalVehicles": 15,
+  "totalEarnings": 8500,
+  "totalServices": 25,
+  "activeEmployees": 3,
+  "serviceStats": [
+    {
+      "service": "Basic Wash",
+      "count": 8,
+      "revenue": 1600
+    },
+    {
+      "service": "Premium Wash",
+      "count": 5,
+      "revenue": 2000
+    }
+  ],
+  "recentActivities": [
+    {
+      "time": "14:30:25",
+      "description": "Bill 1005 created for KA01CD5678"
+    },
+    {
+      "time": "13:15:10",
+      "description": "Bill 1004 created for MH12EF9012"
+    }
+  ]
+}
+@app.get("GET /api/dashboard/stats")
+def dashboard_stats():
+    return data
 
 #------------------------------post requests
 class service_request(BaseModel):
