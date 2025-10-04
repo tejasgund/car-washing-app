@@ -29,8 +29,8 @@ def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to 
 
 
 #post api to add new service
-@app.post("/api/services")
-def add_service():
+@app.get("/api/services")
+def list_services():
     responce,status=api_functions.list_service()
     return JSONResponse(content=responce, status_code=status)
 
