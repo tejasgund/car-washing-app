@@ -33,6 +33,12 @@ customers_db = [
         "vehicleType": "Car"
     },
     {
+        "name": "Tejas Gund",
+        "mobile": "8177809890",
+        "vehicleNumber": "MH13CL3290",
+        "vehicleType": "Truck"
+    },
+    {
         "name": "Jane Smith",
         "mobile": "9123456780",
         "vehicleNumber": "MH02CD5678",
