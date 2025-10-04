@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Washing Center - Billing Management (API MOCKED)</title>
+    <title>Vehicle Washing Center - Billing Management</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* (*** KEEP YOUR ORIGINAL CSS HERE ***) */
         :root {
             --primary-color: #2563eb;
             --secondary-color: #64748b;
@@ -150,12 +149,27 @@
             border-radius: 6px;
             font-weight: 500;
         }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>WashCenter Pro (MOCKED API)</a>
+            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>WashCenter Pro</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -293,7 +307,7 @@
                                     <input type="text" id="vehicleNumber" class="form-control" placeholder="Enter Vehicle Number (e.g., KA01AB1234)" style="text-transform: uppercase;">
                                 </div>
                                 <div class="col-md-4">
-                                    <button class="btn btn-primary w-100" onclick="searchVehicle()">
+                                    <button class="btn btn-primary w-100" onclick="searchVehicle()" id="searchVehicleBtn">
                                         <i class="fas fa-search me-2"></i>Search
                                     </button>
                                 </div>
@@ -354,7 +368,7 @@
                                     <input type="number" id="customServicePrice" class="form-control" placeholder="Price">
                                 </div>
                                 <div class="col-md-2">
-                                    <button class="btn btn-success w-100" onclick="addCustomService()">
+                                    <button class="btn btn-success w-100" onclick="addCustomService()" id="addServiceBtn">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
@@ -423,7 +437,7 @@
                                 </div>
 
                                 <div class="d-grid gap-2">
-                                    <button class="btn btn-primary btn-lg" onclick="saveBill()">
+                                    <button class="btn btn-primary btn-lg" onclick="saveBill()" id="saveBillBtn">
                                         <i class="fas fa-save me-2"></i>Save Bill
                                     </button>
                                     <button class="btn btn-outline-secondary" onclick="printBill()">
@@ -459,7 +473,7 @@
                             <input type="date" id="toDate" class="form-control">
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
-                            <button class="btn btn-primary w-100" onclick="loadReports()">
+                            <button class="btn btn-primary w-100" onclick="loadReports()" id="generateReportBtn">
                                 <i class="fas fa-search me-2"></i>Generate Report
                             </button>
                         </div>
@@ -530,7 +544,7 @@
                                         <option value="Inactive">Inactive</option>
                                     </select>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">
+                                <button type="submit" class="btn btn-primary w-100" id="saveEmployeeBtn">
                                     <i class="fas fa-save me-2"></i>Save Employee
                                 </button>
                             </form>
@@ -556,218 +570,22 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://unpkg.com/msw@1.3.2/lib/umd/index.js"></script>
-
     <script>
-        // --- 1. CONFIGURATION AND MOCK DATA ---
+        // --- CONFIGURATION ---
+        const API_BASE_URL = 'http://15.206.151.116:8080/api';
 
-        const API_BASE_URL = '/api'; // Using a relative URL to make mocking easier
-        let appData = {
-            // This will hold the live state manipulated by the mock handlers
-            services: [
-                { id: 1, name: 'Basic Wash', price: 200 },
-                { id: 2, name: 'Premium Wash', price: 400 },
-                { id: 3, name: 'Interior Cleaning', price: 300 },
-                { id: 4, name: 'Wax Polish', price: 500 },
-                { id: 5, name: 'Engine Wash', price: 250 }
-            ],
-            employees: [
-                { id: 1, name: 'Rajesh Kumar', mobile: '9876543210', designation: 'Senior Washer', status: 'Active' },
-                { id: 2, name: 'Amit Singh', mobile: '9876543211', designation: 'Washer', status: 'Active' }
-            ],
-            customers: [
-                { name: 'John Doe', mobile: '9876543210', vehicleNumber: 'KA01AB1234', vehicleType: 'Car' }
-            ],
-            bills: [],
-            nextBillNo: 1001
-        };
-
-        // --- 2. MOCK API HANDLERS (Simulating the Backend) ---
-
-        const { rest, setupWorker } = window.msw;
-
-        const handlers = [
-
-            // ------------------ Dashboard Stats (GET /api/dashboard/stats) ------------------
-            rest.get(`${API_BASE_URL}/dashboard/stats`, (req, res, ctx) => {
-                const totalVehicles = appData.bills.length;
-                const totalEarnings = appData.bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
-                const totalServices = appData.bills.reduce((sum, bill) => sum + bill.services.length, 0);
-                const activeEmployees = appData.employees.filter(e => e.status === 'Active').length;
-
-                let serviceStats = {};
-                appData.bills.forEach(bill => {
-                    bill.services.forEach(service => {
-                        if (!serviceStats[service.name]) {
-                            serviceStats[service.name] = { count: 0, revenue: 0 };
-                        }
-                        serviceStats[service.name].count += 1;
-                        serviceStats[service.name].revenue += service.price;
-                    });
-                });
-
-                const recentActivities = appData.bills.slice(-5).reverse().map(bill => ({
-                    time: new Date(bill.date).toLocaleTimeString(),
-                    description: `Bill ${bill.billNo} created for ${bill.vehicleNumber}`
-                }));
-
-                return res(
-                    ctx.delay(500),
-                    ctx.status(200),
-                    ctx.json({
-                        totalVehicles,
-                        totalEarnings,
-                        totalServices,
-                        activeEmployees,
-                        serviceStats: Object.keys(serviceStats).map(name => ({ service: name, ...serviceStats[name] })),
-                        recentActivities
-                    })
-                );
-            }),
-
-
-            // ------------------ Services (GET /api/services) ------------------
-            rest.get(`${API_BASE_URL}/services`, (req, res, ctx) => {
-                return res(
-                    ctx.delay(300),
-                    ctx.status(200),
-                    ctx.json(appData.services)
-                );
-            }),
-
-            // ------------------ Add Custom Service (POST /api/services) ------------------
-            rest.post(`${API_BASE_URL}/services`, async (req, res, ctx) => {
-                const newService = await req.json();
-                const id = Date.now();
-                const serviceWithId = { ...newService, id, custom: true };
-                appData.services.push(serviceWithId);
-
-                return res(
-                    ctx.delay(200),
-                    ctx.status(201),
-                    ctx.json(serviceWithId)
-                );
-            }),
-
-            // ------------------ Customer Search (GET /api/customers?vehicleNumber=...) ------------------
-            rest.get(`${API_BASE_URL}/customers`, (req, res, ctx) => {
-                const vehicleNumber = req.url.searchParams.get('vehicleNumber')?.toUpperCase();
-                const customer = appData.customers.find(c => c.vehicleNumber === vehicleNumber);
-
-                if (customer) {
-                    return res(
-                        ctx.delay(300),
-                        ctx.status(200),
-                        ctx.json(customer)
-                    );
-                } else {
-                    return res(
-                        ctx.delay(300),
-                        ctx.status(404),
-                        ctx.json({ message: 'Customer not found' })
-                    );
-                }
-            }),
-
-            // ------------------ Employees (GET /api/employees) ------------------
-            rest.get(`${API_BASE_URL}/employees`, (req, res, ctx) => {
-                return res(
-                    ctx.delay(300),
-                    ctx.status(200),
-                    ctx.json(appData.employees)
-                );
-            }),
-
-            // ------------------ Add Employee (POST /api/employees) ------------------
-            rest.post(`${API_BASE_URL}/employees`, async (req, res, ctx) => {
-                const newEmployee = await req.json();
-                const id = appData.employees.length + 1;
-                const employeeWithId = { ...newEmployee, id: id };
-                appData.employees.push(employeeWithId);
-
-                return res(
-                    ctx.delay(200),
-                    ctx.status(201),
-                    ctx.json(employeeWithId)
-                );
-            }),
-
-            // ------------------ Save Bill (POST /api/bills) ------------------
-            rest.post(`${API_BASE_URL}/bills`, async (req, res, ctx) => {
-                const billData = await req.json();
-                const billNo = appData.nextBillNo++;
-                const newBill = {
-                    ...billData,
-                    billNo: billNo,
-                    date: new Date().toISOString()
-                };
-                appData.bills.push(newBill);
-
-                // Also update customer list if it's a new customer
-                const existingCustomer = appData.customers.find(c => c.vehicleNumber === billData.vehicleNumber);
-                if (!existingCustomer) {
-                    appData.customers.push({
-                        name: billData.customerName,
-                        mobile: billData.mobileNumber,
-                        vehicleNumber: billData.vehicleNumber,
-                        vehicleType: billData.vehicleType
-                    });
-                }
-
-                return res(
-                    ctx.delay(500),
-                    ctx.status(201),
-                    ctx.json({ billNo: billNo, message: 'Bill saved successfully' })
-                );
-            }),
-
-            // ------------------ Reports (GET /api/bills/report?fromDate=...&toDate=...) ------------------
-            rest.get(`${API_BASE_URL}/bills/report`, (req, res, ctx) => {
-                const fromDate = req.url.searchParams.get('fromDate');
-                const toDate = req.url.searchParams.get('toDate');
-
-                // Simple date filtering logic
-                const filteredBills = appData.bills.filter(bill => {
-                    const billDate = bill.date.substring(0, 10);
-                    return billDate >= fromDate && billDate <= toDate;
-                }).map(bill => {
-                    const employee = appData.employees.find(e => e.id === bill.employeeId);
-                    return {
-                        billNo: bill.billNo,
-                        date: bill.date.substring(0, 10),
-                        vehicleNumber: bill.vehicleNumber,
-                        customerName: bill.customerName,
-                        servicesCount: bill.services.length,
-                        amount: bill.totalAmount,
-                        employeeName: employee ? employee.name : 'N/A'
-                    };
-                });
-
-                return res(
-                    ctx.delay(500),
-                    ctx.status(200),
-                    ctx.json(filteredBills)
-                );
-            }),
-        ];
-
-        // Start the Mock Service Worker
-        const worker = setupWorker(...handlers);
-        worker.start({ onUnhandledRequest: 'bypass' });
-
-        // --- 3. FRONTEND LOGIC (Modified to use fetch() API calls) ---
-
-        let localServicesCache = []; // To store services loaded from API
+        // --- FRONTEND LOGIC ---
+        let localServicesCache = [];
+        let nextBillNo = 1001;
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Initial setup is now async due to API calls
+            // Initial setup
             Promise.all([
-                loadServices(), // Load services first
+                loadServices(),
                 loadEmployees(),
                 updateDashboard(),
             ]).then(() => {
-                // Set current bill number and date only after services are loaded
-                document.getElementById('billNumber').textContent = appData.nextBillNo;
+                document.getElementById('billNumber').textContent = nextBillNo;
                 document.getElementById('billDate').textContent = new Date().toLocaleDateString();
                 setDefaultDates();
             });
@@ -822,14 +640,28 @@
             document.getElementById('customServiceName').value = '';
             document.getElementById('customServicePrice').value = '';
 
-            document.getElementById('billNumber').textContent = appData.nextBillNo;
+            document.getElementById('billNumber').textContent = nextBillNo;
             document.getElementById('billDate').textContent = new Date().toLocaleDateString();
 
             // Reset preview
             document.getElementById('previewCustomer').textContent = '-';
             document.getElementById('previewMobile').textContent = '-';
             document.getElementById('previewVehicle').textContent = '-';
-            updateBillPreview(); // to reset total and services list
+            updateBillPreview();
+        }
+
+        // Utility function to show loading state
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading-spinner"></span> Loading...';
+            } else {
+                button.disabled = false;
+                const originalText = button.getAttribute('data-original-text');
+                if (originalText) {
+                    button.innerHTML = originalText;
+                }
+            }
         }
 
         // --- API Integration Functions ---
@@ -840,6 +672,8 @@
             container.innerHTML = '<p class="text-muted">Loading services...</p>';
             try {
                 const response = await fetch(`${API_BASE_URL}/services`);
+                if (!response.ok) throw new Error('Failed to fetch services');
+
                 localServicesCache = await response.json();
 
                 container.innerHTML = '';
@@ -870,11 +704,16 @@
         async function addCustomService() {
             const name = document.getElementById('customServiceName').value.trim();
             const price = parseInt(document.getElementById('customServicePrice').value);
+            const button = document.getElementById('addServiceBtn');
 
             if (!name || !price) {
                 alert('Please enter service name and price');
                 return;
             }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
 
             try {
                 const response = await fetch(`${API_BASE_URL}/services`, {
@@ -884,22 +723,25 @@
                 });
 
                 if (response.ok) {
-                    await loadServices(); // Reload services to include the new one
+                    await loadServices();
                     alert(`Service "${name}" added.`);
                     document.getElementById('customServiceName').value = '';
                     document.getElementById('customServicePrice').value = '';
                 } else {
-                    alert('Failed to add custom service.');
+                    throw new Error('Failed to add service');
                 }
             } catch (error) {
                 console.error('Error adding custom service:', error);
-                alert('Network error while adding service.');
+                alert('Failed to add custom service.');
+            } finally {
+                setLoading(button, false);
             }
         }
 
         // Vehicle Search (GET /api/customers?vehicleNumber=...)
         async function searchVehicle() {
             const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
+            const button = document.getElementById('searchVehicleBtn');
 
             if (!vehicleNum) {
                 alert('Please enter vehicle number');
@@ -907,6 +749,10 @@
             }
 
             document.getElementById('vehicleNumberDisplay').value = vehicleNum;
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
 
             try {
                 const response = await fetch(`${API_BASE_URL}/customers?vehicleNumber=${vehicleNum}`);
@@ -926,12 +772,14 @@
 
                     alert('New customer! Please fill in the details.');
                 } else {
-                     alert(`Error: ${response.statusText}`);
+                    throw new Error(`Server error: ${response.status}`);
                 }
                 updateBillPreviewCustomer();
             } catch (error) {
                 console.error("Error during vehicle search:", error);
                 alert('An error occurred during search.');
+            } finally {
+                setLoading(button, false);
             }
         }
 
@@ -945,8 +793,9 @@
 
             try {
                 const response = await fetch(`${API_BASE_URL}/employees`);
+                if (!response.ok) throw new Error('Failed to fetch employees');
+
                 const employees = await response.json();
-                appData.employees = employees; // Update local cache for bill data processing
 
                 select.innerHTML = '<option value="">Select Employee</option>';
                 listContainer.innerHTML = '';
@@ -967,8 +816,10 @@
                         </div>
                     `;
                 });
-                // This updates the dashboard stat on the employees page, but Dashboard page will use updateDashboard()
-                document.getElementById('activeEmployees').textContent = employees.filter(e => e.status === 'Active').length;
+
+                // Update dashboard stat
+                const activeCount = employees.filter(e => e.status === 'Active').length;
+                document.getElementById('activeEmployees').textContent = activeCount;
 
             } catch (error) {
                 console.error("Error loading employees:", error);
@@ -985,11 +836,16 @@
                 designation: document.getElementById('empDesignation').value.trim(),
                 status: document.getElementById('empStatus').value
             };
+            const button = document.getElementById('saveEmployeeBtn');
 
             if (!newEmployee.name || !newEmployee.mobile || !newEmployee.designation) {
                 alert('Please fill in all employee details.');
                 return;
             }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
 
             try {
                 const response = await fetch(`${API_BASE_URL}/employees`, {
@@ -1003,11 +859,13 @@
                     await loadEmployees();
                     alert(`${newEmployee.name} added successfully.`);
                 } else {
-                    alert('Failed to save employee.');
+                    throw new Error('Failed to save employee');
                 }
             } catch (error) {
                 console.error("Error saving employee:", error);
-                alert('Network error while saving employee.');
+                alert('Failed to save employee.');
+            } finally {
+                setLoading(button, false);
             }
         }
 
@@ -1020,6 +878,7 @@
             const paymentMode = document.getElementById('paymentMode').value;
             const employeeId = document.getElementById('employeeSelect').value;
             const totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
+            const button = document.getElementById('saveBillBtn');
 
             if (!customerName || !mobile || !vehicleNum || !vehicleType || !employeeId || totalAmount === 0) {
                 alert('Please fill in all customer details and select at least one service.');
@@ -1050,6 +909,10 @@
                 employeeId: parseInt(employeeId)
             };
 
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
             try {
                 const response = await fetch(`${API_BASE_URL}/bills`, {
                     method: 'POST',
@@ -1060,14 +923,17 @@
                 if (response.ok) {
                     const result = await response.json();
                     alert(`Bill ${result.billNo} saved successfully!`);
+                    nextBillNo = result.billNo + 1;
                     updateDashboard();
                     resetBillForm();
                 } else {
-                    alert(`Failed to save bill: ${response.statusText}`);
+                    throw new Error(`Failed to save bill: ${response.statusText}`);
                 }
             } catch (error) {
                 console.error("Error saving bill:", error);
-                alert('A network error occurred while saving the bill.');
+                alert('Failed to save bill.');
+            } finally {
+                setLoading(button, false);
             }
         }
 
@@ -1076,16 +942,23 @@
             const fromDate = document.getElementById('fromDate').value;
             const toDate = document.getElementById('toDate').value;
             const reportsTable = document.getElementById('reportsTable');
+            const button = document.getElementById('generateReportBtn');
 
             if (!fromDate || !toDate) {
                 alert('Please select both From Date and To Date.');
                 return;
             }
 
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
             reportsTable.innerHTML = `<tr><td colspan="7" class="text-center text-info">Generating report...</td></tr>`;
 
             try {
                 const response = await fetch(`${API_BASE_URL}/bills/report?fromDate=${fromDate}&toDate=${toDate}`);
+                if (!response.ok) throw new Error('Failed to fetch reports');
+
                 const bills = await response.json();
 
                 if (bills.length === 0) {
@@ -1111,6 +984,8 @@
             } catch (error) {
                 console.error("Error loading reports:", error);
                 reportsTable.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Failed to load reports.</td></tr>`;
+            } finally {
+                setLoading(button, false);
             }
         }
 
@@ -1118,6 +993,8 @@
         async function updateDashboard() {
             try {
                 const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
+                if (!response.ok) throw new Error('Failed to fetch dashboard stats');
+
                 const data = await response.json();
 
                 document.getElementById('totalVehicles').textContent = data.totalVehicles;
@@ -1128,7 +1005,7 @@
                 // Service Stats Table
                 const statsTable = document.getElementById('serviceStatsTable');
                 statsTable.innerHTML = '';
-                if (data.serviceStats.length > 0) {
+                if (data.serviceStats && data.serviceStats.length > 0) {
                     data.serviceStats.forEach(stat => {
                         statsTable.innerHTML += `
                             <tr>
@@ -1145,7 +1022,7 @@
                 // Recent Activities
                 const activitiesDiv = document.getElementById('recentActivities');
                 activitiesDiv.innerHTML = '';
-                if (data.recentActivities.length > 0) {
+                if (data.recentActivities && data.recentActivities.length > 0) {
                     data.recentActivities.forEach(activity => {
                         activitiesDiv.innerHTML += `<p class="mb-1"><strong>${activity.time}:</strong> ${activity.description}</p>`;
                     });
@@ -1153,11 +1030,14 @@
                      activitiesDiv.innerHTML = '<p class="text-muted">No recent activities</p>';
                 }
 
-
             } catch (error) {
                 console.error('Error updating dashboard:', error);
-                document.querySelectorAll('.stat-card h3').forEach(h3 => h3.textContent = 'Err');
+                document.getElementById('totalVehicles').textContent = 'Err';
+                document.getElementById('totalEarnings').textContent = '₹Err';
+                document.getElementById('totalServices').textContent = 'Err';
+                document.getElementById('activeEmployees').textContent = 'Err';
                 document.getElementById('serviceStatsTable').innerHTML = `<tr><td colspan="3" class="text-center text-danger">Failed to load stats.</td></tr>`;
+                document.getElementById('recentActivities').innerHTML = '<p class="text-danger">Failed to load activities.</p>';
             }
         }
 
@@ -1177,7 +1057,7 @@
 
         // Update Bill Preview - Services and Total Amount
         function updateBillPreview() {
-            updateBillPreviewCustomer(); // Ensure customer details are also updated
+            updateBillPreviewCustomer();
 
             let selectedServices = [];
             let total = 0;
