@@ -19,7 +19,7 @@ def contact(name: str, mobile: str):
     return {"message": f"Welcome {name} Your Mobile number is: {mobile}"}
 
 @app.get("/headers")
-def headers(name: str = Header(None), mobile: str=Header):
+def data(name: str = Header(None), mobile: str = Header(None)):
     return {"message": f"Welcome {name} Your Mobile number is: {mobile}"}
 
 
