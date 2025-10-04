@@ -85,4 +85,4 @@ def add_services(service: ServiceRequest):
 
 @app.post("/api/employees")
 def add_employees(service: emp):
-    api_functions.add_employee(service.name, service.mobile, service.designation)
+    api_functions.add_employee(service.name, service.mobile, service.designation,service.status)
