@@ -1,3 +1,5 @@
+from email.header import Header
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
@@ -16,6 +18,9 @@ def about():
 def contact(name: str, mobile: str):
     return {"message": f"Welcome {name} Your Mobile number is: {mobile}"}
 
+@app.get("/headers")
+def headers(name: str = Header(None), mobile: str=Header):
+    return {"message": f"Welcome {name} Your Mobile number is: {mobile}"}
 
 
 # Note:
