@@ -17,7 +17,7 @@ def contact(name: str):
     return {"message": f"Welcome {name}"}
 
 @app.get("/contact/{mobile}")
-def contact(mobile: str):
+def contact(mobile: int):
     return {"message": f"Welcome dear {mobile}"}
 
 # Note:
