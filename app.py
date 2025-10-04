@@ -16,6 +16,10 @@ def about():
 def contact(name: str):
     return {"message": f"Welcome {name}"}
 
+@app.get("/contact/{mobile}")
+def contact(mobile: str):
+    return {"message": f"Welcome dear {mobile}"}
+
 # Note:
 # In FastAPI, you don’t use app.run() (that’s Flask).
 # You run it with uvicorn:
