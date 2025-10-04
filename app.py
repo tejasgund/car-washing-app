@@ -1,32 +1,28 @@
-from email.header import Header
-
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 import api_functions
-from typing import Optional
-
 
 app = FastAPI()
 
-# Route to serve frontend HTML
+# Serve static files (CSS/JS if any)
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
+
+# Serve index.html at root
 @app.get("/")
 def home():
     return FileResponse("frontend/index.html")
 
-@app.get("/about")
-def about():
-    return {"message": "This is a test API"}
 
-
-
-
-
-#@app.get("/api/customers/{vehicleNumber}")
+# API endpoint for customer info by vehicle number
+@app.get("/api/customers/{vehicleNumber}")
 def get_customer(vehicleNumber: str):
-    response, status = api_functions.vehicle_number("MH13CL3290")
-    return status,response
+    response, status = api_functions.vehicle_number(vehicleNumber)
 
-# Note:
-# In FastAPI, you don’t use app.run() (that’s Flask).
-# You run it with uvicorn:
-# uvicorn app:app --host 0.0.0.0 --port 8080
+    if status == 200:
+        return f"Success (200): {response}"
+    elif status == 404:
+        return f"Not Found (404): {response}"
+    else:
+        return f"Error ({status}): {response}"
