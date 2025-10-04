@@ -17,19 +17,13 @@ def home():
 
 
 # API endpoint using query parameter
-@app.get("/api/customers", response_class=PlainTextResponse)
+@app.get("/api/customers")
 def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to search")):
     response, status = api_functions.vehicle_number(vehicleNumber)
 
-    # Convert dict to JSON string manually with double quotes
-    if isinstance(response, dict):
-        response_str = json.dumps(response)
-    else:
-        response_str = str(response)
-
     if status == 200:
-        return f"Success (200): {response_str}"
+        return JSONResponse(content=response, status_code=200)
     elif status == 404:
-        return f"Not Found (404): {response_str}"
+        return JSONResponse(content=response, status_code=404)
     else:
-        return f"Error ({status}): {response_str}"
+        return JSONResponse(content=response, status_code=500)
