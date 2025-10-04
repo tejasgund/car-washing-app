@@ -42,7 +42,30 @@ def vehicle_number(v_number):
         cursor.close()
         conn.close()
 
+def add_service(name,price):
+    conn = database()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""INSERT INTO services(name,price) values (%s, %s)""", (name,price))
+        conn.commit()
+        cursor.execute("""select id,name,price from services where name = %s""", (name,))
+        list=[]
+        for i in cursor.fetchall():
+            list.append(
+                {
+                    "id": i[0],
+                    "name": i[1],
+                    "price": int(i[2]),
+                    "custom":True
+                }
+            )
+        return list[0]
 
+    except Exception as e:
+        return {"message": f"Database Error {str(e)}"},500
+    finally:
+        cursor.close()
+        conn.close()
 def list_service():
     conn = database()
     cursor = conn.cursor()
@@ -64,3 +87,4 @@ def list_service():
         cursor.close()
         conn.close()
 
+print(add_service("test",300))

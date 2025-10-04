@@ -2,6 +2,8 @@ from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import api_functions
+from pydantic import BaseModel
+
 
 app = FastAPI()
 
@@ -35,3 +37,10 @@ def list_services():
     return JSONResponse(content=responce, status_code=status)
 
 
+#------------------------------post requests
+class service_request(BaseModel):
+    name: str
+    price: float
+@app.post("/api/services")
+def add_servie(service: service_request):
+    return service.name,service.price
