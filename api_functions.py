@@ -53,7 +53,7 @@ def list_service():
             services.append(
                 {"id": row[0],
                  "name": row[1],
-                 "price": float(row[2])
+                 "price": int(row[2])
                  }
             )
         return services,200
