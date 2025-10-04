@@ -6,23 +6,19 @@ import json
 
 app = FastAPI()
 
-# Serve static files (JS/CSS if any)
+# Serve static files (CSS/JS if needed)
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
-
 
 # Serve index.html at root
 @app.get("/")
 def home():
     return FileResponse("frontend/index.html")
 
-
-# API endpoint for customer info using query parameter
+# API endpoint using query parameter
 @app.get("/api/customers")
 def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to search")):
     response, status = api_functions.vehicle_number(vehicleNumber)
-
-    # Ensure JSON uses double quotes
-    response_json = json.dumps(response)
+    response_json = json.dumps(response)  # ensures double quotes
 
     if status == 200:
         return f"Success (200): {response_json}"
