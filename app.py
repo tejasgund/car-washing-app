@@ -38,7 +38,13 @@ def list_services():
 #
 @app.get("/api/employees")
 def get_employees():
-    return [ {"id": 1, "name": "Rajesh Kumar", "mobile": "9876543210", "designation": "Senior Washer", "status": "Active"}, ... ]
+    return [
+        {"id": 1, "name":
+        "Rajesh Kumar",
+         "mobile": "9876543210",
+         "designation": "Senior Washer",
+         "status": "Active"}
+    ]
 
 #------------------------------post requests
 class service_request(BaseModel):
