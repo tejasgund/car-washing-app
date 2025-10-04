@@ -16,8 +16,8 @@ def home():
 
 
 # API endpoint for customer info by vehicle number
-@app.get("/api/customers/{vehicleNumber}")
-def get_customer(vehicleNumber: str):
+@app.get("/api/customers")
+def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to search"))::
     response, status = api_functions.vehicle_number(vehicleNumber)
 
     if status == 200:
