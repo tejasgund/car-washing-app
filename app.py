@@ -21,9 +21,10 @@ def about():
 
 
 
-@app.get("/api/customers")
+#@app.get("/api/customers/{vehicleNumber}")
 def get_customer(vehicleNumber: str):
-    api_functions.vehicle_number(vehicleNumber)
+    response, status = api_functions.vehicle_number("MH13CL3290")
+    return status,response
 
 # Note:
 # In FastAPI, you don’t use app.run() (that’s Flask).
