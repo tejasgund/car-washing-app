@@ -68,9 +68,11 @@ def dashboard_stats():
     return data
 
 #------------------------------post requests
-class service_request(BaseModel):
+
+class ServiceRequest(BaseModel):
     name: str
     price: float
+
 @app.post("/api/services")
-def add_servie(service: service_request):
-    return service.name,service.price
+def add_service(service: ServiceRequest):
+    return {"name": service.name, "price": service.price}
