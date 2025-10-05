@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sahyadri Washing Center - Management System</title>
+    <title>Sahyadri Washing Center - Internal Management System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -15,18 +15,15 @@
             --warning-color: #f59e0b;
             --info-color: #0ea5e9;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
-
         .navbar {
             background: linear-gradient(135deg, var(--primary-color), #3b82f6);
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
-
         .brand-header {
             background: white;
             border-radius: 15px;
@@ -34,13 +31,11 @@
             margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-
         .logo-section {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-
         .logo-circle {
             width: 80px;
             height: 80px;
@@ -53,20 +48,17 @@
             color: white;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-
         .brand-info h1 {
             font-size: 28px;
             font-weight: 700;
             color: #1e293b;
             margin: 0;
         }
-
         .brand-info p {
             margin: 5px 0 0 0;
             color: #64748b;
             font-size: 14px;
         }
-
         .stat-card {
             background: white;
             border-radius: 15px;
@@ -75,12 +67,10 @@
             transition: all 0.3s;
             height: 100%;
         }
-
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
-
         .stat-icon {
             width: 70px;
             height: 70px;
@@ -91,19 +81,16 @@
             font-size: 28px;
             margin-bottom: 15px;
         }
-
         .stat-value {
             font-size: 32px;
             font-weight: 700;
             margin: 10px 0;
         }
-
         .stat-label {
             color: #64748b;
             font-size: 14px;
             font-weight: 500;
         }
-
         .period-selector {
             background: white;
             border-radius: 12px;
@@ -111,7 +98,6 @@
             margin-bottom: 25px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
-
         .period-btn {
             padding: 8px 20px;
             border-radius: 8px;
@@ -122,13 +108,11 @@
             transition: all 0.3s;
             margin: 0 5px;
         }
-
         .period-btn.active {
             background: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
         }
-
         .chart-card {
             background: white;
             border-radius: 15px;
@@ -136,7 +120,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             margin-bottom: 25px;
         }
-
         .card-header-custom {
             font-size: 18px;
             font-weight: 600;
@@ -145,7 +128,6 @@
             padding-bottom: 15px;
             border-bottom: 2px solid #f1f5f9;
         }
-
         .service-stat-item {
             padding: 15px;
             border-radius: 10px;
@@ -156,12 +138,10 @@
             align-items: center;
             transition: all 0.3s;
         }
-
         .service-stat-item:hover {
             background: #f1f5f9;
             transform: translateX(5px);
         }
-
         .activity-item {
             padding: 15px;
             border-left: 3px solid var(--primary-color);
@@ -169,7 +149,6 @@
             border-radius: 8px;
             margin-bottom: 12px;
         }
-
         .revenue-card {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
@@ -177,7 +156,6 @@
             padding: 25px;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
-
         .comparison-badge {
             display: inline-flex;
             align-items: center;
@@ -188,28 +166,23 @@
             font-weight: 600;
             margin-top: 8px;
         }
-
         .badge-up {
             background: rgba(16, 185, 129, 0.2);
             color: #059669;
         }
-
         .badge-down {
             background: rgba(239, 68, 68, 0.2);
             color: #dc2626;
         }
-
         @media (max-width: 768px) {
             .logo-circle {
                 width: 60px;
                 height: 60px;
                 font-size: 28px;
             }
-
             .brand-info h1 {
                 font-size: 22px;
             }
-
             .stat-value {
                 font-size: 24px;
             }
@@ -219,7 +192,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>Sahyadri Washing Center</a>
+            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>Sahyadri Washing Center - Internal</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -238,9 +211,7 @@
             </div>
         </div>
     </nav>
-
     <div class="container-fluid mt-4 px-4">
-        <!-- Brand Header -->
         <div class="brand-header">
             <div class="row align-items-center">
                 <div class="col-md-8">
@@ -250,27 +221,23 @@
                         </div>
                         <div class="brand-info">
                             <h1>Sahyadri Washing Center</h1>
-                            <p><i class="fas fa-map-marker-alt me-2"></i>Sahyadri Business Park, Gund Plot, Paranda Road, Barshi</p>
-                            <p><i class="fas fa-map-pin me-2"></i>PIN: 413411 | <i class="fas fa-phone me-2"></i>Contact: +91 XXXXXXXXXX</p>
+                            <p><i class="fas fa-map-marker-alt me-2"></i>**Address:** Sahyadri Business Park, Paranda Road, Gund Plot, Barshi</p>
+                            <p><i class="fas fa-map-pin me-2"></i>**PIN:** 413411 | <i class="fas fa-phone me-2"></i>**Contact:** +91 XXXXXXXXXX</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 text-end">
-                    <h5 class="text-muted mb-1">Today's Date</h5>
+                    <h5 class="text-muted mb-1">Current Date & Time</h5>
                     <h4 class="mb-0" id="currentDate">Loading...</h4>
                 </div>
             </div>
         </div>
-
-        <!-- Period Selector -->
         <div class="period-selector text-center">
             <button class="period-btn active" onclick="changePeriod('today')" id="btn-today">Today</button>
             <button class="period-btn" onclick="changePeriod('week')" id="btn-week">This Week</button>
             <button class="period-btn" onclick="changePeriod('month')" id="btn-month">This Month</button>
             <button class="period-btn" onclick="changePeriod('year')" id="btn-year">This Year</button>
         </div>
-
-        <!-- Key Stats Row -->
         <div class="row mb-4">
             <div class="col-md-3 col-sm-6 mb-3">
                 <div class="stat-card">
@@ -278,7 +245,7 @@
                         <i class="fas fa-car"></i>
                     </div>
                     <div class="stat-value text-primary" id="totalVehicles">0</div>
-                    <div class="stat-label">Total Vehicles</div>
+                    <div class="stat-label">Total Vehicles Washed</div>
                     <div class="comparison-badge badge-up" id="vehiclesChange">
                         <i class="fas fa-arrow-up"></i> 0%
                     </div>
@@ -321,14 +288,11 @@
                 </div>
             </div>
         </div>
-
-        <!-- Charts and Details Row -->
         <div class="row">
-            <!-- Service Statistics -->
             <div class="col-md-4 mb-4">
                 <div class="chart-card">
                     <div class="card-header-custom">
-                        <i class="fas fa-list-check me-2"></i>Service Performance
+                        <i class="fas fa-list-check me-2"></i>Service Performance (Revenue)
                     </div>
                     <div id="serviceStats">
                         <div class="text-center text-muted py-4">
@@ -339,11 +303,9 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Revenue Breakdown -->
             <div class="col-md-4 mb-4">
                 <div class="revenue-card">
-                    <h5 class="mb-3"><i class="fas fa-coins me-2"></i>Revenue Breakdown</h5>
+                    <h5 class="mb-3"><i class="fas fa-coins me-2"></i>Payment Mode Breakdown</h5>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Cash Payments</span>
@@ -364,7 +326,7 @@
                     </div>
                     <div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Card Payments</span>
+                            <span>Card/Other Payments</span>
                             <strong id="cardRevenue">₹0</strong>
                         </div>
                         <div class="progress" style="height: 8px;">
@@ -372,22 +334,19 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="chart-card mt-4">
                     <div class="card-header-custom">
-                        <i class="fas fa-users me-2"></i>Top Performers
+                        <i class="fas fa-users-gear me-2"></i>Employee Performance
                     </div>
                     <div id="topEmployees">
                         <div class="text-center text-muted py-3">Loading...</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Recent Activity -->
             <div class="col-md-4 mb-4">
                 <div class="chart-card">
                     <div class="card-header-custom">
-                        <i class="fas fa-clock me-2"></i>Recent Activity
+                        <i class="fas fa-clock me-2"></i>Recent Billing Activity
                     </div>
                     <div id="recentActivity" style="max-height: 500px; overflow-y: auto;">
                         <div class="text-center text-muted py-4">
@@ -399,13 +358,11 @@
                 </div>
             </div>
         </div>
-
-        <!-- Monthly Comparison -->
         <div class="row">
             <div class="col-12">
                 <div class="chart-card">
                     <div class="card-header-custom">
-                        <i class="fas fa-calendar-alt me-2"></i>Monthly Overview
+                        <i class="fas fa-calendar-alt me-2"></i>Revenue & Vehicle Comparison
                     </div>
                     <div class="row text-center">
                         <div class="col-md-3 mb-3">
@@ -419,12 +376,12 @@
                             <small class="text-muted" id="lastMonthVehicles">0 vehicles</small>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <h6 class="text-muted">This Year</h6>
+                            <h6 class="text-muted">Year-to-Date</h6>
                             <h3 class="text-success" id="thisYearRevenue">₹0</h3>
                             <small class="text-muted" id="thisYearVehicles">0 vehicles</small>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <h6 class="text-muted">All Time</h6>
+                            <h6 class="text-muted">All-Time Total</h6>
                             <h3 class="text-info" id="allTimeRevenue">₹0</h3>
                             <small class="text-muted" id="allTimeVehicles">0 vehicles</small>
                         </div>
@@ -433,12 +390,10 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = 'http://15.206.151.116:8080/api';
         let currentPeriod = 'today';
-
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateDateTime();
@@ -446,9 +401,11 @@
             loadDashboardData();
         });
 
+        // --- Core Functions ---
+
         function updateDateTime() {
             const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             document.getElementById('currentDate').textContent = now.toLocaleDateString('en-IN', options);
         }
 
@@ -461,39 +418,58 @@
 
         async function loadDashboardData() {
             try {
+                // The API endpoint is fixed as requested
                 const response = await fetch(`${API_BASE}/dashboard/stats`);
                 if (!response.ok) throw new Error('Failed to fetch data');
 
                 const data = await response.json();
+
+                // Central function to update all sections
                 updateStats(data);
                 updateServiceStats(data.serviceStats || []);
                 updateRecentActivity(data.recentActivities || []);
+
+                // Simulate data for payment breakdown and employee stats since the API only returns one endpoint.
                 updatePaymentBreakdown(data);
                 updateTopEmployees(data);
                 updateMonthlyComparison(data);
+
             } catch (error) {
                 console.error('Error loading dashboard:', error);
                 showError();
             }
         }
 
+        // --- Update Functions ---
+
         function updateStats(data) {
-            document.getElementById('totalVehicles').textContent = data.totalVehicles || 0;
-            document.getElementById('totalRevenue').textContent = `₹${(data.totalEarnings || 0).toLocaleString('en-IN')}`;
+            const totalVehicles = data.totalVehicles || 0;
+            const totalEarnings = data.totalEarnings || 0;
+
+            document.getElementById('totalVehicles').textContent = totalVehicles.toLocaleString('en-IN');
+            document.getElementById('totalRevenue').textContent = `₹${totalEarnings.toLocaleString('en-IN')}`;
             document.getElementById('totalServices').textContent = data.totalServices || 0;
 
-            const avgBill = data.totalVehicles ? Math.round(data.totalEarnings / data.totalVehicles) : 0;
+            const avgBill = totalVehicles ? Math.round(totalEarnings / totalVehicles) : 0;
             document.getElementById('avgBillValue').textContent = `₹${avgBill.toLocaleString('en-IN')}`;
 
-            // Update comparison badges (simulated data)
-            updateComparisonBadge('vehiclesChange', 12);
-            updateComparisonBadge('revenueChange', 18);
-            updateComparisonBadge('servicesChange', 8);
-            updateComparisonBadge('avgChange', 5);
+            // Update comparison badges (simulated data based on current period)
+            const vehicleChange = currentPeriod === 'today' ? 12 : (currentPeriod === 'week' ? 8 : 4);
+            const revenueChange = currentPeriod === 'today' ? 18 : (currentPeriod === 'week' ? 15 : 7);
+            const servicesChange = currentPeriod === 'today' ? 8 : (currentPeriod === 'week' ? 6 : 3);
+            const avgChange = currentPeriod === 'today' ? 5 : (currentPeriod === 'week' ? 2 : -1);
+
+            updateComparisonBadge('vehiclesChange', vehicleChange);
+            updateComparisonBadge('revenueChange', revenueChange);
+            updateComparisonBadge('servicesChange', servicesChange);
+            updateComparisonBadge('avgChange', avgChange);
         }
 
         function updateComparisonBadge(elementId, change) {
             const element = document.getElementById(elementId);
+            // Ensure the element exists before trying to update it
+            if (!element) return;
+
             const isPositive = change >= 0;
             element.className = `comparison-badge ${isPositive ? 'badge-up' : 'badge-down'}`;
             element.innerHTML = `
@@ -504,10 +480,9 @@
         function updateServiceStats(stats) {
             const container = document.getElementById('serviceStats');
             if (stats.length === 0) {
-                container.innerHTML = '<p class="text-muted text-center">No data available</p>';
+                container.innerHTML = '<p class="text-muted text-center py-3">No service data available for this period.</p>';
                 return;
             }
-
             container.innerHTML = stats.map(stat => `
                 <div class="service-stat-item">
                     <div>
@@ -515,7 +490,7 @@
                         <div><small class="text-muted">${stat.count} times</small></div>
                     </div>
                     <div class="text-end">
-                        <strong class="text-success">₹${stat.revenue}</strong>
+                        <strong class="text-success">₹${(stat.revenue || 0).toLocaleString('en-IN')}</strong>
                     </div>
                 </div>
             `).join('');
@@ -524,44 +499,55 @@
         function updateRecentActivity(activities) {
             const container = document.getElementById('recentActivity');
             if (activities.length === 0) {
-                container.innerHTML = '<p class="text-muted text-center">No recent activities</p>';
+                container.innerHTML = '<p class="text-muted text-center py-3">No recent billing activity found.</p>';
                 return;
             }
-
             container.innerHTML = activities.map(activity => `
                 <div class="activity-item">
                     <div class="d-flex justify-content-between mb-1">
                         <strong>${activity.time}</strong>
                         <span class="badge bg-primary">${activity.type || 'Bill'}</span>
                     </div>
-                    <small class="text-muted">${activity.description}</small>
+                    <small class="text-muted text-truncate d-block">${activity.description}</small>
                 </div>
             `).join('');
         }
 
         function updatePaymentBreakdown(data) {
-            // Simulated payment breakdown
+            // Simulated payment breakdown based on total earnings
             const total = data.totalEarnings || 0;
-            const cash = Math.round(total * 0.45);
-            const upi = Math.round(total * 0.40);
-            const card = total - cash - upi;
+            // Use slightly different percentages to simulate real-world variance
+            const cashRatio = 0.50; // 50%
+            const upiRatio = 0.35;  // 35%
+            const cardRatio = 0.15; // 15% (Card/Other)
+
+            const cash = Math.round(total * cashRatio);
+            const upi = Math.round(total * upiRatio);
+            const card = total - cash - upi; // Ensure card/other is the remaining amount
 
             document.getElementById('cashRevenue').textContent = `₹${cash.toLocaleString('en-IN')}`;
             document.getElementById('upiRevenue').textContent = `₹${upi.toLocaleString('en-IN')}`;
             document.getElementById('cardRevenue').textContent = `₹${card.toLocaleString('en-IN')}`;
 
-            document.getElementById('cashProgress').style.width = '45%';
-            document.getElementById('upiProgress').style.width = '40%';
-            document.getElementById('cardProgress').style.width = '15%';
+            // Update progress bars
+            document.getElementById('cashProgress').style.width = `${(cashRatio * 100).toFixed(0)}%`;
+            document.getElementById('upiProgress').style.width = `${(upiRatio * 100).toFixed(0)}%`;
+            document.getElementById('cardProgress').style.width = `${(cardRatio * 100).toFixed(0)}%`; // Use remaining percentage
         }
 
         function updateTopEmployees(data) {
             const container = document.getElementById('topEmployees');
+            // Simulated Employee Data for Top 3 Performers (by number of services)
             const employees = [
                 { name: 'Rajesh Kumar', count: 45, amount: 12500 },
                 { name: 'Amit Patil', count: 38, amount: 10200 },
                 { name: 'Suresh Desai', count: 32, amount: 8900 }
             ];
+
+            if (employees.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-3">No employee data to display.</p>';
+                return;
+            }
 
             container.innerHTML = employees.map((emp, index) => `
                 <div class="d-flex justify-content-between align-items-center mb-3 pb-2 ${index < employees.length - 1 ? 'border-bottom' : ''}">
@@ -575,31 +561,43 @@
         }
 
         function updateMonthlyComparison(data) {
-            // This Month
-            document.getElementById('thisMonthRevenue').textContent = `₹${(data.totalEarnings || 0).toLocaleString('en-IN')}`;
-            document.getElementById('thisMonthVehicles').textContent = `${data.totalVehicles || 0} vehicles`;
+            const currentRevenue = data.totalEarnings || 0;
+            const currentVehicles = data.totalVehicles || 0;
 
-            // Simulated data for other periods
-            const lastMonth = Math.round((data.totalEarnings || 0) * 0.85);
-            const thisYear = Math.round((data.totalEarnings || 0) * 8.5);
-            const allTime = Math.round((data.totalEarnings || 0) * 24);
+            // This Month (Assuming the core stats are for the current month if period is not 'Today/Week')
+            document.getElementById('thisMonthRevenue').textContent = `₹${currentRevenue.toLocaleString('en-IN')}`;
+            document.getElementById('thisMonthVehicles').textContent = `${currentVehicles.toLocaleString('en-IN')} vehicles`;
 
-            document.getElementById('lastMonthRevenue').textContent = `₹${lastMonth.toLocaleString('en-IN')}`;
-            document.getElementById('lastMonthVehicles').textContent = `${Math.round((data.totalVehicles || 0) * 0.85)} vehicles`;
+            // Simulated data for other periods, scaled from current data for a sensible display
+            const lastMonthRevenue = Math.round(currentRevenue * 0.85); // 15% lower last month
+            const lastMonthVehicles = Math.round(currentVehicles * 0.88);
 
-            document.getElementById('thisYearRevenue').textContent = `₹${thisYear.toLocaleString('en-IN')}`;
-            document.getElementById('thisYearVehicles').textContent = `${Math.round((data.totalVehicles || 0) * 8.5)} vehicles`;
+            const yearToDateFactor = 8.5; // Roughly 8.5 months of operation this year
+            const thisYearRevenue = Math.round(currentRevenue * yearToDateFactor);
+            const thisYearVehicles = Math.round(currentVehicles * yearToDateFactor);
 
-            document.getElementById('allTimeRevenue').textContent = `₹${allTime.toLocaleString('en-IN')}`;
-            document.getElementById('allTimeVehicles').textContent = `${Math.round((data.totalVehicles || 0) * 24)} vehicles`;
+            const allTimeFactor = 24; // Roughly 2 years of operation
+            const allTimeRevenue = Math.round(currentRevenue * allTimeFactor);
+            const allTimeVehicles = Math.round(currentVehicles * allTimeFactor);
+
+
+            document.getElementById('lastMonthRevenue').textContent = `₹${lastMonthRevenue.toLocaleString('en-IN')}`;
+            document.getElementById('lastMonthVehicles').textContent = `${lastMonthVehicles.toLocaleString('en-IN')} vehicles`;
+            document.getElementById('thisYearRevenue').textContent = `₹${thisYearRevenue.toLocaleString('en-IN')}`;
+            document.getElementById('thisYearVehicles').textContent = `${thisYearVehicles.toLocaleString('en-IN')} vehicles`;
+            document.getElementById('allTimeRevenue').textContent = `₹${allTimeRevenue.toLocaleString('en-IN')}`;
+            document.getElementById('allTimeVehicles').textContent = `${allTimeVehicles.toLocaleString('en-IN')} vehicles`;
         }
 
         function showError() {
-            document.getElementById('totalVehicles').textContent = 'Error';
-            document.getElementById('totalRevenue').textContent = 'Error';
-            document.getElementById('totalServices').textContent = 'Error';
-            document.getElementById('avgBillValue').textContent = 'Error';
+            document.getElementById('totalVehicles').textContent = 'API Error';
+            document.getElementById('totalRevenue').textContent = 'API Error';
+            document.getElementById('totalServices').textContent = 'API Error';
+            document.getElementById('avgBillValue').textContent = 'API Error';
+            document.getElementById('serviceStats').innerHTML = '<p class="text-danger text-center py-3">⚠️ Error: Could not load data from server.</p>';
+            document.getElementById('recentActivity').innerHTML = '<p class="text-danger text-center py-3">⚠️ Error: Could not load data from server.</p>';
         }
+
     </script>
 </body>
 </html>
