@@ -48,6 +48,8 @@ def dashboard_stats():
     return JSONResponse(content=stats, status_code=200)
 
 
+app = FastAPI()
+
 @app.get("/api/bills/report")
 def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
     try:
@@ -55,7 +57,7 @@ def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
         from_date = datetime.strptime(fromDate, "%Y-%m-%d")
         to_date = datetime.strptime(toDate, "%Y-%m-%d")
 
-        # Call the updated function
+        # Get report
         return get_bill_reports(from_date, to_date)
 
     except ValueError as e:

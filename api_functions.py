@@ -4,6 +4,10 @@ import config
 from config import database
 
 
+
+
+
+
 def bill_no_generator():
     conn = config.database()
     cursor = conn.cursor()
@@ -307,33 +311,32 @@ def stats():
         conn.close()
 
 
-from fastapi.responses import JSONResponse
 
 
 def get_bill_reports(from_date, to_date):
     """
-    Call the MySQL stored procedure GetBillsReport and return the results as JSON-serializable list.
-    from_date and to_date should be datetime objects.
+    Fetch bills report between from_date and to_date.
+    Works for all MySQL connectors.
     """
     conn = database()
     cursor = conn.cursor()
     try:
-        # Call the stored procedure
-        cursor.callproc("GetBillsReport", (from_date, to_date))
-
-        # Fetch results from stored procedure
-        rows = []
-        for result in cursor.stored_results():
-            rows = result.fetchall()
+        # Use execute with CALL instead of callproc
+        query = "CALL GetBillsReport(%s, %s)"
+        cursor.execute(query, (from_date, to_date))
+        rows = cursor.fetchall()  # fetch all rows
 
         # Convert to JSON-serializable list
         bills_list = []
         for r in rows:
             bills_list.append({
                 "billNo": r[0],
-                "customerId": r[1],
-                "totalAmount": float(r[2]) if isinstance(r[2], Decimal) else r[2],
-                "billDate": r[3].strftime("%Y-%m-%d %H:%M:%S") if hasattr(r[3], "strftime") else str(r[3])
+                "date": r[1].strftime("%Y-%m-%d") if hasattr(r[1], "strftime") else str(r[1]),
+                "vehicleNumber": r[2],
+                "customerName": r[3],
+                "servicesCount": r[4],
+                "amount": float(r[5]) if isinstance(r[5], Decimal) else r[5],
+                "employeeName": r[6]
             })
 
         return bills_list
@@ -345,4 +348,3 @@ def get_bill_reports(from_date, to_date):
         cursor.close()
         conn.close()
 
-print(get_bill_reports("2025/10/05","2025/10/05"))
