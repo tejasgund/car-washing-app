@@ -3,6 +3,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import api_functions
 from pydantic import BaseModel
+from typing import List
+
 
 
 app = FastAPI()
