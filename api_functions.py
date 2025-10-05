@@ -229,9 +229,72 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
     finally:
         cursor.close()
         conn.close()
+def stats():
+    conn = database()
+    cursor = conn.cursor()
+    try:
+        query = """SELECT total_vehicles_today, total_earnings_today, total_services_today, active_employees 
+                   FROM dashboard_stats"""
+        cursor.execute(query)
+        row = cursor.fetchone()  # get only the first row
+        if row:
+            stats = {
+                "totalVehicles": row[0],
+                "totalEarnings": row[1],
+                "totalServices": row[2],
+                "activeEmployees": row[3]
+            }
 
-#list= [ {"id": 1, "name": "Basic Wash", "price": 200} ]
-#print(create_bill(
-#"test",12346,"dasd","Bike",list,212,"Upi",1)
-#)
+        else:
+            stats = {
+                "totalVehicles": 0,
+                "totalEarnings": 0,
+                "totalServices": 0,
+                "activeEmployees": 0
+            }
+        query = """select service_name,service_count,service_revenue from service_stats"""
+        cursor.execute(query)
+        row = cursor.fetchall()
+        service_stats_1 = []
+        if row:
+            for i in row:
+                service_stats_1.append({
+                    "service": i[0],
+                    "count": i[1],
+                    "revenue": i[2]
+                })
+            stats["serviceStats"] = service_stats_1
+        else:
+            service_stats_1.append({
+                "service": 0,
+                "count": 0,
+                "revenue": 0
+            })
+            stats["serviceStats"] = service_stats_1
+        query="""SELECT bill_no,description,activity_time from recent_activities"""
+        cursor.execute(query)
+        row = cursor.fetchall()
+        recent_activities_1 = []
+        if row:
+            for i in row:
+                recent_activities_1.append({
+                    "time":i[2],
+                    "description":[1],
+                })
+                stats["recentActivities"]=recent_activities_1
+        else:
+            recent_activities_1.append({
+                "time":datetime.now(),
+                "description":"Not Found Any Activity"
+            })
+            stats["recentActivities"] = recent_activities_1
+        return stats
+
+    except Exception as e:
+        conn.rollback()
+        return {"message": f"Database Error {str(e)}"},500
+    finally:
+        cursor.close()
+        conn.close()
+
 

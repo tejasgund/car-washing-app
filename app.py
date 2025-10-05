@@ -72,7 +72,10 @@ def dashboard_stats():
 @app.get("/api/employees")
 def list_employees():
     return api_functions.list_employees()
-
+@app.get("/api/dashboard/stats")
+def dashboard_stats():
+    stats=api_functions.stats()
+    return JSONResponse(content=stats, status_code=200)
 #------------------------------post requests
 
 class ServiceRequest(BaseModel):
