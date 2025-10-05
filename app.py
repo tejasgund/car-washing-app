@@ -17,7 +17,7 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 # Serve index.html
 @app.get("/")
 def home():
-    return FileResponse("frontend/index.html")
+    return FileResponse("frontend/index2.html")
 
 # API endpoint using query parameter
 @app.get("/api/customers")

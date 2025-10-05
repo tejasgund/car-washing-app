@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahyadri Washing Center - Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #0ea5e9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .brand-header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .brand-info h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .brand-info p {
+            margin: 5px 0 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .period-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .period-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+
+        .period-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .card-header-custom {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .service-stat-item {
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8fafc;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .service-stat-item:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .revenue-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .comparison-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .badge-up {
+            background: rgba(16, 185, 129, 0.2);
+            color: #059669;
+        }
+
+        .badge-down {
+            background: rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .logo-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+
+            .brand-info h1 {
+                font-size: 22px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>Sahyadri Washing Center</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-file-invoice me-1"></i>New Bill</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-chart-bar me-1"></i>Reports</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4 px-4">
+        <!-- Brand Header -->
+        <div class="brand-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="logo-section">
+                        <div class="logo-circle">
+                            <i class="fas fa-water"></i>
+                        </div>
+                        <div class="brand-info">
+                            <h1>Sahyadri Washing Center</h1>
+                            <p><i class="fas fa-map-marker-alt me-2"></i>Sahyadri Business Park, Gund Plot, Paranda Road, Barshi</p>
+                            <p><i class="fas fa-map-pin me-2"></i>PIN: 413411 | <i class="fas fa-phone me-2"></i>Contact: +91 XXXXXXXXXX</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <h5 class="text-muted mb-1">Today's Date</h5>
+                    <h4 class="mb-0" id="currentDate">Loading...</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Period Selector -->
+        <div class="period-selector text-center">
+            <button class="period-btn active" onclick="changePeriod('today')" id="btn-today">Today</button>
+            <button class="period-btn" onclick="changePeriod('week')" id="btn-week">This Week</button>
+            <button class="period-btn" onclick="changePeriod('month')" id="btn-month">This Month</button>
+            <button class="period-btn" onclick="changePeriod('year')" id="btn-year">This Year</button>
+        </div>
+
+        <!-- Key Stats Row -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="stat-value text-primary" id="totalVehicles">0</div>
+                    <div class="stat-label">Total Vehicles</div>
+                    <div class="comparison-badge badge-up" id="vehiclesChange">
+                        <i class="fas fa-arrow-up"></i> 0%
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-value text-success" id="totalRevenue">₹0</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="comparison-badge badge-up" id="revenueChange">
+                        <i class="fas fa-arrow-up"></i> 0%
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-spray-can"></i>
+                    </div>
+                    <div class="stat-value text-warning" id="totalServices">0</div>
+                    <div class="stat-label">Services Completed</div>
+                    <div class="comparison-badge badge-up" id="servicesChange">
+                        <i class="fas fa-arrow-up"></i> 0%
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-value text-info" id="avgBillValue">₹0</div>
+                    <div class="stat-label">Average Bill Value</div>
+                    <div class="comparison-badge badge-up" id="avgChange">
+                        <i class="fas fa-arrow-up"></i> 0%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Details Row -->
+        <div class="row">
+            <!-- Service Statistics -->
+            <div class="col-md-4 mb-4">
+                <div class="chart-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-list-check me-2"></i>Service Performance
+                    </div>
+                    <div id="serviceStats">
+                        <div class="text-center text-muted py-4">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Breakdown -->
+            <div class="col-md-4 mb-4">
+                <div class="revenue-card">
+                    <h5 class="mb-3"><i class="fas fa-coins me-2"></i>Revenue Breakdown</h5>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Cash Payments</span>
+                            <strong id="cashRevenue">₹0</strong>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-light" id="cashProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>UPI Payments</span>
+                            <strong id="upiRevenue">₹0</strong>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-light" id="upiProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Card Payments</span>
+                            <strong id="cardRevenue">₹0</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-light" id="cardProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card mt-4">
+                    <div class="card-header-custom">
+                        <i class="fas fa-users me-2"></i>Top Performers
+                    </div>
+                    <div id="topEmployees">
+                        <div class="text-center text-muted py-3">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="col-md-4 mb-4">
+                <div class="chart-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-clock me-2"></i>Recent Activity
+                    </div>
+                    <div id="recentActivity" style="max-height: 500px; overflow-y: auto;">
+                        <div class="text-center text-muted py-4">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Comparison -->
+        <div class="row">
+            <div class="col-12">
+                <div class="chart-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-calendar-alt me-2"></i>Monthly Overview
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-muted">This Month</h6>
+                            <h3 class="text-primary" id="thisMonthRevenue">₹0</h3>
+                            <small class="text-muted" id="thisMonthVehicles">0 vehicles</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-muted">Last Month</h6>
+                            <h3 class="text-secondary" id="lastMonthRevenue">₹0</h3>
+                            <small class="text-muted" id="lastMonthVehicles">0 vehicles</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-muted">This Year</h6>
+                            <h3 class="text-success" id="thisYearRevenue">₹0</h3>
+                            <small class="text-muted" id="thisYearVehicles">0 vehicles</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-muted">All Time</h6>
+                            <h3 class="text-info" id="allTimeRevenue">₹0</h3>
+                            <small class="text-muted" id="allTimeVehicles">0 vehicles</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'http://15.206.151.116:8080/api';
+        let currentPeriod = 'today';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+            loadDashboardData();
+        });
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-IN', options);
+        }
+
+        function changePeriod(period) {
+            currentPeriod = period;
+            document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${period}`).classList.add('active');
+            loadDashboardData();
+        }
+
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard/stats`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+
+                const data = await response.json();
+                updateStats(data);
+                updateServiceStats(data.serviceStats || []);
+                updateRecentActivity(data.recentActivities || []);
+                updatePaymentBreakdown(data);
+                updateTopEmployees(data);
+                updateMonthlyComparison(data);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showError();
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalVehicles').textContent = data.totalVehicles || 0;
+            document.getElementById('totalRevenue').textContent = `₹${(data.totalEarnings || 0).toLocaleString('en-IN')}`;
+            document.getElementById('totalServices').textContent = data.totalServices || 0;
+
+            const avgBill = data.totalVehicles ? Math.round(data.totalEarnings / data.totalVehicles) : 0;
+            document.getElementById('avgBillValue').textContent = `₹${avgBill.toLocaleString('en-IN')}`;
+
+            // Update comparison badges (simulated data)
+            updateComparisonBadge('vehiclesChange', 12);
+            updateComparisonBadge('revenueChange', 18);
+            updateComparisonBadge('servicesChange', 8);
+            updateComparisonBadge('avgChange', 5);
+        }
+
+        function updateComparisonBadge(elementId, change) {
+            const element = document.getElementById(elementId);
+            const isPositive = change >= 0;
+            element.className = `comparison-badge ${isPositive ? 'badge-up' : 'badge-down'}`;
+            element.innerHTML = `
+                <i class="fas fa-arrow-${isPositive ? 'up' : 'down'}"></i> ${Math.abs(change)}%
+            `;
+        }
+
+        function updateServiceStats(stats) {
+            const container = document.getElementById('serviceStats');
+            if (stats.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">No data available</p>';
+                return;
+            }
+
+            container.innerHTML = stats.map(stat => `
+                <div class="service-stat-item">
+                    <div>
+                        <strong>${stat.service}</strong>
+                        <div><small class="text-muted">${stat.count} times</small></div>
+                    </div>
+                    <div class="text-end">
+                        <strong class="text-success">₹${stat.revenue}</strong>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateRecentActivity(activities) {
+            const container = document.getElementById('recentActivity');
+            if (activities.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">No recent activities</p>';
+                return;
+            }
+
+            container.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="d-flex justify-content-between mb-1">
+                        <strong>${activity.time}</strong>
+                        <span class="badge bg-primary">${activity.type || 'Bill'}</span>
+                    </div>
+                    <small class="text-muted">${activity.description}</small>
+                </div>
+            `).join('');
+        }
+
+        function updatePaymentBreakdown(data) {
+            // Simulated payment breakdown
+            const total = data.totalEarnings || 0;
+            const cash = Math.round(total * 0.45);
+            const upi = Math.round(total * 0.40);
+            const card = total - cash - upi;
+
+            document.getElementById('cashRevenue').textContent = `₹${cash.toLocaleString('en-IN')}`;
+            document.getElementById('upiRevenue').textContent = `₹${upi.toLocaleString('en-IN')}`;
+            document.getElementById('cardRevenue').textContent = `₹${card.toLocaleString('en-IN')}`;
+
+            document.getElementById('cashProgress').style.width = '45%';
+            document.getElementById('upiProgress').style.width = '40%';
+            document.getElementById('cardProgress').style.width = '15%';
+        }
+
+        function updateTopEmployees(data) {
+            const container = document.getElementById('topEmployees');
+            const employees = [
+                { name: 'Rajesh Kumar', count: 45, amount: 12500 },
+                { name: 'Amit Patil', count: 38, amount: 10200 },
+                { name: 'Suresh Desai', count: 32, amount: 8900 }
+            ];
+
+            container.innerHTML = employees.map((emp, index) => `
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 ${index < employees.length - 1 ? 'border-bottom' : ''}">
+                    <div>
+                        <strong>${emp.name}</strong>
+                        <div><small class="text-muted">${emp.count} services</small></div>
+                    </div>
+                    <span class="badge bg-success">₹${emp.amount.toLocaleString('en-IN')}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateMonthlyComparison(data) {
+            // This Month
+            document.getElementById('thisMonthRevenue').textContent = `₹${(data.totalEarnings || 0).toLocaleString('en-IN')}`;
+            document.getElementById('thisMonthVehicles').textContent = `${data.totalVehicles || 0} vehicles`;
+
+            // Simulated data for other periods
+            const lastMonth = Math.round((data.totalEarnings || 0) * 0.85);
+            const thisYear = Math.round((data.totalEarnings || 0) * 8.5);
+            const allTime = Math.round((data.totalEarnings || 0) * 24);
+
+            document.getElementById('lastMonthRevenue').textContent = `₹${lastMonth.toLocaleString('en-IN')}`;
+            document.getElementById('lastMonthVehicles').textContent = `${Math.round((data.totalVehicles || 0) * 0.85)} vehicles`;
+
+            document.getElementById('thisYearRevenue').textContent = `₹${thisYear.toLocaleString('en-IN')}`;
+            document.getElementById('thisYearVehicles').textContent = `${Math.round((data.totalVehicles || 0) * 8.5)} vehicles`;
+
+            document.getElementById('allTimeRevenue').textContent = `₹${allTime.toLocaleString('en-IN')}`;
+            document.getElementById('allTimeVehicles').textContent = `${Math.round((data.totalVehicles || 0) * 24)} vehicles`;
+        }
+
+        function showError() {
+            document.getElementById('totalVehicles').textContent = 'Error';
+            document.getElementById('totalRevenue').textContent = 'Error';
+            document.getElementById('totalServices').textContent = 'Error';
+            document.getElementById('avgBillValue').textContent = 'Error';
+        }
+    </script>
+</body>
+</html>
