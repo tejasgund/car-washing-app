@@ -46,6 +46,10 @@ def list_employees():
 def dashboard_stats():
     stats=api_functions.stats()
     return JSONResponse(content=stats, status_code=200)
+
+@app.get("/api/bills/report")
+def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
+    return {"fromDate": fromDate, "toDate": toDate}
 #------------------------------post requests
 
 class ServiceRequest(BaseModel):

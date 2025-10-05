@@ -307,5 +307,3 @@ def stats():
         conn.close()
 
 
-
-print(stats())
