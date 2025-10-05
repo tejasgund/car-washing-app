@@ -1,10 +1,10 @@
 from twilio.rest import Client
+import os
 
 def send_message(number,message):
-    account_sid = 'AC2cf2999e6243491028eef6eede3d6fc1'
-    auth_token = '1ad2bafc53427f06fb1325eb794cf5dc'
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
     client = Client(account_sid, auth_token)
-
 
     try:
         message = client.messages.create(

@@ -1,5 +1,6 @@
 from config import database
 from messenger import  send_message
+
 def generate_bill_message(bill_no):
     conn = database()
     cursor = conn.cursor()  # returns tuples
@@ -63,8 +64,6 @@ def generate_bill_message(bill_no):
 
 # --- Example usage ---
 message_text, customer_number = generate_bill_message(1004)
-print("Number:", customer_number)
-print("Message:\n", message_text)
 if customer_number != None and message_text != None:
     send_message(customer_number, message_text)
 
