@@ -279,9 +279,9 @@ def stats():
             for i in row:
                 recent_activities_1.append({
                     "time":i[2],
-                    "description":[1],
+                    "description":i[1]
                 })
-                stats["recentActivities"]=recent_activities_1
+            stats["recentActivities"]=recent_activities_1
         else:
             recent_activities_1.append({
                 "time":datetime.now(),
@@ -298,3 +298,4 @@ def stats():
         conn.close()
 
 
+print(stats())
