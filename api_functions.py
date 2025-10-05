@@ -37,11 +37,8 @@ def vehicle_number(v_number):
     cursor = conn.cursor()
     try:
         cursor.execute("""
-            SELECT c.name, c.mobile, v.vehicle_number, v.vehicle_type
-            FROM customers c
-            INNER JOIN vehicles v
-            ON c.id = v.customer_id
-            WHERE v.vehicle_number = %s;
+            SELECT name,mobile,vehicle_number,vehicle_type from c_data
+            WHERE vehicle_number = %s;
         """, (v_number,))
 
         data = cursor.fetchone()

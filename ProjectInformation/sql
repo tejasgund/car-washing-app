@@ -248,3 +248,9 @@ BEGIN
 END$$
 DELIMITER ;
 
+
+
+
+
+#create this views
+create view c_data as select e.name,e.mobile,b.vehicle_number,b.vehicle_type from employees e inner join bills b;
