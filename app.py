@@ -58,7 +58,7 @@ def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
         to_date = datetime.strptime(toDate, "%Y-%m-%d")
 
         # Get report
-        return get_bill_reports(from_date, to_date)
+        return api_functions.get_bill_reports(from_date, to_date)
 
     except ValueError as e:
         return {"error": f"Invalid date format: {str(e)}"}
