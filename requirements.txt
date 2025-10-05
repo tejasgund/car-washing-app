@@ -4,4 +4,4 @@ gunicorn
 sqlalchemy
 mysql-connector-python
 pydantic
-
+twilio
