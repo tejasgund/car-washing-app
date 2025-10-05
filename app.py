@@ -81,7 +81,15 @@ class emp(BaseModel):
     mobile : int
     designation : str
     status : str
-
+class bills(BaseModel):
+    customerName: str
+    mobileNumber: str
+    vehicleNumber: str
+    vehicleType: str
+    services: List[Service]
+    totalAmount: float
+    paymentMode: str
+    employeeId: int
 
 @app.post("/api/services")
 def add_services(service: ServiceRequest):
@@ -90,3 +98,8 @@ def add_services(service: ServiceRequest):
 @app.post("/api/employees")
 def add_employees(service: emp):
     api_functions.add_employee(service.name, service.mobile, service.designation,service.status)
+
+@app.post("/api/bills")
+def add_bills(bill:bills):
+    api_functions.create_bill(bill.customerName,bill.mobileNumber,bill.vehicleNumber,bill.vehicleType,bill.services,bill.totalAmount,bill.paymentMode,bill.employeeId)
+
