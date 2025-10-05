@@ -78,11 +78,16 @@ def list_employees():
 class ServiceRequest(BaseModel):
     name: str
     price: float
+
 class emp(BaseModel):
     name: str
     mobile : int
     designation : str
     status : str
+class Service(BaseModel):
+    id: int
+    name: str
+    price: float
 class bills(BaseModel):
     customerName: str
     mobileNumber: str
