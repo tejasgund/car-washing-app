@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 import api_functions
 from pydantic import BaseModel
 from typing import List
+from datetime import datetime
+
 
 
 
@@ -48,7 +50,7 @@ def dashboard_stats():
     return JSONResponse(content=stats, status_code=200)
 
 
-app = FastAPI()
+
 
 @app.get("/api/bills/report")
 def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
