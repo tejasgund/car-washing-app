@@ -61,10 +61,7 @@ def generate_bill_message(bill_no):
     return msg, bill_info[2]  # mobile number
 
 
-# --- Example usage ---
 message_text, customer_number = generate_bill_message(1004)
-print("Number:", customer_number)
-print("Message:\n", message_text)
 if customer_number != None and message_text != None:
     send_message(customer_number, message_text)
 

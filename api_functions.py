@@ -2,8 +2,7 @@ import re
 from datetime import datetime
 import config
 from config import database
-
-
+from create_message import generate_bill_message
 
 
 
@@ -224,9 +223,9 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
             )
 
         conn.commit()  # Commit once after inserting all services
-
+        generate_bill_message(bill_no)
         return {"billNo":bill_no,"message":"Bill saved successfully"}
-
+#
     except Exception as e:
         conn.rollback()
         raise e
