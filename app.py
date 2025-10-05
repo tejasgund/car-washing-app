@@ -47,12 +47,17 @@ def dashboard_stats():
     stats=api_functions.stats()
     return JSONResponse(content=stats, status_code=200)
 
+
 @app.get("/api/bills/report")
 def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
     try:
+        # Convert query parameters to datetime
         from_date = datetime.strptime(fromDate, "%Y-%m-%d")
         to_date = datetime.strptime(toDate, "%Y-%m-%d")
+
+        # Call the updated function
         return get_bill_reports(from_date, to_date)
+
     except ValueError as e:
         return {"error": f"Invalid date format: {str(e)}"}
 #------------------------------post requests

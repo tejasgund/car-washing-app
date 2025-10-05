@@ -311,31 +311,38 @@ from fastapi.responses import JSONResponse
 
 
 def get_bill_reports(from_date, to_date):
+    """
+    Call the MySQL stored procedure GetBillsReport and return the results as JSON-serializable list.
+    from_date and to_date should be datetime objects.
+    """
     conn = database()
     cursor = conn.cursor()
     try:
-        # Call the stored procedure safely
+        # Call the stored procedure
         cursor.callproc("GetBillsReport", (from_date, to_date))
-        rows = cursor.fetchall()
 
-        # Convert result to list of dicts
+        # Fetch results from stored procedure
+        rows = []
+        for result in cursor.stored_results():
+            rows = result.fetchall()
+
+        # Convert to JSON-serializable list
         bills_list = []
         for r in rows:
             bills_list.append({
                 "billNo": r[0],
                 "customerId": r[1],
-                "totalAmount": float(r[2]),  # if DECIMAL
-                "billDate": r[3].strftime("%Y-%m-%d %H:%M:%S") if hasattr(r[3], "strftime") else r[3]
+                "totalAmount": float(r[2]) if isinstance(r[2], Decimal) else r[2],
+                "billDate": r[3].strftime("%Y-%m-%d %H:%M:%S") if hasattr(r[3], "strftime") else str(r[3])
             })
 
         return bills_list
 
     except Exception as e:
-        return JSONResponse(content={"message": str(e)}, status_code=500)
+        return {"message": str(e)}
 
     finally:
         cursor.close()
         conn.close()
-
 
 print(get_bill_reports("2025/10/05","2025/10/05"))
