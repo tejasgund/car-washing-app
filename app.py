@@ -49,7 +49,12 @@ def dashboard_stats():
 
 @app.get("/api/bills/report")
 def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
-    return {"fromDate": fromDate, "toDate": toDate}
+    try:
+        from_date = datetime.strptime(fromDate, "%Y-%m-%d")
+        to_date = datetime.strptime(toDate, "%Y-%m-%d")
+        return get_bill_reports(from_date, to_date)
+    except ValueError as e:
+        return {"error": f"Invalid date format: {str(e)}"}
 #------------------------------post requests
 
 class ServiceRequest(BaseModel):

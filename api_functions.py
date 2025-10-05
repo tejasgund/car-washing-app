@@ -307,3 +307,35 @@ def stats():
         conn.close()
 
 
+from fastapi.responses import JSONResponse
+
+
+def get_bill_reports(from_date, to_date):
+    conn = database()
+    cursor = conn.cursor()
+    try:
+        # Call the stored procedure safely
+        cursor.callproc("GetBillsReport", (from_date, to_date))
+        rows = cursor.fetchall()
+
+        # Convert result to list of dicts
+        bills_list = []
+        for r in rows:
+            bills_list.append({
+                "billNo": r[0],
+                "customerId": r[1],
+                "totalAmount": float(r[2]),  # if DECIMAL
+                "billDate": r[3].strftime("%Y-%m-%d %H:%M:%S") if hasattr(r[3], "strftime") else r[3]
+            })
+
+        return bills_list
+
+    except Exception as e:
+        return JSONResponse(content={"message": str(e)}, status_code=500)
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+print(get_bill_reports("2025/10/05","2025/10/05"))
