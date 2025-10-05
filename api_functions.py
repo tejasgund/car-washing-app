@@ -214,13 +214,12 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
         bill_id = cursor.lastrowid
 
         for service in services:
-            print(service)
             cursor.execute(
                 """
                 INSERT INTO bill_services (bill_id, service_id, service_name, service_price)
                 VALUES (%s, %s, %s, %s)
                 """,
-                (bill_id, service["id"], service["name"], service["price"])
+                (bill_id, service.id, service.name, service.price)  # <-- use dot notation
             )
 
         conn.commit()  # Commit once after inserting all services
