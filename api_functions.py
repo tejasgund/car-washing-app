@@ -1,5 +1,25 @@
 import re
+from datetime import datetime
+import config
 from config import database
+
+
+def bill_no_generator():
+    conn = config.database()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT MAX(bill_no) FROM bills")
+        result = cursor.fetchone()[0]  # fetchone() returns a tuple like (max_value,)
+
+        if result is None:
+            return 1001
+        else:
+            return result + 1
+    except Exception as e:
+        return {'error': str(e)}
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def is_valid_bike_number(number):
@@ -130,4 +150,92 @@ def list_employees():
         return response
 
 
+from datetime import datetime
+
+
+def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services, totalAmount, paymentMode, employeeId):
+    bill_no = bill_no_generator()
+    conn = database()
+    cursor = conn.cursor()
+    try:
+        # Check if customer already exists
+        cursor.execute("""
+            SELECT id, name, mobile, vehicle_number, vehicle_type
+            FROM customers
+            WHERE vehicle_number = %s
+        """, (vehicleNumber,))
+        existing_customer = cursor.fetchone()
+
+        if existing_customer:
+            customerId, existing_name, existing_mobile, existing_vehicle, existing_type = existing_customer
+
+            # Only update if any data has changed
+            if (customerName != existing_name or
+                    mobileNumber != existing_mobile or
+                    vehicleNumber != existing_vehicle or
+                    vehicleType != existing_type):
+                cursor.execute("""
+                    UPDATE customers
+                    SET name=%s, mobile=%s, vehicle_number=%s, vehicle_type=%s
+                    WHERE id=%s
+                """, (customerName, mobileNumber, vehicleNumber, vehicleType, customerId))
+        else:
+            # Insert new customer
+            cursor.execute("""
+                INSERT INTO customers (name, mobile, vehicle_number, vehicle_type)
+                VALUES (%s, %s, %s, %s)
+            """, (customerName, mobileNumber, vehicleNumber, vehicleType))
+            conn.commit()
+            customerId = cursor.lastrowid
+
+        # Insert the bill
+        cursor.execute("""
+            INSERT INTO bills (
+                bill_no,
+                customer_id,
+                vehicle_number,
+                vehicle_type,
+                total_amount,
+                payment_mode,
+                employee_id,
+                bill_date
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            int(bill_no),
+            int(customerId),
+            vehicleNumber,
+            vehicleType,
+            totalAmount,
+            paymentMode,
+            employeeId,
+            datetime.now()
+        ))
+        conn.commit()
+        bill_id = cursor.lastrowid
+
+        for service in services:
+            print(service)
+            cursor.execute(
+                """
+                INSERT INTO bill_services (bill_id, service_id, service_name, service_price)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (bill_id, service["id"], service["name"], service["price"])
+            )
+
+        conn.commit()  # Commit once after inserting all services
+
+        return {"billNo":bill_no,"message":"Bill saved successfully"}
+
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        cursor.close()
+        conn.close()
+
+#list= [ {"id": 1, "name": "Basic Wash", "price": 200} ]
+#print(create_bill(
+#"test",12346,"dasd","Bike",list,212,"Upi",1)
+#)
 
