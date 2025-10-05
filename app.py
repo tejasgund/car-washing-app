@@ -109,8 +109,7 @@ def add_employees(service: emp):
 @app.post("/api/bills")
 def add_bills(bill:bills):
     try:
-        return bill.services[0]
+        return api_functions.create_bill(str(bill.customerName),int(bill.mobileNumber),str(bill.vehicleNumber),str(bill.vehicleType),
+                                  bill.services,int(bill.totalAmount),str(bill.paymentMode),int(bill.employeeId))
     except Exception as e:
         return JSONResponse(content=str(e), status_code=500)
-
-# api_functions.create_bill(bill.customerName,bill.mobileNumber,bill.vehicleNumber,bill.vehicleType,bill.services,bill.totalAmount,bill.paymentMode,bill.employeeId)
