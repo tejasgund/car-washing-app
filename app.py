@@ -109,7 +109,7 @@ def add_employees(service: emp):
 @app.post("/api/bills")
 def add_bills(bill:bills):
     try:
-        return bills.services[0]
+        return bill.services[0]
     except Exception as e:
         return JSONResponse(content=str(e), status_code=500)
 
