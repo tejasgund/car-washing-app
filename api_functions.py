@@ -229,73 +229,83 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
     finally:
         cursor.close()
         conn.close()
+from fastapi.responses import JSONResponse
+from datetime import datetime
+from decimal import Decimal
+
 def stats():
     conn = database()
     cursor = conn.cursor()
     try:
-        query = """SELECT total_vehicles_today, total_earnings_today, total_services_today, active_employees 
-                   FROM dashboard_stats"""
-        cursor.execute(query)
-        row = cursor.fetchone()  # get only the first row
+        # ---------------- Dashboard main stats ----------------
+        cursor.execute("""
+            SELECT total_vehicles_today, total_earnings_today, total_services_today, active_employees 
+            FROM dashboard_stats
+        """)
+        row = cursor.fetchone()
         if row:
             stats = {
                 "totalVehicles": row[0],
-                "totalEarnings": row[1],
+                "totalEarnings": float(row[1]) if isinstance(row[1], Decimal) else row[1],
                 "totalServices": row[2],
                 "activeEmployees": row[3]
             }
-
         else:
             stats = {
                 "totalVehicles": 0,
-                "totalEarnings": 0,
+                "totalEarnings": 0.0,
                 "totalServices": 0,
                 "activeEmployees": 0
             }
-        query = """select service_name,service_count,service_revenue from service_stats"""
-        cursor.execute(query)
-        row = cursor.fetchall()
-        service_stats_1 = []
-        if row:
-            for i in row:
-                service_stats_1.append({
+
+        # ---------------- Service stats ----------------
+        cursor.execute("SELECT service_name, service_count, service_revenue FROM service_stats")
+        rows = cursor.fetchall()
+        service_stats = []
+        if rows:
+            for i in rows:
+                service_stats.append({
                     "service": i[0],
                     "count": i[1],
-                    "revenue": i[2]
+                    "revenue": float(i[2]) if isinstance(i[2], Decimal) else i[2]
                 })
-            stats["serviceStats"] = service_stats_1
         else:
-            service_stats_1.append({
-                "service": 0,
+            service_stats.append({
+                "service": "N/A",
                 "count": 0,
-                "revenue": 0
+                "revenue": 0.0
             })
-            stats["serviceStats"] = service_stats_1
-        query="""SELECT bill_no,description,activity_time from recent_activities"""
-        cursor.execute(query)
-        row = cursor.fetchall()
-        recent_activities_1 = []
-        if row:
-            for i in row:
-                recent_activities_1.append({
-                    "time":i[2],
-                    "description":i[1]
+        stats["serviceStats"] = service_stats
+
+        # ---------------- Recent activities ----------------
+        cursor.execute("SELECT bill_no, description, activity_time FROM recent_activities")
+        rows = cursor.fetchall()
+        recent_activities = []
+        if rows:
+            for i in rows:
+                activity_time = i[2]
+                if isinstance(activity_time, datetime):
+                    activity_time = activity_time.strftime("%Y-%m-%d %H:%M:%S")
+                recent_activities.append({
+                    "time": activity_time,
+                    "description": i[1]
                 })
-            stats["recentActivities"]=recent_activities_1
         else:
-            recent_activities_1.append({
-                "time":datetime.now(),
-                "description":"Not Found Any Activity"
+            recent_activities.append({
+                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "description": "Not Found Any Activity"
             })
-            stats["recentActivities"] = recent_activities_1
+        stats["recentActivities"] = recent_activities
+
         return stats
 
     except Exception as e:
-        conn.rollback()
-        return {"message": f"Database Error {str(e)}"},500
+        return JSONResponse(content={"message": f"Database Error {str(e)}"}, status_code=500)
+
     finally:
         cursor.close()
         conn.close()
+
 
 
 print(stats())
