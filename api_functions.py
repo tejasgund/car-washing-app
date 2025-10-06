@@ -224,7 +224,6 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
             )
 
         conn.commit()  # Commit once after inserting all services
-        generate_bill_message(int(bill_no))
         return {"billNo":bill_no,"message":"Bill saved successfully"}
 #
     except Exception as e:
@@ -233,6 +232,7 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
     finally:
         cursor.close()
         conn.close()
+        generate_bill_message(int(bill_no))
 
 
 def stats():
