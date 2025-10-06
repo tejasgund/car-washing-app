@@ -1,5 +1,6 @@
 from config import database
 from messenger import  send_message
+from messenger import send_message
 
 def generate_bill_message(bill_no):
     conn = database()
@@ -58,15 +59,11 @@ def generate_bill_message(bill_no):
 
     cursor.close()
     conn.close()
-
+    send_message(bill_info[2], msg)
     return msg, bill_info[2]  # mobile number
 
 
 # --- Example usage ---
-message_text, customer_number = generate_bill_message(1004)
-if customer_number != None and message_text != None:
-    #send_message(customer_number, message_text)
-    send_message(8177809890, message_text)
 
 
 

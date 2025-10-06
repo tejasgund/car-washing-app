@@ -5,6 +5,7 @@ from config import database
 from create_message import generate_bill_message
 from fastapi.responses import JSONResponse
 from decimal import Decimal
+from datetime import datetime
 
 
 
@@ -151,7 +152,6 @@ def list_employees():
         return response
 
 
-from datetime import datetime
 
 
 def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services, totalAmount, paymentMode, employeeId):
@@ -224,6 +224,7 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
             )
 
         conn.commit()  # Commit once after inserting all services
+        generate_bill_message(bill_no)
         return {"billNo":bill_no,"message":"Bill saved successfully"}
 #
     except Exception as e:
