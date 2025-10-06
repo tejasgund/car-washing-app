@@ -4,7 +4,7 @@ import config
 from config import database
 from create_message import generate_bill_message
 
-
+generate_bill_message(1004)
 
 
 def bill_no_generator():

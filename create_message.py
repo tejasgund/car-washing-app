@@ -63,7 +63,7 @@ def generate_bill_message(bill_no):
 
 
 # --- Example usage ---
-#message_text, customer_number = generate_bill_message(1004)
+message_text, customer_number = generate_bill_message(1004)
 if customer_number != None and message_text != None:
     #send_message(customer_number, message_text)
     send_message(8177809890, message_text)
