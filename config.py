@@ -1,10 +1,10 @@
 import pymysql
 def database():
     return pymysql.connect(
-    host="15.206.151.116",
+    host="mysql_prod",
     user="admin",
     passwd="admin",
-    database="wash_center",
+    database="car_washing_app_prod",
     port=3306
 )
 
