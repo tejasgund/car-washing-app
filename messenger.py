@@ -14,6 +14,6 @@ def send_message(number,message):
         )
 
     except Exception as e:
-        print(f"Failed to send message : {e}")
+        return {f"Failed to send message : {e}"}
 
 
