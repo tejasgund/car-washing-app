@@ -3,8 +3,9 @@ from datetime import datetime
 import config
 from config import database
 from create_message import generate_bill_message
+from fastapi.responses import JSONResponse
+from decimal import Decimal
 
-generate_bill_message(1004)
 
 
 def bill_no_generator():
@@ -223,7 +224,7 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
             )
 
         conn.commit()  # Commit once after inserting all services
-        generate_bill_message(bill_no)
+        generate_bill_message(int(bill_no))
         return {"billNo":bill_no,"message":"Bill saved successfully"}
 #
     except Exception as e:
@@ -232,9 +233,7 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
     finally:
         cursor.close()
         conn.close()
-from fastapi.responses import JSONResponse
-from datetime import datetime
-from decimal import Decimal
+
 
 def stats():
     conn = database()
