@@ -232,7 +232,6 @@ def create_bill(customerName, mobileNumber, vehicleNumber, vehicleType, services
     finally:
         cursor.close()
         conn.close()
-        generate_bill_message(int(1005))
 
 
 def stats():
