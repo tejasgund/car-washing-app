@@ -42,7 +42,7 @@ def vehicle_number(v_number):
     cursor = conn.cursor()
     try:
         cursor.execute("""
-            SELECT name,mobile,vehicle_number,vehicle_type from c_data
+            SELECT name,mobile,vehicle_number,vehicle_type from customers
             WHERE vehicle_number = %s;
         """, (v_number,))
 
@@ -63,7 +63,7 @@ def vehicle_number(v_number):
     finally:
         cursor.close()
         conn.close()
-
+print(vehicle_number("MH13cl3290"))
 def add_service(name,price):
     conn = database()
     cursor = conn.cursor()
