@@ -4,6 +4,6 @@ def database():
     host="mysql_prod",
     user="admin",
     passwd="admin",
-    database="car_washing_app_prod",
+    database="car_washing_app_qa",
     port=3306
 )
