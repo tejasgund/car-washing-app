@@ -51,7 +51,7 @@ def vehicle_number(v_number):
             response = {
                 "name": data[0],
                 "mobile": data[1],
-                "vehicleNumber": data[2],
+                "vehicleNumber": data[2].upper(),
                 "vehicleType": data[3]
             }
             return response,200 #success
@@ -63,7 +63,7 @@ def vehicle_number(v_number):
     finally:
         cursor.close()
         conn.close()
-print(vehicle_number("MH13cl3290"))
+
 def add_service(name,price):
     conn = database()
     cursor = conn.cursor()
@@ -88,6 +88,7 @@ def add_service(name,price):
     finally:
         cursor.close()
         conn.close()
+print(vehicle_number("MH13cl3290"))
 def list_service():
     conn = database()
     cursor = conn.cursor()
