@@ -41,3 +41,4 @@ def vehicle_number(v_number):
     finally:
         cursor.close()
         conn.close()
+
