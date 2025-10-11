@@ -175,3 +175,5 @@ def add_bills(bill: Bill):
     except Exception as e:
         log.exception(f"❌ Failed to create bill: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
