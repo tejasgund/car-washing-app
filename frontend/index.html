@@ -572,7 +572,7 @@
 
     <script>
         // --- CONFIGURATION ---
-        const API_BASE_URL = 'http://15.206.90.104/api';
+        const API_BASE_URL = 'http://15.206.151.116:8080/api';
 
         // --- FRONTEND LOGIC ---
         let localServicesCache = [];
@@ -738,58 +738,51 @@
             }
         }
 
-// Vehicle Search (GET /api/customers?vehicleNumber=...)
-async function searchVehicle() {
-    const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
-    const button = document.getElementById('searchVehicleBtn');
+        // Vehicle Search (GET /api/customers?vehicleNumber=...)
+        async function searchVehicle() {
+            const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
+            const button = document.getElementById('searchVehicleBtn');
 
-    if (!vehicleNum) {
-        alert('Please enter vehicle number');
-        return;
-    }
-
-    document.getElementById('vehicleNumberDisplay').value = vehicleNum;
-
-    // Store original button text
-    button.setAttribute('data-original-text', button.innerHTML);
-    setLoading(button, true);
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/customers?vehicleNumber=${vehicleNum}`);
-
-        if (response.ok) {
-            const customer = await response.json();
-
-            // Check if the response has the expected data
-            if (customer && customer.name) {
-                document.getElementById('customerName').value = customer.name;
-                document.getElementById('mobileNumber').value = customer.mobile;
-                document.getElementById('vehicleType').value = customer.vehicleType;
-                alert('Customer found! Details auto-filled.');
-            } else {
-                // If response is OK but data structure is unexpected
-                document.getElementById('customerName').value = '';
-                document.getElementById('mobileNumber').value = '';
-                document.getElementById('vehicleType').value = '';
-                alert('Customer data format is unexpected. Please fill details manually.');
+            if (!vehicleNum) {
+                alert('Please enter vehicle number');
+                return;
             }
-        } else if (response.status === 404) {
-            // Customer not found - clear fields for new customer
-            document.getElementById('customerName').value = '';
-            document.getElementById('mobileNumber').value = '';
-            document.getElementById('vehicleType').value = '';
-            alert('New customer! Please fill in the details.');
-        } else {
-            throw new Error(`Server error: ${response.status}`);
+
+            document.getElementById('vehicleNumberDisplay').value = vehicleNum;
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/customers?vehicleNumber=${vehicleNum}`);
+
+                if (response.ok) {
+                    const customer = await response.json();
+
+                    document.getElementById('customerName').value = customer.name;
+                    document.getElementById('mobileNumber').value = customer.mobile;
+                    document.getElementById('vehicleType').value = customer.vehicleType;
+
+                    alert('Customer found! Details auto-filled.');
+                } else if (response.status === 404) {
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('mobileNumber').value = '';
+                    document.getElementById('vehicleType').value = '';
+
+                    alert('New customer! Please fill in the details.');
+                } else {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                updateBillPreviewCustomer();
+            } catch (error) {
+                console.error("Error during vehicle search:", error);
+                alert('An error occurred during search.');
+            } finally {
+                setLoading(button, false);
+            }
         }
-        updateBillPreviewCustomer();
-    } catch (error) {
-        console.error("Error during vehicle search:", error);
-        alert('An error occurred during search. Please check console for details.');
-    } finally {
-        setLoading(button, false);
-    }
-}
+
         // Load Employees (GET /api/employees)
         async function loadEmployees() {
             const select = document.getElementById('employeeSelect');
