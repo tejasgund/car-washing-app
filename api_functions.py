@@ -35,7 +35,6 @@ def is_valid_bike_number(number):
 
 def vehicle_number(v_number):
     if not is_valid_bike_number(v_number):
-        print("Invalid bike number format")
         return {"message": "Invalid bike number format"}
 
     conn = database()
@@ -88,7 +87,7 @@ def add_service(name,price):
     finally:
         cursor.close()
         conn.close()
-print(vehicle_number("MH13cl3290"))
+
 def list_service():
     conn = database()
     cursor = conn.cursor()
