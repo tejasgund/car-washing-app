@@ -1,12 +1,10 @@
 from config import database
-from messenger import  send_message
 from messenger import send_message
 
 def generate_bill_message(bill_no):
     conn = database()
-    cursor = conn.cursor()  # returns tuples
+    cursor = conn.cursor()
 
-    # --- Fetch customer and bill info using bill_no ---
     cursor.execute("""
     SELECT b.id, c.name, c.mobile, b.bill_no, b.vehicle_number, b.vehicle_type,
            b.total_amount, b.payment_mode, b.created_at
@@ -14,55 +12,39 @@ def generate_bill_message(bill_no):
     INNER JOIN customers c ON b.customer_id = c.id
     WHERE b.bill_no = %s
     """, (bill_no,))
-
     bill_info = cursor.fetchone()
     if not bill_info:
         cursor.close()
         conn.close()
-        return None, None  # Bill not found
+        return None, None
 
-    bill_id = bill_info[0]  # bills.id
-
-    # --- Fetch all services for this bill ---
+    bill_id = bill_info[0]
     cursor.execute("""
     SELECT service_name, service_price
     FROM bill_services
     WHERE bill_id = %s
     """, (bill_id,))
-
     services = cursor.fetchall()
 
-    # --- Format services list ---
-    services_text = ""
-    for s in services:
-        services_text += f"- {s[0]}: ₹{s[1]}\n"  # s[0]=service_name, s[1]=service_price
+    services_text = ", ".join([f"{s[0]} ₹{s[1]}" for s in services])
 
-    # --- Create WhatsApp message ---
-    msg = f"""
-🚗✨ नमस्ते {bill_info[1]}!
-
-आपल्या वाहनासाठी बिल तपशील:
-
-🧾 बिल क्र.: {bill_info[3]}
-🚘 वाहन क्रमांक: {bill_info[4]}
-🚗 वाहन प्रकार: {bill_info[5]}
-🕒 बिल दिनांक: {bill_info[8].strftime('%d-%m-%Y %H:%M')}
-
-💳 पेमेंट मोड: {bill_info[7]}
-
-🛠️ सेवांचा तपशील:
-{services_text}
-💰 एकूण रक्कम: ₹{bill_info[6]}
-
-🙏 सह्याद्री वॉशिंग सेंटर मध्ये आपले स्वागत आहे!
-"""
+    # --- सुंदर मराठी बिल संदेश ---
+    msg = (
+        f"🌸 नमस्कार {bill_info[1]}!\n"
+        f"सह्याद्री वॉशिंग सेंटर मध्ये आपले मनःपूर्वक स्वागत आहे 🙏\n\n"
+        f"आपल्या वाहनासाठी बिल तयार झाले आहे.\n"
+        f"🧾 बिल क्रमांक: {bill_info[3]}\n"
+        f"🚘 वाहन क्र.: {bill_info[4]} ({bill_info[5]})\n"
+        f"📅 दिनांक: {bill_info[8].strftime('%d-%m-%Y %H:%M')}\n\n"
+        f"🛠️ सेवा: {services_text}\n"
+        f"💰 एकूण रक्कम: ₹{bill_info[6]}\n"
+        f"💳 पेमेंट मोड: {bill_info[7]}\n\n"
+        f"आपल्या भेटीसाठी धन्यवाद 🙏\n"
+        f"पुन्हा भेट देण्याचे आमंत्रण!\n\n"
+        f"🌿 सह्याद्री वॉशिंग सेंटर - आपली सेवा, आमचा अभिमान 🚗✨"
+    )
 
     cursor.close()
     conn.close()
     send_message(bill_info[2], msg)
-    return msg, bill_info[2]  # mobile number
-
-
-
-
-
+    return msg, bill_info[2]
