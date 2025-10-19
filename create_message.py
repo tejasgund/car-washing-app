@@ -63,7 +63,6 @@ def generate_bill_message(bill_no):
     return msg, bill_info[2]  # mobile number
 
 
-# --- Example usage ---
 
 
 
