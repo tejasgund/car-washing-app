@@ -196,6 +196,10 @@
             padding: 20px;
             margin-top: 20px;
         }
+
+        .quick-filter-btn {
+            margin: 2px;
+        }
     </style>
 </head>
 <body>
@@ -233,8 +237,7 @@
     </nav>
 
     <div class="container-fluid mt-4">
-        <!-- Existing sections (dashboard, newbill, employees) remain the same -->
-
+        <!-- Reports Section -->
         <div id="reports" class="page-section">
             <div class="row">
                 <div class="col-12">
@@ -248,58 +251,75 @@
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label">From Date</label>
                             <input type="date" id="fromDate" class="form-control">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label">To Date</label>
                             <input type="date" id="toDate" class="form-control">
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
+                        <div class="col-md-3 d-flex align-items-end">
                             <button class="btn btn-primary w-100" onclick="loadReports()" id="generateReportBtn">
                                 <i class="fas fa-search me-2"></i>Generate Report
                             </button>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Quick Filters</label>
+                            <div>
+                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('today')">Today</button>
+                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('week')">This Week</button>
+                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('month')">This Month</button>
+                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('6months')">Last 6 Months</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- NEW: Report Summary Section -->
+            <!-- Report Summary Section -->
             <div id="reportSummary" style="display: none;">
                 <div class="report-summary">
                     <div class="row text-center">
-                        <div class="col-md-3 col-6 summary-item">
+                        <div class="col-md-2 col-6 summary-item">
                             <div class="summary-value" id="totalDays">0</div>
                             <div class="summary-label">Total Days</div>
                         </div>
-                        <div class="col-md-3 col-6 summary-item">
+                        <div class="col-md-2 col-6 summary-item">
                             <div class="summary-value" id="totalBills">0</div>
                             <div class="summary-label">Total Bills</div>
                         </div>
-                        <div class="col-md-3 col-6 summary-item">
+                        <div class="col-md-2 col-6 summary-item">
+                            <div class="summary-value" id="totalVehiclesCount">0</div>
+                            <div class="summary-label">Total Vehicles</div>
+                        </div>
+                        <div class="col-md-2 col-6 summary-item">
                             <div class="summary-value" id="totalServicesCount">0</div>
                             <div class="summary-label">Total Services</div>
                         </div>
-                        <div class="col-md-3 col-6 summary-item">
+                        <div class="col-md-2 col-6 summary-item">
                             <div class="summary-value">₹<span id="totalRevenue">0</span></div>
                             <div class="summary-label">Total Revenue</div>
+                        </div>
+                        <div class="col-md-2 col-6 summary-item">
+                            <div class="summary-value">₹<span id="avgBillValue">0</span></div>
+                            <div class="summary-label">Avg. Bill</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Additional Summary Cards -->
-                <div class="row">
-                    <div class="col-md-4">
+                <!-- Additional Statistics -->
+                <div class="row mt-3">
+                    <div class="col-md-3">
                         <div class="stat-card">
                             <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                                <i class="fas fa-car"></i>
+                                <i class="fas fa-calendar-day"></i>
                             </div>
                             <h3 id="avgBillsPerDay" class="mb-1">0</h3>
                             <p class="text-muted mb-0">Avg. Bills/Day</p>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="stat-card">
                             <div class="stat-icon bg-success bg-opacity-10 text-success">
                                 <i class="fas fa-money-bill-wave"></i>
@@ -308,13 +328,22 @@
                             <p class="text-muted mb-0">Avg. Revenue/Day</p>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="stat-card">
                             <div class="stat-icon bg-info bg-opacity-10 text-info">
-                                <i class="fas fa-calculator"></i>
+                                <i class="fas fa-car"></i>
                             </div>
-                            <h3>₹<span id="avgBillValue">0</span></h3>
-                            <p class="text-muted mb-0">Avg. Bill Value</p>
+                            <h3 id="avgServicesPerBill">0</h3>
+                            <p class="text-muted mb-0">Avg. Services/Bill</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3>₹<span id="totalRevenueFormatted">0</span></h3>
+                            <p class="text-muted mb-0">Total Revenue</p>
                         </div>
                     </div>
                 </div>
@@ -325,20 +354,20 @@
                     <div class="row" id="paymentBreakdown">
                         <div class="col-md-4">
                             <div class="d-flex justify-content-between mb-2">
-                                <span>Cash:</span>
-                                <strong>₹<span id="cashAmount">0</span></strong>
+                                <span><i class="fas fa-money-bill-wave text-success me-2"></i>Cash:</span>
+                                <strong>₹<span id="cashAmount">0</span> (<span id="cashPercent">0%</span>)</strong>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="d-flex justify-content-between mb-2">
-                                <span>UPI:</span>
-                                <strong>₹<span id="upiAmount">0</span></strong>
+                                <span><i class="fas fa-mobile-alt text-primary me-2"></i>UPI:</span>
+                                <strong>₹<span id="upiAmount">0</span> (<span id="upiPercent">0%</span>)</strong>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="d-flex justify-content-between mb-2">
-                                <span>Card:</span>
-                                <strong>₹<span id="cardAmount">0</span></strong>
+                                <span><i class="fas fa-credit-card text-info me-2"></i>Card:</span>
+                                <strong>₹<span id="cardAmount">0</span> (<span id="cardPercent">0%</span>)</strong>
                             </div>
                         </div>
                     </div>
@@ -444,7 +473,34 @@
             document.getElementById('toDate').value = today;
         }
 
-        // Load Reports (GET /api/bills/report?fromDate=...&toDate=...)
+        // Quick Filter Functions
+        function setQuickFilter(range) {
+            const today = new Date();
+            const fromDate = new Date();
+
+            switch(range) {
+                case 'today':
+                    fromDate.setDate(today.getDate());
+                    break;
+                case 'week':
+                    fromDate.setDate(today.getDate() - 7);
+                    break;
+                case 'month':
+                    fromDate.setMonth(today.getMonth() - 1);
+                    break;
+                case '6months':
+                    fromDate.setMonth(today.getMonth() - 6);
+                    break;
+            }
+
+            document.getElementById('fromDate').value = fromDate.toISOString().substring(0, 10);
+            document.getElementById('toDate').value = today.toISOString().substring(0, 10);
+
+            // Auto-generate report
+            loadReports();
+        }
+
+        // Load Reports (works with old API format)
         async function loadReports() {
             const fromDate = document.getElementById('fromDate').value;
             const toDate = document.getElementById('toDate').value;
@@ -468,7 +524,7 @@
                 const response = await fetch(`${API_BASE_URL}/bills/report?fromDate=${fromDate}&toDate=${toDate}`);
                 if (!response.ok) throw new Error('Failed to fetch reports');
 
-                const bills = await response.json();
+                const bills = await response.json(); // Old API format - just array of bills
 
                 // Update date range display
                 document.getElementById('reportDateRange').textContent =
@@ -479,22 +535,27 @@
                     return;
                 }
 
-                // Calculate summary statistics
+                // Calculate all statistics from the bills data (frontend calculation)
                 calculateReportSummary(bills, fromDate, toDate);
 
-                // Display bills table
+                // Display bills table (works with old API format)
                 reportsTable.innerHTML = '';
                 bills.forEach(bill => {
+                    // Assuming old API returns bills with these properties
+                    const servicesCount = bill.servicesCount || (bill.services ? bill.services.length : 1);
+                    const paymentMode = bill.paymentMode || 'Cash'; // Default to Cash if not provided
+                    const employeeName = bill.employeeName || (bill.employeeId ? bill.employeeId.name : 'N/A');
+
                     reportsTable.innerHTML += `
                         <tr>
-                            <td>${bill.billNo}</td>
+                            <td>${bill.billNo || bill.id}</td>
                             <td>${bill.date}</td>
                             <td>${bill.vehicleNumber}</td>
                             <td>${bill.customerName}</td>
-                            <td>${bill.servicesCount}</td>
-                            <td>₹${bill.amount}</td>
-                            <td><span class="badge bg-secondary">${bill.paymentMode}</span></td>
-                            <td>${bill.employeeName}</td>
+                            <td>${servicesCount}</td>
+                            <td>₹${bill.amount || bill.totalAmount}</td>
+                            <td><span class="badge bg-secondary">${paymentMode}</span></td>
+                            <td>${employeeName}</td>
                         </tr>
                     `;
                 });
@@ -510,24 +571,31 @@
             }
         }
 
-        // Calculate and display report summary
+        // Calculate all statistics from bills data (frontend calculation)
         function calculateReportSummary(bills, fromDate, toDate) {
             // Calculate total days
             const start = new Date(fromDate);
             const end = new Date(toDate);
             const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
-            // Calculate totals
+            // Calculate totals from bills data
             const totalBills = bills.length;
-            const totalServices = bills.reduce((sum, bill) => sum + (bill.servicesCount || 1), 0);
-            const totalRevenue = bills.reduce((sum, bill) => sum + bill.amount, 0);
+            const totalVehicles = bills.length; // Each bill represents one vehicle
+            const totalServices = bills.reduce((sum, bill) => {
+                return sum + (bill.servicesCount || (bill.services ? bill.services.length : 1));
+            }, 0);
+
+            const totalRevenue = bills.reduce((sum, bill) => {
+                return sum + (bill.amount || bill.totalAmount || 0);
+            }, 0);
 
             // Calculate averages
             const avgBillsPerDay = (totalBills / totalDays).toFixed(1);
             const avgRevenuePerDay = (totalRevenue / totalDays).toFixed(0);
             const avgBillValue = totalBills > 0 ? (totalRevenue / totalBills).toFixed(0) : 0;
+            const avgServicesPerBill = totalBills > 0 ? (totalServices / totalBills).toFixed(1) : 0;
 
-            // Calculate payment mode breakdown
+            // Calculate payment mode breakdown (with fallbacks for old API)
             const paymentBreakdown = {
                 'Cash': 0,
                 'UPI': 0,
@@ -535,25 +603,43 @@
             };
 
             bills.forEach(bill => {
-                if (bill.paymentMode && paymentBreakdown.hasOwnProperty(bill.paymentMode)) {
-                    paymentBreakdown[bill.paymentMode] += bill.amount;
+                const paymentMode = bill.paymentMode || 'Cash';
+                const amount = bill.amount || bill.totalAmount || 0;
+
+                if (paymentBreakdown.hasOwnProperty(paymentMode)) {
+                    paymentBreakdown[paymentMode] += amount;
+                } else {
+                    // If payment mode is not in our list, count it as Cash
+                    paymentBreakdown['Cash'] += amount;
                 }
             });
+
+            // Calculate percentages
+            const cashPercent = totalRevenue > 0 ? ((paymentBreakdown.Cash / totalRevenue) * 100).toFixed(1) : 0;
+            const upiPercent = totalRevenue > 0 ? ((paymentBreakdown.UPI / totalRevenue) * 100).toFixed(1) : 0;
+            const cardPercent = totalRevenue > 0 ? ((paymentBreakdown.Card / totalRevenue) * 100).toFixed(1) : 0;
 
             // Update summary display
             document.getElementById('totalDays').textContent = totalDays;
             document.getElementById('totalBills').textContent = totalBills;
+            document.getElementById('totalVehiclesCount').textContent = totalVehicles;
             document.getElementById('totalServicesCount').textContent = totalServices;
             document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString('en-IN');
+            document.getElementById('totalRevenueFormatted').textContent = totalRevenue.toLocaleString('en-IN');
 
             document.getElementById('avgBillsPerDay').textContent = avgBillsPerDay;
             document.getElementById('avgRevenuePerDay').textContent = avgRevenuePerDay.toLocaleString('en-IN');
             document.getElementById('avgBillValue').textContent = avgBillValue.toLocaleString('en-IN');
+            document.getElementById('avgServicesPerBill').textContent = avgServicesPerBill;
 
             // Update payment breakdown
             document.getElementById('cashAmount').textContent = paymentBreakdown.Cash.toLocaleString('en-IN');
             document.getElementById('upiAmount').textContent = paymentBreakdown.UPI.toLocaleString('en-IN');
             document.getElementById('cardAmount').textContent = paymentBreakdown.Card.toLocaleString('en-IN');
+
+            document.getElementById('cashPercent').textContent = cashPercent + '%';
+            document.getElementById('upiPercent').textContent = upiPercent + '%';
+            document.getElementById('cardPercent').textContent = cardPercent + '%';
         }
 
         // Utility function to show loading state
@@ -570,8 +656,8 @@
             }
         }
 
-        // ... rest of your existing JavaScript functions remain the same ...
-        // (loadServices, addCustomService, searchVehicle, loadEmployees, saveEmployee, saveBill, updateDashboard, etc.)
+        // ... rest of your existing JavaScript functions remain exactly the same ...
+        // No changes needed to: loadServices, addCustomService, searchVehicle, loadEmployees, saveEmployee, saveBill, updateDashboard, etc.
 
     </script>
 </body>
