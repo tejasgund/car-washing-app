@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Washing Center - Billing Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #1e40af);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+        }
+
+        .service-item {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .service-item:hover {
+            border-color: var(--primary-color);
+            background-color: #f8fafc;
+        }
+
+        .service-item input[type="checkbox"]:checked + label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .invoice-preview {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .employee-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        .badge-custom {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* New styles for report summary */
+        .report-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .payment-breakdown {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>सह्याद्री वॉशिंग सेंटर</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showPage('dashboard')">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('newbill')">
+                            <i class="fas fa-file-invoice me-1"></i>New Bill
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('reports')">
+                            <i class="fas fa-chart-bar me-1"></i>Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('employees')">
+                            <i class="fas fa-users me-1"></i>Employees
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Existing sections (dashboard, newbill, employees) remain the same -->
+
+        <div id="reports" class="page-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Reports</h2>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-filter me-2"></i>Filter Reports
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">From Date</label>
+                            <input type="date" id="fromDate" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">To Date</label>
+                            <input type="date" id="toDate" class="form-control">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="loadReports()" id="generateReportBtn">
+                                <i class="fas fa-search me-2"></i>Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Report Summary Section -->
+            <div id="reportSummary" style="display: none;">
+                <div class="report-summary">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 summary-item">
+                            <div class="summary-value" id="totalDays">0</div>
+                            <div class="summary-label">Total Days</div>
+                        </div>
+                        <div class="col-md-3 col-6 summary-item">
+                            <div class="summary-value" id="totalBills">0</div>
+                            <div class="summary-label">Total Bills</div>
+                        </div>
+                        <div class="col-md-3 col-6 summary-item">
+                            <div class="summary-value" id="totalServicesCount">0</div>
+                            <div class="summary-label">Total Services</div>
+                        </div>
+                        <div class="col-md-3 col-6 summary-item">
+                            <div class="summary-value">₹<span id="totalRevenue">0</span></div>
+                            <div class="summary-label">Total Revenue</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Summary Cards -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <h3 id="avgBillsPerDay" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">Avg. Bills/Day</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <h3>₹<span id="avgRevenuePerDay">0</span></h3>
+                            <p class="text-muted mb-0">Avg. Revenue/Day</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-info bg-opacity-10 text-info">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3>₹<span id="avgBillValue">0</span></h3>
+                            <p class="text-muted mb-0">Avg. Bill Value</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Mode Breakdown -->
+                <div class="payment-breakdown">
+                    <h5 class="mb-3"><i class="fas fa-credit-card me-2"></i>Payment Mode Breakdown</h5>
+                    <div class="row" id="paymentBreakdown">
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Cash:</span>
+                                <strong>₹<span id="cashAmount">0</span></strong>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>UPI:</span>
+                                <strong>₹<span id="upiAmount">0</span></strong>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Card:</span>
+                                <strong>₹<span id="cardAmount">0</span></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-table me-2"></i>Bills Summary
+                    </div>
+                    <div class="text-muted small" id="reportDateRange"></div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Bill No</th>
+                                    <th>Date</th>
+                                    <th>Vehicle</th>
+                                    <th>Customer</th>
+                                    <th>Services</th>
+                                    <th>Amount</th>
+                                    <th>Payment Mode</th>
+                                    <th>Employee</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTable">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">Select date range and click Generate Report</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other sections remain the same -->
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- CONFIGURATION ---
+        const API_BASE_URL = 'http://15.206.90.104/api';
+
+        // --- FRONTEND LOGIC ---
+        let localServicesCache = [];
+        let nextBillNo = 1001;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial setup
+            Promise.all([
+                loadServices(),
+                loadEmployees(),
+                updateDashboard(),
+            ]).then(() => {
+                document.getElementById('billNumber').textContent = nextBillNo;
+                document.getElementById('billDate').textContent = new Date().toLocaleDateString();
+                setDefaultDates();
+            });
+
+            document.getElementById('employeeForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveEmployee();
+            });
+
+            // Set up event listeners for bill preview updates
+            document.getElementById('customerForm').addEventListener('input', updateBillPreviewCustomer);
+        });
+
+        // Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            if (pageId === 'dashboard') {
+                updateDashboard();
+            } else if (pageId === 'newbill') {
+                resetBillForm();
+            } else if (pageId === 'employees') {
+                loadEmployees();
+            } else if (pageId === 'reports') {
+                setDefaultDates();
+            }
+        }
+
+        function setDefaultDates() {
+            const today = new Date().toISOString().substring(0, 10);
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+            document.getElementById('fromDate').value = oneWeekAgo.toISOString().substring(0, 10);
+            document.getElementById('toDate').value = today;
+        }
+
+        // Load Reports (GET /api/bills/report?fromDate=...&toDate=...)
+        async function loadReports() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const reportsTable = document.getElementById('reportsTable');
+            const button = document.getElementById('generateReportBtn');
+            const reportSummary = document.getElementById('reportSummary');
+
+            if (!fromDate || !toDate) {
+                alert('Please select both From Date and To Date.');
+                return;
+            }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-info">Generating report...</td></tr>`;
+            reportSummary.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bills/report?fromDate=${fromDate}&toDate=${toDate}`);
+                if (!response.ok) throw new Error('Failed to fetch reports');
+
+                const bills = await response.json();
+
+                // Update date range display
+                document.getElementById('reportDateRange').textContent =
+                    `${new Date(fromDate).toLocaleDateString()} - ${new Date(toDate).toLocaleDateString()}`;
+
+                if (bills.length === 0) {
+                    reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No bills found for the selected date range.</td></tr>`;
+                    return;
+                }
+
+                // Calculate summary statistics
+                calculateReportSummary(bills, fromDate, toDate);
+
+                // Display bills table
+                reportsTable.innerHTML = '';
+                bills.forEach(bill => {
+                    reportsTable.innerHTML += `
+                        <tr>
+                            <td>${bill.billNo}</td>
+                            <td>${bill.date}</td>
+                            <td>${bill.vehicleNumber}</td>
+                            <td>${bill.customerName}</td>
+                            <td>${bill.servicesCount}</td>
+                            <td>₹${bill.amount}</td>
+                            <td><span class="badge bg-secondary">${bill.paymentMode}</span></td>
+                            <td>${bill.employeeName}</td>
+                        </tr>
+                    `;
+                });
+
+                // Show summary section
+                reportSummary.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error loading reports:", error);
+                reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Failed to load reports.</td></tr>`;
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Calculate and display report summary
+        function calculateReportSummary(bills, fromDate, toDate) {
+            // Calculate total days
+            const start = new Date(fromDate);
+            const end = new Date(toDate);
+            const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+            // Calculate totals
+            const totalBills = bills.length;
+            const totalServices = bills.reduce((sum, bill) => sum + (bill.servicesCount || 1), 0);
+            const totalRevenue = bills.reduce((sum, bill) => sum + bill.amount, 0);
+
+            // Calculate averages
+            const avgBillsPerDay = (totalBills / totalDays).toFixed(1);
+            const avgRevenuePerDay = (totalRevenue / totalDays).toFixed(0);
+            const avgBillValue = totalBills > 0 ? (totalRevenue / totalBills).toFixed(0) : 0;
+
+            // Calculate payment mode breakdown
+            const paymentBreakdown = {
+                'Cash': 0,
+                'UPI': 0,
+                'Card': 0
+            };
+
+            bills.forEach(bill => {
+                if (bill.paymentMode && paymentBreakdown.hasOwnProperty(bill.paymentMode)) {
+                    paymentBreakdown[bill.paymentMode] += bill.amount;
+                }
+            });
+
+            // Update summary display
+            document.getElementById('totalDays').textContent = totalDays;
+            document.getElementById('totalBills').textContent = totalBills;
+            document.getElementById('totalServicesCount').textContent = totalServices;
+            document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString('en-IN');
+
+            document.getElementById('avgBillsPerDay').textContent = avgBillsPerDay;
+            document.getElementById('avgRevenuePerDay').textContent = avgRevenuePerDay.toLocaleString('en-IN');
+            document.getElementById('avgBillValue').textContent = avgBillValue.toLocaleString('en-IN');
+
+            // Update payment breakdown
+            document.getElementById('cashAmount').textContent = paymentBreakdown.Cash.toLocaleString('en-IN');
+            document.getElementById('upiAmount').textContent = paymentBreakdown.UPI.toLocaleString('en-IN');
+            document.getElementById('cardAmount').textContent = paymentBreakdown.Card.toLocaleString('en-IN');
+        }
+
+        // Utility function to show loading state
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading-spinner"></span> Loading...';
+            } else {
+                button.disabled = false;
+                const originalText = button.getAttribute('data-original-text');
+                if (originalText) {
+                    button.innerHTML = originalText;
+                }
+            }
+        }
+
+        // ... rest of your existing JavaScript functions remain the same ...
+        // (loadServices, addCustomService, searchVehicle, loadEmployees, saveEmployee, saveBill, updateDashboard, etc.)
+
+    </script>
+</body>
+</html>
