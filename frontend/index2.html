@@ -165,40 +165,8 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* New styles for report summary */
-        .report-summary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .summary-item {
-            text-align: center;
-            padding: 15px;
-        }
-
-        .summary-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .summary-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .payment-breakdown {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .quick-filter-btn {
-            margin: 2px;
+        .bg-purple {
+            background-color: #9333ea;
         }
     </style>
 </head>
@@ -237,7 +205,256 @@
     </nav>
 
     <div class="container-fluid mt-4">
-        <!-- Reports Section -->
+        <div id="dashboard" class="page-section active">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-chart-line me-2"></i>Dashboard</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3 id="totalVehicles" class="mb-1">...</h3>
+                        <p class="text-muted mb-0">Total Vehicles Today</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3 id="totalEarnings" class="mb-1">₹...</h3>
+                        <p class="text-muted mb-0">Total Earnings</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-spray-can"></i>
+                        </div>
+                        <h3 id="totalServices" class="mb-1">...</h3>
+                        <p class="text-muted mb-0">Services Done</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h3 id="activeEmployees" class="mb-1">...</h3>
+                        <p class="text-muted mb-0">Active Employees</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-2"></i>Service-wise Count Today
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Count</th>
+                                            <th>Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="serviceStatsTable">
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted">Loading data...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-clock me-2"></i>Recent Activities
+                        </div>
+                        <div class="card-body">
+                            <div id="recentActivities">
+                                <p class="text-muted">Loading activities...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="newbill" class="page-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-file-invoice me-2"></i>Create New Bill</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-search me-2"></i>Vehicle Search
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <input type="text" id="vehicleNumber" class="form-control" placeholder="Enter Vehicle Number (e.g., KA01AB1234)" style="text-transform: uppercase;">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-primary w-100" onclick="searchVehicle()" id="searchVehicleBtn">
+                                        <i class="fas fa-search me-2"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="fas fa-user me-2"></i>Customer Information
+                        </div>
+                        <div class="card-body">
+                            <form id="customerForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Customer Name</label>
+                                        <input type="text" id="customerName" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Mobile Number</label>
+                                        <input type="tel" id="mobileNumber" class="form-control" pattern="[0-9]{10}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Vehicle Number</label>
+                                        <input type="text" id="vehicleNumberDisplay" class="form-control" readonly style="text-transform: uppercase;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Vehicle Type</label>
+                                        <select id="vehicleType" class="form-select" required>
+                                            <option value="">Select Type</option>
+                                            <option value="Car">Car</option>
+                                            <option value="SUV">SUV</option>
+                                            <option value="Bike">Bike</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="fas fa-list-check me-2"></i>Select Services
+                        </div>
+                        <div class="card-body">
+                            <div id="servicesList">
+                                <p class="text-muted">Loading services...</p>
+                            </div>
+
+                            <hr>
+                            <h6 class="mb-3">Add Custom Service</h6>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <input type="text" id="customServiceName" class="form-control" placeholder="Service Name">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" id="customServicePrice" class="form-control" placeholder="Price">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success w-100" onclick="addCustomService()" id="addServiceBtn">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>Bill Preview
+                        </div>
+                        <div class="card-body">
+                            <div class="invoice-preview" id="invoicePreview">
+                                <div class="text-center mb-4">
+                                    <h4 class="mb-0">सह्याद्री वॉशिंग सेंटर</h4>
+                                    <p class="text-muted small">Vehicle Washing & Care</p>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <strong>Bill No:</strong> <span id="billNumber">...</span>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <strong>Date:</strong> <span id="billDate">...</span>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="mb-3">
+                                    <strong>Customer:</strong> <span id="previewCustomer">-</span><br>
+                                    <strong>Mobile:</strong> <span id="previewMobile">-</span><br>
+                                    <strong>Vehicle:</strong> <span id="previewVehicle">-</span>
+                                </div>
+
+                                <hr>
+
+                                <h6>Services:</h6>
+                                <div id="previewServices" class="mb-3">
+                                    <p class="text-muted">No services selected</p>
+                                </div>
+
+                                <hr>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <strong class="h5">Total Amount:</strong>
+                                    <strong class="h5 text-primary">₹<span id="totalAmount">0</span></strong>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Payment Mode</label>
+                                    <select id="paymentMode" class="form-select">
+                                        <option value="Cash">Cash</option>
+                                        <option value="UPI">UPI</option>
+                                        <option value="Card">Card</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Employee</label>
+                                    <select id="employeeSelect" class="form-select">
+                                        <option value="">Select Employee</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-lg" onclick="saveBill()" id="saveBillBtn">
+                                        <i class="fas fa-save me-2"></i>Save Bill
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="printBill()">
+                                        <i class="fas fa-print me-2"></i>Print / Download PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="reports" class="page-section">
             <div class="row">
                 <div class="col-12">
@@ -250,136 +467,164 @@
                     <i class="fas fa-filter me-2"></i>Filter Reports
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-3">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
                             <label class="form-label">From Date</label>
                             <input type="date" id="fromDate" class="form-control">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="form-label">To Date</label>
                             <input type="date" id="toDate" class="form-control">
                         </div>
-                        <div class="col-md-3 d-flex align-items-end">
+                        <div class="col-md-4 d-flex align-items-end">
                             <button class="btn btn-primary w-100" onclick="loadReports()" id="generateReportBtn">
                                 <i class="fas fa-search me-2"></i>Generate Report
                             </button>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Quick Filters</label>
-                            <div>
-                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('today')">Today</button>
-                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('week')">This Week</button>
-                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('month')">This Month</button>
-                                <button class="btn btn-outline-primary btn-sm quick-filter-btn" onclick="setQuickFilter('6months')">Last 6 Months</button>
-                            </div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('today')">
+                                <i class="fas fa-calendar-day me-1"></i>Today
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('week')">
+                                <i class="fas fa-calendar-week me-1"></i>This Week
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('month')">
+                                <i class="fas fa-calendar-alt me-1"></i>This Month
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('6months')">
+                                <i class="fas fa-calendar me-1"></i>Last 6 Months
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('1year')">
+                                <i class="fas fa-calendar me-1"></i>Last 1 Year
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('year')">
+                                <i class="fas fa-calendar-check me-1"></i>This Year
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Report Summary Section -->
-            <div id="reportSummary" style="display: none;">
-                <div class="report-summary">
-                    <div class="row text-center">
-                        <div class="col-md-2 col-6 summary-item">
-                            <div class="summary-value" id="totalDays">0</div>
-                            <div class="summary-label">Total Days</div>
-                        </div>
-                        <div class="col-md-2 col-6 summary-item">
-                            <div class="summary-value" id="totalBills">0</div>
-                            <div class="summary-label">Total Bills</div>
-                        </div>
-                        <div class="col-md-2 col-6 summary-item">
-                            <div class="summary-value" id="totalVehiclesCount">0</div>
-                            <div class="summary-label">Total Vehicles</div>
-                        </div>
-                        <div class="col-md-2 col-6 summary-item">
-                            <div class="summary-value" id="totalServicesCount">0</div>
-                            <div class="summary-label">Total Services</div>
-                        </div>
-                        <div class="col-md-2 col-6 summary-item">
-                            <div class="summary-value">₹<span id="totalRevenue">0</span></div>
-                            <div class="summary-label">Total Revenue</div>
-                        </div>
-                        <div class="col-md-2 col-6 summary-item">
-                            <div class="summary-value">₹<span id="avgBillValue">0</span></div>
-                            <div class="summary-label">Avg. Bill</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Additional Statistics -->
+            <div id="reportSummarySection" style="display: none;">
                 <div class="row mt-3">
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-6">
                         <div class="stat-card">
                             <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                                <i class="fas fa-calendar-day"></i>
+                                <i class="fas fa-calendar-alt"></i>
                             </div>
-                            <h3 id="avgBillsPerDay" class="mb-1">0</h3>
-                            <p class="text-muted mb-0">Avg. Bills/Day</p>
+                            <h3 id="reportTotalDays" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">Total Days</p>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="stat-icon bg-success bg-opacity-10 text-success">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </div>
-                            <h3>₹<span id="avgRevenuePerDay">0</span></h3>
-                            <p class="text-muted mb-0">Avg. Revenue/Day</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-6">
                         <div class="stat-card">
                             <div class="stat-icon bg-info bg-opacity-10 text-info">
-                                <i class="fas fa-car"></i>
+                                <i class="fas fa-file-invoice"></i>
                             </div>
-                            <h3 id="avgServicesPerBill">0</h3>
-                            <p class="text-muted mb-0">Avg. Services/Bill</p>
+                            <h3 id="reportTotalBills" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">Total Bills</p>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-6">
                         <div class="stat-card">
                             <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="fas fa-car"></i>
                             </div>
-                            <h3>₹<span id="totalRevenueFormatted">0</span></h3>
+                            <h3 id="reportTotalVehicles" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">Total Vehicles</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <h3 id="reportTotalRevenue" class="mb-1">₹0</h3>
                             <p class="text-muted mb-0">Total Revenue</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Payment Mode Breakdown -->
-                <div class="payment-breakdown">
-                    <h5 class="mb-3"><i class="fas fa-credit-card me-2"></i>Payment Mode Breakdown</h5>
-                    <div class="row" id="paymentBreakdown">
-                        <div class="col-md-4">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span><i class="fas fa-money-bill-wave text-success me-2"></i>Cash:</span>
-                                <strong>₹<span id="cashAmount">0</span> (<span id="cashPercent">0%</span>)</strong>
+                <div class="row mt-3">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-purple bg-opacity-10" style="color: #9333ea;">
+                                <i class="fas fa-spray-can"></i>
+                            </div>
+                            <h3 id="reportTotalServices" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">Total Services</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 id="reportAvgBillValue" class="mb-1">₹0</h3>
+                            <p class="text-muted mb-0">Avg Bill Value</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-info bg-opacity-10 text-info">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <h3 id="reportAvgBillsPerDay" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">Avg Bills/Day</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3 id="reportAvgRevenuePerDay" class="mb-1">₹0</h3>
+                            <p class="text-muted mb-0">Avg Revenue/Day</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-credit-card me-2"></i>Payment Mode Breakdown
+                            </div>
+                            <div class="card-body">
+                                <div id="paymentBreakdown">
+                                    <p class="text-muted">No data available</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span><i class="fas fa-mobile-alt text-primary me-2"></i>UPI:</span>
-                                <strong>₹<span id="upiAmount">0</span> (<span id="upiPercent">0%</span>)</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card" style="height: calc(100% - 0px);">
+                            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-cogs"></i>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span><i class="fas fa-credit-card text-info me-2"></i>Card:</span>
-                                <strong>₹<span id="cardAmount">0</span> (<span id="cardPercent">0%</span>)</strong>
-                            </div>
+                            <h3 id="reportAvgServicesPerBill" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">Avg Services/Bill</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="card mt-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <i class="fas fa-table me-2"></i>Bills Summary
-                    </div>
-                    <div class="text-muted small" id="reportDateRange"></div>
+                <div class="card-header">
+                    <i class="fas fa-table me-2"></i>Bills Summary
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -392,7 +637,7 @@
                                     <th>Customer</th>
                                     <th>Services</th>
                                     <th>Amount</th>
-                                    <th>Payment Mode</th>
+                                    <th>Payment</th>
                                     <th>Employee</th>
                                 </tr>
                             </thead>
@@ -407,7 +652,62 @@
             </div>
         </div>
 
-        <!-- Other sections remain the same -->
+        <div id="employees" class="page-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-users me-2"></i>Employee Management</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-user-plus me-2"></i>Add New Employee
+                        </div>
+                        <div class="card-body">
+                            <form id="employeeForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Employee Name</label>
+                                    <input type="text" id="empName" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Mobile Number</label>
+                                    <input type="tel" id="empMobile" class="form-control" pattern="[0-9]{10}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Designation</label>
+                                    <input type="text" id="empDesignation" class="form-control" placeholder="e.g., Washer, Manager" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select id="empStatus" class="form-select">
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100" id="saveEmployeeBtn">
+                                    <i class="fas fa-save me-2"></i>Save Employee
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-list me-2"></i>Employee List
+                        </div>
+                        <div class="card-body">
+                            <div id="employeesList">
+                                <p class="text-muted">Loading employees...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -459,187 +759,37 @@
                 resetBillForm();
             } else if (pageId === 'employees') {
                 loadEmployees();
-            } else if (pageId === 'reports') {
-                setDefaultDates();
             }
         }
 
         function setDefaultDates() {
             const today = new Date().toISOString().substring(0, 10);
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-            document.getElementById('fromDate').value = oneWeekAgo.toISOString().substring(0, 10);
+            document.getElementById('fromDate').value = today;
             document.getElementById('toDate').value = today;
         }
 
-        // Quick Filter Functions
-        function setQuickFilter(range) {
-            const today = new Date();
-            const fromDate = new Date();
+        function resetBillForm() {
+            document.getElementById('customerForm').reset();
+            document.getElementById('vehicleNumber').value = '';
+            document.getElementById('vehicleNumberDisplay').value = '';
 
-            switch(range) {
-                case 'today':
-                    fromDate.setDate(today.getDate());
-                    break;
-                case 'week':
-                    fromDate.setDate(today.getDate() - 7);
-                    break;
-                case 'month':
-                    fromDate.setMonth(today.getMonth() - 1);
-                    break;
-                case '6months':
-                    fromDate.setMonth(today.getMonth() - 6);
-                    break;
-            }
-
-            document.getElementById('fromDate').value = fromDate.toISOString().substring(0, 10);
-            document.getElementById('toDate').value = today.toISOString().substring(0, 10);
-
-            // Auto-generate report
-            loadReports();
-        }
-
-        // Load Reports (works with old API format)
-        async function loadReports() {
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-            const reportsTable = document.getElementById('reportsTable');
-            const button = document.getElementById('generateReportBtn');
-            const reportSummary = document.getElementById('reportSummary');
-
-            if (!fromDate || !toDate) {
-                alert('Please select both From Date and To Date.');
-                return;
-            }
-
-            // Store original button text
-            button.setAttribute('data-original-text', button.innerHTML);
-            setLoading(button, true);
-
-            reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-info">Generating report...</td></tr>`;
-            reportSummary.style.display = 'none';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/bills/report?fromDate=${fromDate}&toDate=${toDate}`);
-                if (!response.ok) throw new Error('Failed to fetch reports');
-
-                const bills = await response.json(); // Old API format - just array of bills
-
-                // Update date range display
-                document.getElementById('reportDateRange').textContent =
-                    `${new Date(fromDate).toLocaleDateString()} - ${new Date(toDate).toLocaleDateString()}`;
-
-                if (bills.length === 0) {
-                    reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No bills found for the selected date range.</td></tr>`;
-                    return;
-                }
-
-                // Calculate all statistics from the bills data (frontend calculation)
-                calculateReportSummary(bills, fromDate, toDate);
-
-                // Display bills table (works with old API format)
-                reportsTable.innerHTML = '';
-                bills.forEach(bill => {
-                    // Assuming old API returns bills with these properties
-                    const servicesCount = bill.servicesCount || (bill.services ? bill.services.length : 1);
-                    const paymentMode = bill.paymentMode || 'Cash'; // Default to Cash if not provided
-                    const employeeName = bill.employeeName || (bill.employeeId ? bill.employeeId.name : 'N/A');
-
-                    reportsTable.innerHTML += `
-                        <tr>
-                            <td>${bill.billNo || bill.id}</td>
-                            <td>${bill.date}</td>
-                            <td>${bill.vehicleNumber}</td>
-                            <td>${bill.customerName}</td>
-                            <td>${servicesCount}</td>
-                            <td>₹${bill.amount || bill.totalAmount}</td>
-                            <td><span class="badge bg-secondary">${paymentMode}</span></td>
-                            <td>${employeeName}</td>
-                        </tr>
-                    `;
-                });
-
-                // Show summary section
-                reportSummary.style.display = 'block';
-
-            } catch (error) {
-                console.error("Error loading reports:", error);
-                reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Failed to load reports.</td></tr>`;
-            } finally {
-                setLoading(button, false);
-            }
-        }
-
-        // Calculate all statistics from bills data (frontend calculation)
-        function calculateReportSummary(bills, fromDate, toDate) {
-            // Calculate total days
-            const start = new Date(fromDate);
-            const end = new Date(toDate);
-            const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
-            // Calculate totals from bills data
-            const totalBills = bills.length;
-            const totalVehicles = bills.length; // Each bill represents one vehicle
-            const totalServices = bills.reduce((sum, bill) => {
-                return sum + (bill.servicesCount || (bill.services ? bill.services.length : 1));
-            }, 0);
-
-            const totalRevenue = bills.reduce((sum, bill) => {
-                return sum + (bill.amount || bill.totalAmount || 0);
-            }, 0);
-
-            // Calculate averages
-            const avgBillsPerDay = (totalBills / totalDays).toFixed(1);
-            const avgRevenuePerDay = (totalRevenue / totalDays).toFixed(0);
-            const avgBillValue = totalBills > 0 ? (totalRevenue / totalBills).toFixed(0) : 0;
-            const avgServicesPerBill = totalBills > 0 ? (totalServices / totalBills).toFixed(1) : 0;
-
-            // Calculate payment mode breakdown (with fallbacks for old API)
-            const paymentBreakdown = {
-                'Cash': 0,
-                'UPI': 0,
-                'Card': 0
-            };
-
-            bills.forEach(bill => {
-                const paymentMode = bill.paymentMode || 'Cash';
-                const amount = bill.amount || bill.totalAmount || 0;
-
-                if (paymentBreakdown.hasOwnProperty(paymentMode)) {
-                    paymentBreakdown[paymentMode] += amount;
-                } else {
-                    // If payment mode is not in our list, count it as Cash
-                    paymentBreakdown['Cash'] += amount;
-                }
+            // Uncheck all service checkboxes
+            localServicesCache.forEach(service => {
+                const checkbox = document.getElementById('service' + service.id);
+                if (checkbox) checkbox.checked = false;
             });
 
-            // Calculate percentages
-            const cashPercent = totalRevenue > 0 ? ((paymentBreakdown.Cash / totalRevenue) * 100).toFixed(1) : 0;
-            const upiPercent = totalRevenue > 0 ? ((paymentBreakdown.UPI / totalRevenue) * 100).toFixed(1) : 0;
-            const cardPercent = totalRevenue > 0 ? ((paymentBreakdown.Card / totalRevenue) * 100).toFixed(1) : 0;
+            document.getElementById('customServiceName').value = '';
+            document.getElementById('customServicePrice').value = '';
 
-            // Update summary display
-            document.getElementById('totalDays').textContent = totalDays;
-            document.getElementById('totalBills').textContent = totalBills;
-            document.getElementById('totalVehiclesCount').textContent = totalVehicles;
-            document.getElementById('totalServicesCount').textContent = totalServices;
-            document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString('en-IN');
-            document.getElementById('totalRevenueFormatted').textContent = totalRevenue.toLocaleString('en-IN');
+            document.getElementById('billNumber').textContent = nextBillNo;
+            document.getElementById('billDate').textContent = new Date().toLocaleDateString();
 
-            document.getElementById('avgBillsPerDay').textContent = avgBillsPerDay;
-            document.getElementById('avgRevenuePerDay').textContent = avgRevenuePerDay.toLocaleString('en-IN');
-            document.getElementById('avgBillValue').textContent = avgBillValue.toLocaleString('en-IN');
-            document.getElementById('avgServicesPerBill').textContent = avgServicesPerBill;
-
-            // Update payment breakdown
-            document.getElementById('cashAmount').textContent = paymentBreakdown.Cash.toLocaleString('en-IN');
-            document.getElementById('upiAmount').textContent = paymentBreakdown.UPI.toLocaleString('en-IN');
-            document.getElementById('cardAmount').textContent = paymentBreakdown.Card.toLocaleString('en-IN');
-
-            document.getElementById('cashPercent').textContent = cashPercent + '%';
-            document.getElementById('upiPercent').textContent = upiPercent + '%';
-            document.getElementById('cardPercent').textContent = cardPercent + '%';
+            // Reset preview
+            document.getElementById('previewCustomer').textContent = '-';
+            document.getElementById('previewMobile').textContent = '-';
+            document.getElementById('previewVehicle').textContent = '-';
+            updateBillPreview();
         }
 
         // Utility function to show loading state
@@ -656,9 +806,558 @@
             }
         }
 
-        // ... rest of your existing JavaScript functions remain exactly the same ...
-        // No changes needed to: loadServices, addCustomService, searchVehicle, loadEmployees, saveEmployee, saveBill, updateDashboard, etc.
+        // --- API Integration Functions ---
 
+        // Load Services (GET /api/services)
+        async function loadServices() {
+            const container = document.getElementById('servicesList');
+            container.innerHTML = '<p class="text-muted">Loading services...</p>';
+            try {
+                const response = await fetch(`${API_BASE_URL}/services`);
+                if (!response.ok) throw new Error('Failed to fetch services');
+
+                localServicesCache = await response.json();
+
+                container.innerHTML = '';
+                localServicesCache.forEach(service => {
+                    const div = document.createElement('div');
+                    div.className = 'service-item';
+                    div.innerHTML = `
+                        <div class="form-check d-flex justify-content-between align-items-center">
+                            <div>
+                                <input class="form-check-input" type="checkbox" value="${service.id}"
+                                    id="service${service.id}" onchange="updateBillPreview()">
+                                <label class="form-check-label" for="service${service.id}">
+                                    ${service.name}
+                                </label>
+                            </div>
+                            <span class="badge bg-primary">₹${service.price}</span>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading services:', error);
+                container.innerHTML = '<p class="text-danger">Failed to load services.</p>';
+            }
+        }
+
+        // Add Custom Service (POST /api/services)
+        async function addCustomService() {
+            const name = document.getElementById('customServiceName').value.trim();
+            const price = parseInt(document.getElementById('customServicePrice').value);
+            const button = document.getElementById('addServiceBtn');
+
+            if (!name || !price) {
+                alert('Please enter service name and price');
+                return;
+            }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/services`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price })
+                });
+
+                if (response.ok) {
+                    await loadServices();
+                    alert(`Service "${name}" added.`);
+                    document.getElementById('customServiceName').value = '';
+                    document.getElementById('customServicePrice').value = '';
+                } else {
+                    throw new Error('Failed to add service');
+                }
+            } catch (error) {
+                console.error('Error adding custom service:', error);
+                alert('Failed to add custom service.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Vehicle Search (GET /api/customers?vehicleNumber=...)
+        async function searchVehicle() {
+            const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
+            const button = document.getElementById('searchVehicleBtn');
+
+            if (!vehicleNum) {
+                alert('Please enter vehicle number');
+                return;
+            }
+
+            document.getElementById('vehicleNumberDisplay').value = vehicleNum;
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/customers?vehicleNumber=${vehicleNum}`);
+
+                if (response.ok) {
+                    const customer = await response.json();
+
+                    document.getElementById('customerName').value = customer.name;
+                    document.getElementById('mobileNumber').value = customer.mobile;
+                    document.getElementById('vehicleType').value = customer.vehicleType;
+
+                    alert('Customer found! Details auto-filled.');
+                } else if (response.status === 404) {
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('mobileNumber').value = '';
+                    document.getElementById('vehicleType').value = '';
+
+                    alert('New customer! Please fill in the details.');
+                } else {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                updateBillPreviewCustomer();
+            } catch (error) {
+                console.error("Error during vehicle search:", error);
+                alert('An error occurred during search.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Load Employees (GET /api/employees)
+        async function loadEmployees() {
+            const select = document.getElementById('employeeSelect');
+            const listContainer = document.getElementById('employeesList');
+
+            select.innerHTML = '<option value="">Loading...</option>';
+            listContainer.innerHTML = '<p class="text-muted">Loading employees...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/employees`);
+                if (!response.ok) throw new Error('Failed to fetch employees');
+
+                const employees = await response.json();
+
+                select.innerHTML = '<option value="">Select Employee</option>';
+                listContainer.innerHTML = '';
+
+                employees.forEach(emp => {
+                    const option = document.createElement('option');
+                    option.value = emp.id;
+                    option.textContent = `${emp.name} (${emp.designation})`;
+                    select.appendChild(option);
+
+                    listContainer.innerHTML += `
+                        <div class="employee-card d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${emp.name}</strong> - <span class="text-muted">${emp.designation}</span>
+                                <br><small>Mobile: ${emp.mobile}</small>
+                            </div>
+                            <span class="badge badge-custom ${emp.status === 'Active' ? 'bg-success' : 'bg-secondary'}">${emp.status}</span>
+                        </div>
+                    `;
+                });
+
+                // Update dashboard stat
+                const activeCount = employees.filter(e => e.status === 'Active').length;
+                document.getElementById('activeEmployees').textContent = activeCount;
+
+            } catch (error) {
+                console.error("Error loading employees:", error);
+                select.innerHTML = '<option value="">Error Loading</option>';
+                listContainer.innerHTML = '<p class="text-danger">Failed to load employee data.</p>';
+            }
+        }
+
+        // Save Employee (POST /api/employees)
+        async function saveEmployee() {
+            const newEmployee = {
+                name: document.getElementById('empName').value.trim(),
+                mobile: document.getElementById('empMobile').value.trim(),
+                designation: document.getElementById('empDesignation').value.trim(),
+                status: document.getElementById('empStatus').value
+            };
+            const button = document.getElementById('saveEmployeeBtn');
+
+            if (!newEmployee.name || !newEmployee.mobile || !newEmployee.designation) {
+                alert('Please fill in all employee details.');
+                return;
+            }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/employees`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newEmployee)
+                });
+
+                if (response.ok) {
+                    document.getElementById('employeeForm').reset();
+                    await loadEmployees();
+                    alert(`${newEmployee.name} added successfully.`);
+                } else {
+                    throw new Error('Failed to save employee');
+                }
+            } catch (error) {
+                console.error("Error saving employee:", error);
+                alert('Failed to save employee.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Save Bill (POST /api/bills)
+        async function saveBill() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            const vehicleNum = document.getElementById('vehicleNumberDisplay').value.trim();
+            const vehicleType = document.getElementById('vehicleType').value;
+            const paymentMode = document.getElementById('paymentMode').value;
+            const employeeId = document.getElementById('employeeSelect').value;
+            const totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
+            const button = document.getElementById('saveBillBtn');
+
+            if (!customerName || !mobile || !vehicleNum || !vehicleType || !employeeId || totalAmount === 0) {
+                alert('Please fill in all customer details and select at least one service.');
+                return;
+            }
+
+            let selectedServices = [];
+            localServicesCache.forEach(service => {
+                const checkbox = document.getElementById('service' + service.id);
+                if (checkbox && checkbox.checked) {
+                    selectedServices.push({ id: service.id, name: service.name, price: service.price });
+                }
+            });
+
+            if (selectedServices.length === 0) {
+                alert('Please select at least one service.');
+                return;
+            }
+
+            const billData = {
+                customerName,
+                mobileNumber: mobile,
+                vehicleNumber: vehicleNum,
+                vehicleType,
+                services: selectedServices,
+                totalAmount,
+                paymentMode,
+                employeeId: parseInt(employeeId)
+            };
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bills`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(billData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`Bill ${result.billNo} saved successfully!`);
+                    nextBillNo = result.billNo + 1;
+                    updateDashboard();
+                    resetBillForm();
+                } else {
+                    throw new Error(`Failed to save bill: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error("Error saving bill:", error);
+                alert('Failed to save bill.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Quick Filter Functions
+        function setQuickFilter(filterType) {
+            const today = new Date();
+            let fromDate, toDate;
+
+            toDate = today.toISOString().substring(0, 10);
+
+            switch(filterType) {
+                case 'today':
+                    fromDate = toDate;
+                    break;
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    fromDate = weekStart.toISOString().substring(0, 10);
+                    break;
+                case 'month':
+                    fromDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().substring(0, 10);
+                    break;
+                case '6months':
+                    const sixMonthsAgo = new Date(today);
+                    sixMonthsAgo.setMonth(today.getMonth() - 6);
+                    fromDate = sixMonthsAgo.toISOString().substring(0, 10);
+                    break;
+                case '1year':
+                    const oneYearAgo = new Date(today);
+                    oneYearAgo.setFullYear(today.getFullYear() - 1);
+                    fromDate = oneYearAgo.toISOString().substring(0, 10);
+                    break;
+                case 'year':
+                    fromDate = new Date(today.getFullYear(), 0, 1).toISOString().substring(0, 10);
+                    break;
+            }
+
+            document.getElementById('fromDate').value = fromDate;
+            document.getElementById('toDate').value = toDate;
+            loadReports();
+        }
+
+        // Calculate Report Statistics
+        function calculateReportStats(bills, fromDate, toDate) {
+            const from = new Date(fromDate);
+            const to = new Date(toDate);
+            const totalDays = Math.ceil((to - from) / (1000 * 60 * 60 * 24)) + 1;
+
+            const totalBills = bills.length;
+            const uniqueVehicles = new Set(bills.map(b => b.vehicleNumber)).size;
+            const totalRevenue = bills.reduce((sum, b) => sum + parseFloat(b.amount), 0);
+            const totalServices = bills.reduce((sum, b) => sum + parseInt(b.servicesCount), 0);
+
+            const avgBillValue = totalBills > 0 ? totalRevenue / totalBills : 0;
+            const avgBillsPerDay = totalDays > 0 ? totalBills / totalDays : 0;
+            const avgRevenuePerDay = totalDays > 0 ? totalRevenue / totalDays : 0;
+            const avgServicesPerBill = totalBills > 0 ? totalServices / totalBills : 0;
+
+            // Payment Mode Breakdown
+            const paymentModes = { Cash: 0, UPI: 0, Card: 0 };
+            bills.forEach(bill => {
+                const mode = bill.paymentMode || 'Cash';
+                if (paymentModes.hasOwnProperty(mode)) {
+                    paymentModes[mode] += parseFloat(bill.amount);
+                }
+            });
+
+            return {
+                totalDays,
+                totalBills,
+                totalVehicles: uniqueVehicles,
+                totalRevenue,
+                totalServices,
+                avgBillValue,
+                avgBillsPerDay,
+                avgRevenuePerDay,
+                avgServicesPerBill,
+                paymentModes
+            };
+        }
+
+        // Update Report Summary Display
+        function updateReportSummary(stats) {
+            document.getElementById('reportSummarySection').style.display = 'block';
+
+            document.getElementById('reportTotalDays').textContent = stats.totalDays;
+            document.getElementById('reportTotalBills').textContent = stats.totalBills;
+            document.getElementById('reportTotalVehicles').textContent = stats.totalVehicles;
+            document.getElementById('reportTotalRevenue').textContent = `₹${stats.totalRevenue.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('reportTotalServices').textContent = stats.totalServices;
+            document.getElementById('reportAvgBillValue').textContent = `₹${stats.avgBillValue.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('reportAvgBillsPerDay').textContent = stats.avgBillsPerDay.toFixed(1);
+            document.getElementById('reportAvgRevenuePerDay').textContent = `₹${stats.avgRevenuePerDay.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('reportAvgServicesPerBill').textContent = stats.avgServicesPerBill.toFixed(1);
+
+            // Payment Breakdown
+            const totalPayments = Object.values(stats.paymentModes).reduce((a, b) => a + b, 0);
+            const paymentBreakdown = document.getElementById('paymentBreakdown');
+
+            if (totalPayments > 0) {
+                paymentBreakdown.innerHTML = '';
+                Object.entries(stats.paymentModes).forEach(([mode, amount]) => {
+                    const percentage = (amount / totalPayments * 100).toFixed(1);
+                    const bgColor = mode === 'Cash' ? 'success' : mode === 'UPI' ? 'primary' : 'warning';
+                    paymentBreakdown.innerHTML += `
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span><strong>${mode}:</strong> ₹${amount.toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
+                                <span class="text-muted">${percentage}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-${bgColor}" role="progressbar" style="width: ${percentage}%" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                paymentBreakdown.innerHTML = '<p class="text-muted">No payment data available</p>';
+            }
+        }
+
+        // Load Reports (GET /api/bills/report?fromDate=...&toDate=...)
+        async function loadReports() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const reportsTable = document.getElementById('reportsTable');
+            const button = document.getElementById('generateReportBtn');
+
+            if (!fromDate || !toDate) {
+                alert('Please select both From Date and To Date.');
+                return;
+            }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-info">Generating report...</td></tr>`;
+            document.getElementById('reportSummarySection').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bills/report?fromDate=${fromDate}&toDate=${toDate}`);
+                if (!response.ok) throw new Error('Failed to fetch reports');
+
+                const bills = await response.json();
+
+                if (bills.length === 0) {
+                    reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No bills found for the selected date range.</td></tr>`;
+                    document.getElementById('reportSummarySection').style.display = 'none';
+                    return;
+                }
+
+                // Calculate and display statistics
+                const stats = calculateReportStats(bills, fromDate, toDate);
+                updateReportSummary(stats);
+
+                // Display bills table
+                reportsTable.innerHTML = '';
+                bills.forEach(bill => {
+                    const paymentMode = bill.paymentMode || 'Cash';
+                    reportsTable.innerHTML += `
+                        <tr>
+                            <td>${bill.billNo}</td>
+                            <td>${bill.date}</td>
+                            <td>${bill.vehicleNumber}</td>
+                            <td>${bill.customerName}</td>
+                            <td>${bill.servicesCount}</td>
+                            <td>₹${parseFloat(bill.amount).toLocaleString('en-IN')}</td>
+                            <td><span class="badge bg-${paymentMode === 'Cash' ? 'success' : paymentMode === 'UPI' ? 'primary' : 'warning'}">${paymentMode}</span></td>
+                            <td>${bill.employeeName}</td>
+                        </tr>
+                    `;
+                });
+
+            } catch (error) {
+                console.error("Error loading reports:", error);
+                reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Failed to load reports.</td></tr>`;
+                document.getElementById('reportSummarySection').style.display = 'none';
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Update Dashboard (GET /api/dashboard/stats)
+        async function updateDashboard() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
+                if (!response.ok) throw new Error('Failed to fetch dashboard stats');
+
+                const data = await response.json();
+
+                document.getElementById('totalVehicles').textContent = data.totalVehicles;
+                document.getElementById('totalEarnings').textContent = `₹${data.totalEarnings.toLocaleString('en-IN')}`;
+                document.getElementById('totalServices').textContent = data.totalServices;
+                document.getElementById('activeEmployees').textContent = data.activeEmployees;
+
+                // Service Stats Table
+                const statsTable = document.getElementById('serviceStatsTable');
+                statsTable.innerHTML = '';
+                if (data.serviceStats && data.serviceStats.length > 0) {
+                    data.serviceStats.forEach(stat => {
+                        statsTable.innerHTML += `
+                            <tr>
+                                <td>${stat.service}</td>
+                                <td>${stat.count}</td>
+                                <td>₹${stat.revenue}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    statsTable.innerHTML = `<tr><td colspan="3" class="text-center text-muted">No data available</td></tr>`;
+                }
+
+                // Recent Activities
+                const activitiesDiv = document.getElementById('recentActivities');
+                activitiesDiv.innerHTML = '';
+                if (data.recentActivities && data.recentActivities.length > 0) {
+                    data.recentActivities.forEach(activity => {
+                        activitiesDiv.innerHTML += `<p class="mb-1"><strong>${activity.time}:</strong> ${activity.description}</p>`;
+                    });
+                } else {
+                     activitiesDiv.innerHTML = '<p class="text-muted">No recent activities</p>';
+                }
+
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+                document.getElementById('totalVehicles').textContent = 'Err';
+                document.getElementById('totalEarnings').textContent = '₹Err';
+                document.getElementById('totalServices').textContent = 'Err';
+                document.getElementById('activeEmployees').textContent = 'Err';
+                document.getElementById('serviceStatsTable').innerHTML = `<tr><td colspan="3" class="text-center text-danger">Failed to load stats.</td></tr>`;
+                document.getElementById('recentActivities').innerHTML = '<p class="text-danger">Failed to load activities.</p>';
+            }
+        }
+
+        // --- Frontend Utility Functions ---
+
+        // Update Bill Preview - Customer details
+        function updateBillPreviewCustomer() {
+            const name = document.getElementById('customerName').value.trim();
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            const vehicleNum = document.getElementById('vehicleNumberDisplay').value.trim();
+            const vehicleType = document.getElementById('vehicleType').value;
+
+            document.getElementById('previewCustomer').textContent = name || '-';
+            document.getElementById('previewMobile').textContent = mobile || '-';
+            document.getElementById('previewVehicle').textContent = (vehicleNum && vehicleType) ? `${vehicleNum} (${vehicleType})` : vehicleNum || '-';
+        }
+
+        // Update Bill Preview - Services and Total Amount
+        function updateBillPreview() {
+            updateBillPreviewCustomer();
+
+            let selectedServices = [];
+            let total = 0;
+
+            localServicesCache.forEach(service => {
+                const checkbox = document.getElementById('service' + service.id);
+                if (checkbox && checkbox.checked) {
+                    selectedServices.push(service);
+                    total += service.price;
+                }
+            });
+
+            const servicesDiv = document.getElementById('previewServices');
+            if (selectedServices.length > 0) {
+                servicesDiv.innerHTML = selectedServices.map(s => `
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>${s.name}</span>
+                        <span>₹${s.price}</span>
+                    </div>
+                `).join('');
+            } else {
+                servicesDiv.innerHTML = '<p class="text-muted">No services selected</p>';
+            }
+
+            document.getElementById('totalAmount').textContent = total;
+        }
+
+        function printBill() {
+            alert("Print/PDF functionality would be implemented here using a library like jsPDF or a print stylesheet.");
+        }
     </script>
 </body>
 </html>
