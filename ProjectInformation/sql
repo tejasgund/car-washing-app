@@ -223,7 +223,7 @@ BEGIN
 END$$
 DELIMITER ;
 
--- Stored procedure for reports
+-- Old Stored procedure for reports
 DELIMITER $$
 CREATE PROCEDURE GetBillsReport(
     IN p_from_date DATE,
@@ -247,6 +247,34 @@ BEGIN
     ORDER BY b.bill_date DESC, b.bill_no DESC;
 END$$
 DELIMITER ;
+
+
+-- Update Stored procedure for reports
+DELIMITER $$
+CREATE PROCEDURE GetBillsReport(
+    IN p_from_date DATE,
+    IN p_to_date DATE
+)
+BEGIN
+    SELECT
+        b.bill_no,
+        DATE(b.bill_date) as bill_date,
+        b.vehicle_number,
+        c.name as customer_name,
+        COUNT(bs.id) as services_count,
+        b.total_amount as amount,
+        e.name as employee_name,
+        b.payment_mode as paymentMode
+    FROM bills b
+    JOIN customers c ON b.customer_id = c.id
+    JOIN employees e ON b.employee_id = e.id
+    LEFT JOIN bill_services bs ON b.id = bs.bill_id
+    WHERE b.bill_date BETWEEN p_from_date AND p_to_date
+    GROUP BY b.id, b.bill_no, b.bill_date, b.vehicle_number, c.name, b.total_amount, e.name
+    ORDER BY b.bill_date DESC, b.bill_no DESC;
+END$$
+DELIMITER ;
+
 
 
 
