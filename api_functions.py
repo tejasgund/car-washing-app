@@ -334,7 +334,8 @@ def get_bill_reports(from_date, to_date):
                 "customerName": r[3],
                 "servicesCount": r[4],
                 "amount": float(r[5]) if isinstance(r[5], Decimal) else r[5],
-                "employeeName": r[6]
+                "employeeName": r[6],
+                "paymentMode": r[7]
             })
 
         return bills_list
@@ -345,4 +346,3 @@ def get_bill_reports(from_date, to_date):
     finally:
         cursor.close()
         conn.close()
-
