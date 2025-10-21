@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>वाहन धुणे केंद्र - बिल व्यवस्थापन</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #1e40af);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+        }
+
+        .service-item {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .service-item:hover {
+            border-color: var(--primary-color);
+            background-color: #f8fafc;
+        }
+
+        .service-item input[type="checkbox"]:checked + label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .invoice-preview {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .employee-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+        }
+
+        .badge-custom {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .bg-purple {
+            background-color: #9333ea;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-car-wash me-2"></i>सह्याद्री वॉशिंग सेंटर</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showPage('dashboard')">
+                            <i class="fas fa-chart-line me-1"></i>डॅशबोर्ड
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('newbill')">
+                            <i class="fas fa-file-invoice me-1"></i>नवीन बिल
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('reports')">
+                            <i class="fas fa-chart-bar me-1"></i>अहवाल
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('employees')">
+                            <i class="fas fa-users me-1"></i>कर्मचारी
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div id="dashboard" class="page-section active">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-chart-line me-2"></i>डॅशबोर्ड</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3 id="totalVehicles" class="mb-1">...</h3>
+                        <p class="text-muted mb-0">आजची एकूण वाहने</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3 id="totalEarnings" class="mb-1">₹...</h3>
+                        <p class="text-muted mb-0">एकूण उत्पन्न</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-spray-can"></i>
+                        </div>
+                        <h3 id="totalServices" class="mb-1">...</h3>
+                        <p class="text-muted mb-0">पूर्ण झालेल्या सेवा</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h3 id="activeEmployees" class="mb-1">...</h3>
+                        <p class="text-muted mb-0">सक्रिय कर्मचारी</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-2"></i>आजची सेवानिहाय संख्या
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>सेवा</th>
+                                            <th>संख्या</th>
+                                            <th>उत्पन्न</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="serviceStatsTable">
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted">माहिती लोड होत आहे...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-clock me-2"></i>अलीकडील क्रियाकलाप
+                        </div>
+                        <div class="card-body">
+                            <div id="recentActivities">
+                                <p class="text-muted">क्रियाकलाप लोड होत आहेत...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="newbill" class="page-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-file-invoice me-2"></i>नवीन बिल तयार करा</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-search me-2"></i>वाहन शोध
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <input type="text" id="vehicleNumber" class="form-control" placeholder="वाहन क्रमांक टाका (उदा., MH12AB1234)" style="text-transform: uppercase;">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-primary w-100" onclick="searchVehicle()" id="searchVehicleBtn">
+                                        <i class="fas fa-search me-2"></i>शोधा
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="fas fa-user me-2"></i>ग्राहक माहिती
+                        </div>
+                        <div class="card-body">
+                            <form id="customerForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">ग्राहकाचे नाव</label>
+                                        <input type="text" id="customerName" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">मोबाईल नंबर</label>
+                                        <input type="tel" id="mobileNumber" class="form-control" pattern="[0-9]{10}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">वाहन क्रमांक</label>
+                                        <input type="text" id="vehicleNumberDisplay" class="form-control" readonly style="text-transform: uppercase;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">वाहनाचा प्रकार</label>
+                                        <select id="vehicleType" class="form-select" required>
+                                            <option value="">प्रकार निवडा</option>
+                                            <option value="Car">कार</option>
+                                            <option value="SUV">एसयूव्ही</option>
+                                            <option value="Bike">बाईक</option>
+                                            <option value="Other">इतर</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="fas fa-list-check me-2"></i>सेवा निवडा
+                        </div>
+                        <div class="card-body">
+                            <div id="servicesList">
+                                <p class="text-muted">सेवा लोड होत आहेत...</p>
+                            </div>
+
+                            <hr>
+                            <h6 class="mb-3">सानुकूल सेवा जोडा</h6>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <input type="text" id="customServiceName" class="form-control" placeholder="सेवेचे नाव">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="number" id="customServicePrice" class="form-control" placeholder="किंमत">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success w-100" onclick="addCustomService()" id="addServiceBtn">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>बिल पूर्वावलोकन
+                        </div>
+                        <div class="card-body">
+                            <div class="invoice-preview" id="invoicePreview">
+                                <div class="text-center mb-4">
+                                    <h4 class="mb-0">सह्याद्री वॉशिंग सेंटर</h4>
+                                    <p class="text-muted small">वाहन धुणे आणि देखभाल</p>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <strong>बिल क्र:</strong> <span id="billNumber">...</span>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <strong>तारीख:</strong> <span id="billDate">...</span>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="mb-3">
+                                    <strong>ग्राहक:</strong> <span id="previewCustomer">-</span><br>
+                                    <strong>मोबाईल:</strong> <span id="previewMobile">-</span><br>
+                                    <strong>वाहन:</strong> <span id="previewVehicle">-</span>
+                                </div>
+
+                                <hr>
+
+                                <h6>सेवा:</h6>
+                                <div id="previewServices" class="mb-3">
+                                    <p class="text-muted">कोणतीही सेवा निवडलेली नाही</p>
+                                </div>
+
+                                <hr>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <strong class="h5">एकूण रक्कम:</strong>
+                                    <strong class="h5 text-primary">₹<span id="totalAmount">0</span></strong>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">पेमेंट पद्धत</label>
+                                    <select id="paymentMode" class="form-select">
+                                        <option value="Cash">रोख</option>
+                                        <option value="UPI">यूपीआय</option>
+                                        <option value="Card">कार्ड</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">कर्मचारी</label>
+                                    <select id="employeeSelect" class="form-select">
+                                        <option value="">कर्मचारी निवडा</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-lg" onclick="saveBill()" id="saveBillBtn">
+                                        <i class="fas fa-save me-2"></i>बिल जतन करा
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="printBill()">
+                                        <i class="fas fa-print me-2"></i>प्रिंट / पीडीएफ डाउनलोड करा
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reports" class="page-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>अहवाल</h2>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-filter me-2"></i>अहवाल फिल्टर करा
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">पासून तारीख</label>
+                            <input type="date" id="fromDate" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">पर्यंत तारीख</label>
+                            <input type="date" id="toDate" class="form-control">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="loadReports()" id="generateReportBtn">
+                                <i class="fas fa-search me-2"></i>अहवाल तयार करा
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('today')">
+                                <i class="fas fa-calendar-day me-1"></i>आज
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('week')">
+                                <i class="fas fa-calendar-week me-1"></i>हा आठवडा
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('month')">
+                                <i class="fas fa-calendar-alt me-1"></i>हा महिना
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('6months')">
+                                <i class="fas fa-calendar me-1"></i>गेले ६ महिने
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('1year')">
+                                <i class="fas fa-calendar me-1"></i>गेले १ वर्ष
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="setQuickFilter('year')">
+                                <i class="fas fa-calendar-check me-1"></i>हे वर्ष
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportSummarySection" style="display: none;">
+                <div class="row mt-3">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 id="reportTotalDays" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">एकूण दिवस</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-info bg-opacity-10 text-info">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                            <h3 id="reportTotalBills" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">एकूण बिले</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <h3 id="reportTotalVehicles" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">एकूण वाहने</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <h3 id="reportTotalRevenue" class="mb-1">₹0</h3>
+                            <p class="text-muted mb-0">एकूण उत्पन्न</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-purple bg-opacity-10" style="color: #9333ea;">
+                                <i class="fas fa-spray-can"></i>
+                            </div>
+                            <h3 id="reportTotalServices" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">एकूण सेवा</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 id="reportAvgBillValue" class="mb-1">₹0</h3>
+                            <p class="text-muted mb-0">सरासरी बिल मूल्य</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-info bg-opacity-10 text-info">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <h3 id="reportAvgBillsPerDay" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">सरासरी बिले/दिवस</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3 id="reportAvgRevenuePerDay" class="mb-1">₹0</h3>
+                            <p class="text-muted mb-0">सरासरी उत्पन्न/दिवस</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-credit-card me-2"></i>पेमेंट पद्धत विभाजन
+                            </div>
+                            <div class="card-body">
+                                <div id="paymentBreakdown">
+                                    <p class="text-muted">माहिती उपलब्ध नाही</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card" style="height: calc(100% - 0px);">
+                            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <h3 id="reportAvgServicesPerBill" class="mb-1">0</h3>
+                            <p class="text-muted mb-0">सरासरी सेवा/बिल</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <i class="fas fa-table me-2"></i>बिल सारांश
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>बिल क्र</th>
+                                    <th>तारीख</th>
+                                    <th>वाहन</th>
+                                    <th>ग्राहक</th>
+                                    <th>सेवा</th>
+                                    <th>रक्कम</th>
+                                    <th>पेमेंट</th>
+                                    <th>कर्मचारी</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTable">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">तारीख श्रेणी निवडा आणि अहवाल तयार करा क्लिक करा</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="employees" class="page-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4"><i class="fas fa-users me-2"></i>कर्मचारी व्यवस्थापन</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-user-plus me-2"></i>नवीन कर्मचारी जोडा
+                        </div>
+                        <div class="card-body">
+                            <form id="employeeForm">
+                                <div class="mb-3">
+                                    <label class="form-label">कर्मचाऱ्याचे नाव</label>
+                                    <input type="text" id="empName" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">मोबाईल नंबर</label>
+                                    <input type="tel" id="empMobile" class="form-control" pattern="[0-9]{10}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">पदनाम</label>
+                                    <input type="text" id="empDesignation" class="form-control" placeholder="उदा., वॉशर, व्यवस्थापक" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">स्थिती</label>
+                                    <select id="empStatus" class="form-select">
+                                        <option value="Active">सक्रिय</option>
+                                        <option value="Inactive">निष्क्रिय</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100" id="saveEmployeeBtn">
+                                    <i class="fas fa-save me-2"></i>कर्मचारी जतन करा
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-list me-2"></i>कर्मचारी यादी
+                        </div>
+                        <div class="card-body">
+                            <div id="employeesList">
+                                <p class="text-muted">कर्मचारी लोड होत आहेत...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- CONFIGURATION ---
+        const API_BASE_URL = '/api';
+
+        // --- FRONTEND LOGIC ---
+        let localServicesCache = [];
+        let nextBillNo = 1001;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial setup
+            Promise.all([
+                loadServices(),
+                loadEmployees(),
+                updateDashboard(),
+            ]).then(() => {
+                document.getElementById('billNumber').textContent = nextBillNo;
+                document.getElementById('billDate').textContent = new Date().toLocaleDateString('mr-IN');
+                setDefaultDates();
+            });
+
+            document.getElementById('employeeForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveEmployee();
+            });
+
+            // Set up event listeners for bill preview updates
+            document.getElementById('customerForm').addEventListener('input', updateBillPreviewCustomer);
+        });
+
+        // Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            if (pageId === 'dashboard') {
+                updateDashboard();
+            } else if (pageId === 'newbill') {
+                resetBillForm();
+            } else if (pageId === 'employees') {
+                loadEmployees();
+            }
+        }
+
+        function setDefaultDates() {
+            const today = new Date().toISOString().substring(0, 10);
+            document.getElementById('fromDate').value = today;
+            document.getElementById('toDate').value = today;
+        }
+
+        function resetBillForm() {
+            document.getElementById('customerForm').reset();
+            document.getElementById('vehicleNumber').value = '';
+            document.getElementById('vehicleNumberDisplay').value = '';
+
+            // Uncheck all service checkboxes
+            localServicesCache.forEach(service => {
+                const checkbox = document.getElementById('service' + service.id);
+                if (checkbox) checkbox.checked = false;
+            });
+
+            document.getElementById('customServiceName').value = '';
+            document.getElementById('customServicePrice').value = '';
+
+            document.getElementById('billNumber').textContent = nextBillNo;
+            document.getElementById('billDate').textContent = new Date().toLocaleDateString('mr-IN');
+
+            // Reset preview
+            document.getElementById('previewCustomer').textContent = '-';
+            document.getElementById('previewMobile').textContent = '-';
+            document.getElementById('previewVehicle').textContent = '-';
+            updateBillPreview();
+        }
+
+        // Utility function to show loading state
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading-spinner"></span> लोड होत आहे...';
+            } else {
+                button.disabled = false;
+                const originalText = button.getAttribute('data-original-text');
+                if (originalText) {
+                    button.innerHTML = originalText;
+                }
+            }
+        }
+
+        // --- API Integration Functions ---
+
+        // Load Services (GET /api/services)
+        async function loadServices() {
+            const container = document.getElementById('servicesList');
+            container.innerHTML = '<p class="text-muted">सेवा लोड होत आहेत...</p>';
+            try {
+                const response = await fetch(`${API_BASE_URL}/services`);
+                if (!response.ok) throw new Error('Failed to fetch services');
+
+                localServicesCache = await response.json();
+
+                container.innerHTML = '';
+                localServicesCache.forEach(service => {
+                    const div = document.createElement('div');
+                    div.className = 'service-item';
+                    div.innerHTML = `
+                        <div class="form-check d-flex justify-content-between align-items-center">
+                            <div>
+                                <input class="form-check-input" type="checkbox" value="${service.id}"
+                                    id="service${service.id}" onchange="updateBillPreview()">
+                                <label class="form-check-label" for="service${service.id}">
+                                    ${service.name}
+                                </label>
+                            </div>
+                            <span class="badge bg-primary">₹${service.price}</span>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading services:', error);
+                container.innerHTML = '<p class="text-danger">सेवा लोड करण्यात अयशस्वी.</p>';
+            }
+        }
+
+        // Add Custom Service (POST /api/services)
+        async function addCustomService() {
+            const name = document.getElementById('customServiceName').value.trim();
+            const price = parseInt(document.getElementById('customServicePrice').value);
+            const button = document.getElementById('addServiceBtn');
+
+            if (!name || !price) {
+                alert('कृपया सेवेचे नाव आणि किंमत प्रविष्ट करा');
+                return;
+            }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/services`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price })
+                });
+
+                if (response.ok) {
+                    await loadServices();
+                    alert(`सेवा "${name}" जोडली गेली.`);
+                    document.getElementById('customServiceName').value = '';
+                    document.getElementById('customServicePrice').value = '';
+                } else {
+                    throw new Error('Failed to add service');
+                }
+            } catch (error) {
+                console.error('Error adding custom service:', error);
+                alert('सानुकूल सेवा जोडण्यात अयशस्वी.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Vehicle Search (GET /api/customers?vehicleNumber=...)
+        async function searchVehicle() {
+            const vehicleNum = document.getElementById('vehicleNumber').value.toUpperCase().trim();
+            const button = document.getElementById('searchVehicleBtn');
+
+            if (!vehicleNum) {
+                alert('कृपया वाहन क्रमांक प्रविष्ट करा');
+                return;
+            }
+
+            document.getElementById('vehicleNumberDisplay').value = vehicleNum;
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/customers?vehicleNumber=${vehicleNum}`);
+
+                if (response.ok) {
+                    const customer = await response.json();
+
+                    document.getElementById('customerName').value = customer.name;
+                    document.getElementById('mobileNumber').value = customer.mobile;
+                    document.getElementById('vehicleType').value = customer.vehicleType;
+
+                    alert('ग्राहक सापडला! तपशील स्वयं-भरले गेले.');
+                } else if (response.status === 404) {
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('mobileNumber').value = '';
+                    document.getElementById('vehicleType').value = '';
+
+                    alert('नवीन ग्राहक! कृपया तपशील भरा.');
+                } else {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                updateBillPreviewCustomer();
+            } catch (error) {
+                console.error("Error during vehicle search:", error);
+                alert('शोध दरम्यान त्रुटी आली.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Load Employees (GET /api/employees)
+        async function loadEmployees() {
+            const select = document.getElementById('employeeSelect');
+            const listContainer = document.getElementById('employeesList');
+
+            select.innerHTML = '<option value="">लोड होत आहे...</option>';
+            listContainer.innerHTML = '<p class="text-muted">कर्मचारी लोड होत आहेत...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/employees`);
+                if (!response.ok) throw new Error('Failed to fetch employees');
+
+                const employees = await response.json();
+
+                select.innerHTML = '<option value="">कर्मचारी निवडा</option>';
+                listContainer.innerHTML = '';
+
+                employees.forEach(emp => {
+                    const option = document.createElement('option');
+                    option.value = emp.id;
+                    option.textContent = `${emp.name} (${emp.designation})`;
+                    select.appendChild(option);
+
+                    listContainer.innerHTML += `
+                        <div class="employee-card d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${emp.name}</strong> - <span class="text-muted">${emp.designation}</span>
+                                <br><small>मोबाईल: ${emp.mobile}</small>
+                            </div>
+                            <span class="badge badge-custom ${emp.status === 'Active' ? 'bg-success' : 'bg-secondary'}">${emp.status === 'Active' ? 'सक्रिय' : 'निष्क्रिय'}</span>
+                        </div>
+                    `;
+                });
+
+                // Update dashboard stat
+                const activeCount = employees.filter(e => e.status === 'Active').length;
+                document.getElementById('activeEmployees').textContent = activeCount;
+
+            } catch (error) {
+                console.error("Error loading employees:", error);
+                select.innerHTML = '<option value="">लोड करण्यात त्रुटी</option>';
+                listContainer.innerHTML = '<p class="text-danger">कर्मचारी माहिती लोड करण्यात अयशस्वी.</p>';
+            }
+        }
+
+        // Save Employee (POST /api/employees)
+        async function saveEmployee() {
+            const newEmployee = {
+                name: document.getElementById('empName').value.trim(),
+                mobile: document.getElementById('empMobile').value.trim(),
+                designation: document.getElementById('empDesignation').value.trim(),
+                status: document.getElementById('empStatus').value
+            };
+            const button = document.getElementById('saveEmployeeBtn');
+
+            if (!newEmployee.name || !newEmployee.mobile || !newEmployee.designation) {
+                alert('कृपया सर्व कर्मचारी तपशील भरा.');
+                return;
+            }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/employees`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newEmployee)
+                });
+
+                if (response.ok) {
+                    document.getElementById('employeeForm').reset();
+                    await loadEmployees();
+                    alert(`${newEmployee.name} यशस्वीरित्या जोडले गेले.`);
+                } else {
+                    throw new Error('Failed to save employee');
+                }
+            } catch (error) {
+                console.error("Error saving employee:", error);
+                alert('कर्मचारी जतन करण्यात अयशस्वी.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Save Bill (POST /api/bills)
+        async function saveBill() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            const vehicleNum = document.getElementById('vehicleNumberDisplay').value.trim();
+            const vehicleType = document.getElementById('vehicleType').value;
+            const paymentMode = document.getElementById('paymentMode').value;
+            const employeeId = document.getElementById('employeeSelect').value;
+            const totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
+            const button = document.getElementById('saveBillBtn');
+
+            if (!customerName || !mobile || !vehicleNum || !vehicleType || !employeeId || totalAmount === 0) {
+                alert('कृपया सर्व ग्राहक तपशील भरा आणि किमान एक सेवा निवडा.');
+                return;
+            }
+
+            let selectedServices = [];
+            localServicesCache.forEach(service => {
+                const checkbox = document.getElementById('service' + service.id);
+                if (checkbox && checkbox.checked) {
+                    selectedServices.push({ id: service.id, name: service.name, price: service.price });
+                }
+            });
+
+            if (selectedServices.length === 0) {
+                alert('कृपया किमान एक सेवा निवडा.');
+                return;
+            }
+
+            const billData = {
+                customerName,
+                mobileNumber: mobile,
+                vehicleNumber: vehicleNum,
+                vehicleType,
+                services: selectedServices,
+                totalAmount,
+                paymentMode,
+                employeeId: parseInt(employeeId)
+            };
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bills`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(billData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`बिल ${result.billNo} यशस्वीरित्या जतन झाले!`);
+                    nextBillNo = result.billNo + 1;
+                    updateDashboard();
+                    resetBillForm();
+                } else {
+                    throw new Error(`Failed to save bill: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error("Error saving bill:", error);
+                alert('बिल जतन करण्यात अयशस्वी.');
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Quick Filter Functions
+        function setQuickFilter(filterType) {
+            const today = new Date();
+            let fromDate, toDate;
+
+            toDate = today.toISOString().substring(0, 10);
+
+            switch(filterType) {
+                case 'today':
+                    fromDate = toDate;
+                    break;
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    fromDate = weekStart.toISOString().substring(0, 10);
+                    break;
+                case 'month':
+                    fromDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().substring(0, 10);
+                    break;
+                case '6months':
+                    const sixMonthsAgo = new Date(today);
+                    sixMonthsAgo.setMonth(today.getMonth() - 6);
+                    fromDate = sixMonthsAgo.toISOString().substring(0, 10);
+                    break;
+                case '1year':
+                    const oneYearAgo = new Date(today);
+                    oneYearAgo.setFullYear(today.getFullYear() - 1);
+                    fromDate = oneYearAgo.toISOString().substring(0, 10);
+                    break;
+                case 'year':
+                    fromDate = new Date(today.getFullYear(), 0, 1).toISOString().substring(0, 10);
+                    break;
+            }
+
+            document.getElementById('fromDate').value = fromDate;
+            document.getElementById('toDate').value = toDate;
+            loadReports();
+        }
+
+        // Calculate Report Statistics
+        function calculateReportStats(bills, fromDate, toDate) {
+            const from = new Date(fromDate);
+            const to = new Date(toDate);
+            const totalDays = Math.ceil((to - from) / (1000 * 60 * 60 * 24)) + 1;
+
+            const totalBills = bills.length;
+            const uniqueVehicles = new Set(bills.map(b => b.vehicleNumber)).size;
+            const totalRevenue = bills.reduce((sum, b) => sum + parseFloat(b.amount), 0);
+            const totalServices = bills.reduce((sum, b) => sum + parseInt(b.servicesCount), 0);
+
+            const avgBillValue = totalBills > 0 ? totalRevenue / totalBills : 0;
+            const avgBillsPerDay = totalDays > 0 ? totalBills / totalDays : 0;
+            const avgRevenuePerDay = totalDays > 0 ? totalRevenue / totalDays : 0;
+            const avgServicesPerBill = totalBills > 0 ? totalServices / totalBills : 0;
+
+            // Payment Mode Breakdown
+            const paymentModes = { Cash: 0, UPI: 0, Card: 0 };
+            bills.forEach(bill => {
+                const mode = bill.paymentMode || 'Cash';
+                if (paymentModes.hasOwnProperty(mode)) {
+                    paymentModes[mode] += parseFloat(bill.amount);
+                }
+            });
+
+            return {
+                totalDays,
+                totalBills,
+                totalVehicles: uniqueVehicles,
+                totalRevenue,
+                totalServices,
+                avgBillValue,
+                avgBillsPerDay,
+                avgRevenuePerDay,
+                avgServicesPerBill,
+                paymentModes
+            };
+        }
+
+        // Update Report Summary Display
+        function updateReportSummary(stats) {
+            document.getElementById('reportSummarySection').style.display = 'block';
+
+            document.getElementById('reportTotalDays').textContent = stats.totalDays;
+            document.getElementById('reportTotalBills').textContent = stats.totalBills;
+            document.getElementById('reportTotalVehicles').textContent = stats.totalVehicles;
+            document.getElementById('reportTotalRevenue').textContent = `₹${stats.totalRevenue.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('reportTotalServices').textContent = stats.totalServices;
+            document.getElementById('reportAvgBillValue').textContent = `₹${stats.avgBillValue.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('reportAvgBillsPerDay').textContent = stats.avgBillsPerDay.toFixed(1);
+            document.getElementById('reportAvgRevenuePerDay').textContent = `₹${stats.avgRevenuePerDay.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('reportAvgServicesPerBill').textContent = stats.avgServicesPerBill.toFixed(1);
+
+            // Payment Breakdown
+            const totalPayments = Object.values(stats.paymentModes).reduce((a, b) => a + b, 0);
+            const paymentBreakdown = document.getElementById('paymentBreakdown');
+
+            const paymentLabels = { 'Cash': 'रोख', 'UPI': 'यूपीआय', 'Card': 'कार्ड' };
+
+            if (totalPayments > 0) {
+                paymentBreakdown.innerHTML = '';
+                Object.entries(stats.paymentModes).forEach(([mode, amount]) => {
+                    const percentage = (amount / totalPayments * 100).toFixed(1);
+                    const bgColor = mode === 'Cash' ? 'success' : mode === 'UPI' ? 'primary' : 'warning';
+                    paymentBreakdown.innerHTML += `
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span><strong>${paymentLabels[mode]}:</strong> ₹${amount.toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
+                                <span class="text-muted">${percentage}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-${bgColor}" role="progressbar" style="width: ${percentage}%" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                paymentBreakdown.innerHTML = '<p class="text-muted">पेमेंट माहिती उपलब्ध नाही</p>';
+            }
+        }
+
+        // Load Reports (GET /api/bills/report?fromDate=...&toDate=...)
+        async function loadReports() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const reportsTable = document.getElementById('reportsTable');
+            const button = document.getElementById('generateReportBtn');
+
+            if (!fromDate || !toDate) {
+                alert('कृपया पासून तारीख आणि पर्यंत तारीख दोन्ही निवडा.');
+                return;
+            }
+
+            // Store original button text
+            button.setAttribute('data-original-text', button.innerHTML);
+            setLoading(button, true);
+
+            reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-info">अहवाल तयार होत आहे...</td></tr>`;
+            document.getElementById('reportSummarySection').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bills/report?fromDate=${fromDate}&toDate=${toDate}`);
+                if (!response.ok) throw new Error('Failed to fetch reports');
+
+                const bills = await response.json();
+
+                if (bills.length === 0) {
+                    reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-muted">निवडलेल्या तारीख श्रेणीसाठी कोणतेही बिल सापडले नाहीत.</td></tr>`;
+                    document.getElementById('reportSummarySection').style.display = 'none';
+                    return;
+                }
+
+                // Calculate and display statistics
+                const stats = calculateReportStats(bills, fromDate, toDate);
+                updateReportSummary(stats);
+
+                // Display bills table
+                const paymentLabels = { 'Cash': 'रोख', 'UPI': 'यूपीआय', 'Card': 'कार्ड' };
+                reportsTable.innerHTML = '';
+                bills.forEach(bill => {
+                    const paymentMode = bill.paymentMode || 'Cash';
+                    const paymentLabel = paymentLabels[paymentMode] || paymentMode;
+                    reportsTable.innerHTML += `
+                        <tr>
+                            <td>${bill.billNo}</td>
+                            <td>${bill.date}</td>
+                            <td>${bill.vehicleNumber}</td>
+                            <td>${bill.customerName}</td>
+                            <td>${bill.servicesCount}</td>
+                            <td>₹${parseFloat(bill.amount).toLocaleString('en-IN')}</td>
+                            <td><span class="badge bg-${paymentMode === 'Cash' ? 'success' : paymentMode === 'UPI' ? 'primary' : 'warning'}">${paymentLabel}</span></td>
+                            <td>${bill.employeeName}</td>
+                        </tr>
+                    `;
+                });
+
+            } catch (error) {
+                console.error("Error loading reports:", error);
+                reportsTable.innerHTML = `<tr><td colspan="8" class="text-center text-danger">अहवाल लोड करण्यात अयशस्वी.</td></tr>`;
+                document.getElementById('reportSummarySection').style.display = 'none';
+            } finally {
+                setLoading(button, false);
+            }
+        }
+
+        // Update Dashboard (GET /api/dashboard/stats)
+        async function updateDashboard() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
+                if (!response.ok) throw new Error('Failed to fetch dashboard stats');
+
+                const data = await response.json();
+
+                document.getElementById('totalVehicles').textContent = data.totalVehicles;
+                document.getElementById('totalEarnings').textContent = `₹${data.totalEarnings.toLocaleString('en-IN')}`;
+                document.getElementById('totalServices').textContent = data.totalServices;
+                document.getElementById('activeEmployees').textContent = data.activeEmployees;
+
+                // Service Stats Table
+                const statsTable = document.getElementById('serviceStatsTable');
+                statsTable.innerHTML = '';
+                if (data.serviceStats && data.serviceStats.length > 0) {
+                    data.serviceStats.forEach(stat => {
+                        statsTable.innerHTML += `
+                            <tr>
+                                <td>${stat.service}</td>
+                                <td>${stat.count}</td>
+                                <td>₹${stat.revenue}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    statsTable.innerHTML = `<tr><td colspan="3" class="text-center text-muted">माहिती उपलब्ध नाही</td></tr>`;
+                }
+
+                // Recent Activities
+                const activitiesDiv = document.getElementById('recentActivities');
+                activitiesDiv.innerHTML = '';
+                if (data.recentActivities && data.recentActivities.length > 0) {
+                    data.recentActivities.forEach(activity => {
+                        activitiesDiv.innerHTML += `<p class="mb-1"><strong>${activity.time}:</strong> ${activity.description}</p>`;
+                    });
+                } else {
+                     activitiesDiv.innerHTML = '<p class="text-muted">अलीकडील क्रियाकलाप नाहीत</p>';
+                }
+
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+                document.getElementById('totalVehicles').textContent = 'त्रुटी';
+                document.getElementById('totalEarnings').textContent = '₹त्रुटी';
+                document.getElementById('totalServices').textContent = 'त्रुटी';
+                document.getElementById('activeEmployees').textContent = 'त्रुटी';
+                document.getElementById('serviceStatsTable').innerHTML = `<tr><td colspan="3" class="text-center text-danger">आकडेवारी लोड करण्यात अयशस्वी.</td></tr>`;
+                document.getElementById('recentActivities').innerHTML = '<p class="text-danger">क्रियाकलाप लोड करण्यात अयशस्वी.</p>';
+            }
+        }
+
+        // --- Frontend Utility Functions ---
+
+        // Update Bill Preview - Customer details
+        function updateBillPreviewCustomer() {
+            const name = document.getElementById('customerName').value.trim();
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            const vehicleNum = document.getElementById('vehicleNumberDisplay').value.trim();
+            const vehicleType = document.getElementById('vehicleType').value;
+
+            const vehicleTypeLabels = { 'Car': 'कार', 'SUV': 'एसयूव्ही', 'Bike': 'बाईक', 'Other': 'इतर' };
+            const vehicleTypeLabel = vehicleTypeLabels[vehicleType] || vehicleType;
+
+            document.getElementById('previewCustomer').textContent = name || '-';
+            document.getElementById('previewMobile').textContent = mobile || '-';
+            document.getElementById('previewVehicle').textContent = (vehicleNum && vehicleType) ? `${vehicleNum} (${vehicleTypeLabel})` : vehicleNum || '-';
+        }
+
+        // Update Bill Preview - Services and Total Amount
+        function updateBillPreview() {
+            updateBillPreviewCustomer();
+
+            let selectedServices = [];
+            let total = 0;
+
+            localServicesCache.forEach(service => {
+                const checkbox = document.getElementById('service' + service.id);
+                if (checkbox && checkbox.checked) {
+                    selectedServices.push(service);
+                    total += service.price;
+                }
+            });
+
+            const servicesDiv = document.getElementById('previewServices');
+            if (selectedServices.length > 0) {
+                servicesDiv.innerHTML = selectedServices.map(s => `
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>${s.name}</span>
+                        <span>₹${s.price}</span>
+                    </div>
+                `).join('');
+            } else {
+                servicesDiv.innerHTML = '<p class="text-muted">कोणतीही सेवा निवडलेली नाही</p>';
+            }
+
+            document.getElementById('totalAmount').textContent = total;
+        }
+
+        function printBill() {
+            alert("प्रिंट/पीडीएफ कार्यक्षमता येथे jsPDF सारख्या लायब्ररी वापरून किंवा प्रिंट स्टाइलशीट वापरून लागू केली जाईल.");
+        }
+    </script>
+</body>
+</html>
