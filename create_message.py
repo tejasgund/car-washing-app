@@ -48,6 +48,3 @@ def generate_bill_message(bill_no):
     conn.close()
     send_message(bill_info[2], msg)
     return msg, bill_info[2]
-print(
-    generate_bill_message(1001)
-)
