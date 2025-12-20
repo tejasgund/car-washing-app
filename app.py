@@ -8,10 +8,10 @@ from AppLog.applog import get_logger
 import api_functions
 
 # Initialize logger
-log = get_logger(__name__)
+log = get_logger("API Callings")
 
 app = FastAPI()
-log.info("🚀 FastAPI Application Started")
+log.info(f"Washing Application Started{datetime.now()}")
 
 # Serve static files
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
@@ -21,17 +21,17 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 @app.get("/")
 def home():
-    log.info("🏠 Home page request received")
+    log.info("Recieved a request /")
     try:
         return FileResponse("frontend/index3.html")
     except Exception as e:
-        log.exception(f"❌ Failed to load home page: {e}")
+        log.info(f"Exception occured in api /{e}")
         return JSONResponse(content={"error": "Failed to load home page"}, status_code=500)
 
 
 @app.get("/api/customers")
 def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to search")):
-    log.info(f"🔍 /api/customers called with vehicleNumber={vehicleNumber}")
+    log.info(f"/api/customers called with vehicleNumber={vehicleNumber}")
     try:
         response, status = api_functions.vehicle_number(vehicleNumber)
         log.info(f"Customer API response status={status}")
