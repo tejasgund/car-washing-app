@@ -1,0 +1,6 @@
+2025-12-20 11:21:48 - my_logs - INFO - test
+2025-12-20 11:22:52 - my_logs - INFO - test
+2025-12-20 11:22:53 - __main__ - INFO - 🚀 FastAPI Application Started
+2025-12-20 11:50:26 - my_logs - INFO - test
+2025-12-20 11:50:49 - my_logs - INFO - test
+2025-12-20 11:50:52 - __main__ - ERROR - MySQL connection failed: (2003, "Can't connect to MySQL server on 'sahyadri_mysql' ([Errno 11001] getaddrinfo failed)")
