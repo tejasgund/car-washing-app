@@ -23,7 +23,7 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 def home():
     log.info("Recieved a request /")
     try:
-        return FileResponse("frontend/index3.html")
+        return FileResponse("frontend/index.html")
     except Exception as e:
         log.info(f"Exception occured in api /{e}")
         return JSONResponse(content={"error": "Failed to load home page"}, status_code=500)
