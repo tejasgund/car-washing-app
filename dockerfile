@@ -3,6 +3,8 @@ FROM python:3.9-slim
 
 # Set working directory
 WORKDIR /app
+#upgrade pip
+RUN pip install --upgrade pip
 
 # Copy requirements and install dependencies
 COPY requirements.txt .
