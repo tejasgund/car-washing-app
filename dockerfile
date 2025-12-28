@@ -4,6 +4,13 @@ FROM python:3.9-slim
 # Set working directory
 WORKDIR /app
 
+#Set the db environment varaibles
+ENV DB_Host="sahyadri_mysql"
+ENV DB_User="admin"
+ENV DB_Password="admin"
+ENV DB_Database="car_washing_app_qa"
+ENV DB_Port=3306
+
 # Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
