@@ -5,10 +5,10 @@ FROM python:3.9-slim
 WORKDIR /app
 
 #Set the db environment varaibles
-ENV DB_Host="sahyadri_mysql"
-ENV DB_User="admin"
-ENV DB_Password="admin"
-ENV DB_Database="car_washing_app_qa"
+ENV DB_Host="testing-mysql"
+ENV DB_User="root"
+ENV DB_Password="tejas"
+ENV DB_Database="qa"
 ENV DB_Port=3306
 
 # Copy requirements and install dependencies
