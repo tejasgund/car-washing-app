@@ -1,9 +1,9 @@
 # ----------------
-# Build Stage
+# Builder Stage
 # ----------------
-FROM python:3.11-slim AS builder
+FROM python:3.11-bullseye AS builder
 
-# Set workdir
+# Set working directory
 WORKDIR /app
 
 # Install build dependencies
@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements to leverage cache
+# Copy only requirements to leverage Docker cache
 COPY requirements.txt .
 
-# Install packages system-wide into /install to avoid .local issues
+# Upgrade pip and install dependencies system-wide into /install
 RUN pip install --upgrade pip \
     && pip install --prefix=/install --no-cache-dir -r requirements.txt
 
@@ -26,7 +26,7 @@ COPY . .
 # ----------------
 FROM python:3.11-slim
 
-# Set workdir
+# Set working directory
 WORKDIR /app
 
 # Copy installed packages from builder
@@ -36,22 +36,26 @@ COPY --from=builder /install /usr/local
 COPY --from=builder /app /app
 
 # Add a non-root user
-RUN useradd -m tejas \
-    && chown -R tejas:tejas /app /usr/local
+RUN useradd -m tejas
+
+# Change ownership to non-root user
+RUN chown -R tejas:tejas /app /usr/local
 
 # Switch to non-root user
 USER tejas
 
-# Expose port
-EXPOSE 8080
+# Set PATH to include installed binaries
+ENV PATH=/usr/local/bin:$PATH
 
-# Pass secrets via environment variables (do not hardcode)
-# Example:
-#   docker run -e DB_PASSWORD=secret ...
+# Environment variables (do NOT hardcode secrets in production)
+# Pass via CI/CD or Docker Compose
 ENV DB_Host="testing-mysql"
 ENV DB_User="root"
 ENV DB_Database="qa"
 ENV DB_Port=3306
 
-# Run FastAPI via Gunicorn + Uvicorn workers
+# Expose application port
+EXPOSE 8080
+
+# Run FastAPI app using Gunicorn + Uvicorn workers
 CMD ["gunicorn", "app:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "30", "--access-logfile", "-", "--error-logfile", "-"]
