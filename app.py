@@ -6,6 +6,21 @@ from typing import List
 from datetime import datetime
 from AppLog.applog import get_logger
 import api_functions
+from config import database
+
+#checking database connection
+log = get_logger("Database Connection")
+log.info("Started checking database connection")
+try:
+    conn = database()
+    cursor = conn.cursor()
+    cursor.execute("SELECT 1")
+    result = cursor.fetchone()
+    log.info("Database connection successful")
+except Exception as e:
+    log.error(f"Database connection failed: {e}")
+    exit(1)
+
 
 # Initialize logger
 log = get_logger("API Callings")
