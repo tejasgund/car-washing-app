@@ -9,8 +9,9 @@ from datetime import datetime
 from AppLog.applog import get_logger
 import api_functions
 from config import database
+import requests
 
-#checking database connection
+#checking database connection------------------
 log = get_logger("Database Connection")
 log.info("Started checking database connection")
 try:
