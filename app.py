@@ -77,6 +77,7 @@ def list_services():
     log.info("📋 Listing all services")
     try:
         response, status = api_functions.list_service()
+        log.info(response)
         log.info(f"List services completed with status={status}")
         return JSONResponse(content=response, status_code=status)
     except Exception as e:
@@ -89,6 +90,8 @@ def list_employees():
     log.info("👥 Listing employees")
     try:
         response = api_functions.list_employees()
+        log.info(response)
+        log.info(f"List employees completed with status={response}")
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         log.exception(f"❌ Failed to list employees: {e}")
@@ -100,6 +103,8 @@ def dashboard_stats():
     log.info("📊 Fetching dashboard stats")
     try:
         stats = api_functions.stats()
+        log.info(stats)
+        log.info(f"Dashboard stats completed with status={stats}")
         return JSONResponse(content=stats, status_code=200)
     except Exception as e:
         log.exception(f"❌ Error fetching stats: {e}")
@@ -114,6 +119,7 @@ def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
         to_date = datetime.strptime(toDate, "%Y-%m-%d")
 
         report = api_functions.get_bill_reports(from_date, to_date)
+        log.info(report)
         log.info("✅ Bill report generated successfully")
         return JSONResponse(content=report, status_code=200)
 
