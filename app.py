@@ -33,7 +33,7 @@ except Exception as e:
 log = get_logger("API Callings")
 
 app = FastAPI()
-log.info(f"Washing Application Started{datetime.now()}")
+log.info(f"Washing Application Started:\t{datetime.now()}")
 
 # Serve static files
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
@@ -44,6 +44,7 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 @app.get("/")
 def home():
     log.info("Recieved a request for the main page")
+    log.info(f"CALLED API\t: /")
     try:
         return FileResponse("frontend/index3.html")
         log.info("Successfully recieved a request for the main page")
@@ -54,12 +55,13 @@ def home():
 
 @app.get("/api/customers")
 def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to search")):
-    log.info(f"/api/customers called with vehicleNumber={vehicleNumber}")
+    log.info(f"CALLED API:\t /api/customers/ called with vehicleNumber={vehicleNumber}")
     try:
         response, status = api_functions.vehicle_number(vehicleNumber)
         log.info(f"Customer API response status={status}")
 
         if status == 200:
+            log.info(f"{response}")
             log.info(f"✅ Vehicle {vehicleNumber} found")
         elif status == 404:
             log.warning(f"⚠️ Vehicle {vehicleNumber} not found")
