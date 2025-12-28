@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +20,11 @@ try:
     result = cursor.fetchone()
     log.info("Database connection successful")
 except Exception as e:
+    log.warning(f"Database User : {os.getenv('DB_User')}\n"
+                f"Database Password : {os.getenv('DB_Password')}\n"
+                f"Database Host: {os.getenv('DB_Host')}\n"
+                f"Database Name: {os.getenv('DB_Database')}\n"
+                f"Database Port: {os.getenv('DB_Port')}\n")
     log.error(f"Database connection failed: {e}")
     exit(1)
 
