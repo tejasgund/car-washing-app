@@ -51,7 +51,7 @@ ENV PATH=/usr/local/bin:$PATH
 # Pass via CI/CD or Docker Compose
 ENV DB_Host="sahyadri_mysql"
 ENV DB_User="admin"
-ENV DB_Database="admin"
+ENV DB_Database="car_washing_app_qa"
 ENV DB_Port=3306
 
 # Expose application port
