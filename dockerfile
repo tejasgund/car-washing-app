@@ -37,7 +37,7 @@ COPY --from=builder /app /app
 
 # Add a non-root user
 RUN useradd -m tejas
-
+RUN mkdir -p /app/logs
 # Change ownership to non-root user
 RUN chown -R tejas:tejas /app /usr/local
 
