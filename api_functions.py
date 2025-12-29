@@ -35,7 +35,7 @@ def is_valid_bike_number(number):
 
 def vehicle_number(v_number):
     if not is_valid_bike_number(v_number):
-        return {"message": "Invalid bike number format"}
+        return {"message": "Invalid bike number format"},400
 
     conn = database()
     cursor = conn.cursor()
