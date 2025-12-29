@@ -12,8 +12,10 @@ from config import database
 import requests
 
 #checking database connection------------------
+log = get_logger("Started Application")
+log.info(f"Started Application{datetime.now()}")
 log = get_logger("Database Connection")
-log.info("Started checking database connection")
+log.info("Checking database connection")
 try:
     conn = database()
     cursor = conn.cursor()
@@ -56,6 +58,7 @@ def home():
 
 @app.get("/api/customers")
 def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to search")):
+    log = get_logger("Serching Customer")
     log.info(f"CALLED API:\t /api/customers/ called with vehicleNumber={vehicleNumber}")
     try:
         response, status = api_functions.vehicle_number(vehicleNumber)
@@ -77,6 +80,7 @@ def get_customer(vehicleNumber: str = Query(..., description="Vehicle number to 
 
 @app.get("/api/services")
 def list_services():
+    log = get_logger("Serching Services")
     log.info("📋 Listing all services")
     try:
         response, status = api_functions.list_service()
@@ -90,6 +94,7 @@ def list_services():
 
 @app.get("/api/employees")
 def list_employees():
+    log = get_logger("Serching Employees")
     log.info("👥 Listing employees")
     try:
         response = api_functions.list_employees()
@@ -103,6 +108,7 @@ def list_employees():
 
 @app.get("/api/dashboard/stats")
 def dashboard_stats():
+    log = get_logger("Dashboard Stats")
     log.info("📊 Fetching dashboard stats")
     try:
         stats = api_functions.stats()
@@ -116,6 +122,7 @@ def dashboard_stats():
 
 @app.get("/api/bills/report")
 def bills_report(fromDate: str = Query(...), toDate: str = Query(...)):
+    log = get_logger("Bills Report")
     log.info(f"🧾 Bill report requested from {fromDate} to {toDate}")
     try:
         from_date = datetime.strptime(fromDate, "%Y-%m-%d")
@@ -166,6 +173,7 @@ class Bill(BaseModel):
 
 @app.post("/api/services")
 def add_services(service: ServiceRequest):
+    log = get_logger("Adding Services")
     log.info(f"🛠️ Add service request received: {service}")
     try:
         api_functions.add_service(service.name, service.price)
@@ -178,6 +186,7 @@ def add_services(service: ServiceRequest):
 
 @app.post("/api/employees")
 def add_employees(emp: Employee):
+    log = get_logger("Adding Employees")
     log.info(f"👤 Add employee request: {emp}")
     try:
         api_functions.add_employee(emp.name, emp.mobile, emp.designation, emp.status)
@@ -190,6 +199,7 @@ def add_employees(emp: Employee):
 
 @app.post("/api/bills")
 def add_bills(bill: Bill):
+    log = get_logger("Generating Bills")
     log.info(f"🧾 Add bill request received for vehicle {bill.vehicleNumber}")
     try:
         response = api_functions.create_bill(
