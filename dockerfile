@@ -49,9 +49,9 @@ ENV PATH=/usr/local/bin:$PATH
 
 # Environment variables (do NOT hardcode secrets in production)
 # Pass via CI/CD or Docker Compose
-ENV DB_Host="testing-mysql"
-ENV DB_User="root"
-ENV DB_Database="qa"
+ENV DB_Host="sahyadri_mysql"
+ENV DB_User="admin"
+ENV DB_Database="admin"
 ENV DB_Port=3306
 
 # Expose application port
