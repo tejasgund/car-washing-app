@@ -1,3 +1,4 @@
+#used to create image
 import os
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse, JSONResponse
