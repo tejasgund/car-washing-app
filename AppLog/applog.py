@@ -5,7 +5,7 @@ import os
 # Directory where log files will be stored
 LOG_DIR = "logs"
 if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
+    os.makedirs(LOG_DIR,exist_ok=True)
 
 # Common log format
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
