@@ -1,12 +1,14 @@
-2025-10-11 00:12:18 - __main__ - INFO - Startin APp
-2025-10-11 00:12:28 - __main__ - INFO - Startin APp
-2025-10-11 00:12:36 - __main__ - INFO - Startin APp
-2025-10-11 00:15:44 - __main__ - INFO - Started App
-2025-10-11 00:15:44 - __main__ - INFO - Started Home Page
-2025-10-11 00:18:17 - __main__ - INFO - Started App
-2025-10-11 00:18:17 - __main__ - INFO - Started list services status : 200 responce: [{'id': 1, 'name': 'Basic Car Wash', 'price': 250}]
-2025-10-11 00:39:45 - __main__ - INFO - 🚀 FastAPI Application Started
-2025-10-11 00:40:45 - __main__ - INFO - 🚀 FastAPI Application Started
-2025-10-11 00:41:26 - __main__ - INFO - 🚀 FastAPI Application Started
-2025-10-11 11:18:45 - __main__ - INFO - 🚀 FastAPI Application Started
-2025-10-11 17:19:44 - __main__ - INFO - 🚀 FastAPI Application Started
+2026-03-13 16:44:29 - DatabaseConnection - ERROR - MYSQL_HOST environment variable not set
+2026-03-13 16:44:29 - DatabaseConnection - ERROR - MYSQL_USER environment variable not set
+2026-03-13 16:44:29 - DatabaseConnection - ERROR - MYSQL_PASSWORD environment variable not set
+2026-03-13 16:44:29 - DatabaseConnection - ERROR - MYSQL_DATABASE environment variable not set
+2026-03-13 16:47:51 - DatabaseConnection - ERROR - MYSQL_HOST environment variable not set
+2026-03-13 16:47:51 - DatabaseConnection - ERROR - MYSQL_USER environment variable not set
+2026-03-13 16:47:51 - DatabaseConnection - ERROR - MYSQL_PASSWORD environment variable not set
+2026-03-13 16:47:51 - DatabaseConnection - ERROR - MYSQL_DATABASE environment variable not set
+2026-03-13 16:47:51 - DatabaseConnection - ERROR - MYSQL_DATABASE environment variable set to None
+2026-03-13 16:48:46 - DatabaseConnection - ERROR - MYSQL_HOST environment variable not set
+2026-03-13 16:48:46 - DatabaseConnection - ERROR - MYSQL_USER environment variable not set
+2026-03-13 16:48:46 - DatabaseConnection - ERROR - MYSQL_PASSWORD environment variable not set
+2026-03-13 16:48:46 - DatabaseConnection - ERROR - MYSQL_DATABASE environment variable not set
+2026-03-13 16:48:46 - DatabaseConnection - ERROR - Database connection failed: (1045, "Access denied for user 'Enlighta'@'172.27.0.1' (using password: NO)")
